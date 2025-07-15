@@ -1,5 +1,6 @@
 export const COLORS = {
   LearRed: "#EE3124",
+  LearRedDark: "#8B0000",
   WHITE: "#FFFFFF",
   BLACK: "#000000",
   Gray1: "#F0EFEE",
