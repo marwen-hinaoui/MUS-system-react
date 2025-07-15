@@ -1,11 +1,25 @@
-import React from 'react'
-
+import { Divider, Menu, Switch } from "antd";
+const items = [
+  {
+    key: "1",
+    // icon: <MailOutlined />,
+    label: "Navigation One",
+  },
+  {
+    key: "2",
+    // icon: <CalendarOutlined />,
+    label: "Navigation Two",
+  },
+];
 const DashboardSidebar = () => {
   return (
-    <div>
-      Sidebar
-    </div>
-  )
-}
+    <Menu
+      style={{ width: 256 }}
+      defaultSelectedKeys={["1"]}
+      defaultOpenKeys={["sub1"]}
 
-export default DashboardSidebar
+      items={items}
+    />
+  );
+};
+export default DashboardSidebar;
