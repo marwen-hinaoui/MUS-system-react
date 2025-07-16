@@ -2,7 +2,7 @@ import apiInstance from "./axios";
 
 export const login_api = async (userData) => {
   try {
-    const res = await apiInstance.post("/doctor/login", userData, {
+    const res = await apiInstance.post("/login", userData, {
       headers: {
         "Content-Type": "application/json",
       },

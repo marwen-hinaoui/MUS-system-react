@@ -3,16 +3,19 @@ import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 
 const SharedButton = ({ name, loading, width, margins, color }) => {
+  const styles = {
+    padding: "20px",
+    width: width,
+    fontSize: FONTSIZE.PRIMARY,
+    backgroundColor: color,
+    color: COLORS.WHITE,
+    border: "none",
+  };
   if (loading) {
     return (
       <Button
-        style={{
-          padding: "20px",
-          width: width,
-          fontSize: FONTSIZE.PRIMARY,
-          backgroundColor: color,
-          color: COLORS.WHITE,
-        }}
+        htmlType="submit" 
+        style={styles}
         color={color ? "" : "primary"}
         variant="solid"
         className={margins}
@@ -25,14 +28,7 @@ const SharedButton = ({ name, loading, width, margins, color }) => {
     return (
       <Button
         htmlType="submit"
-        style={{
-          padding: "20px",
-          width: width,
-          fontSize: FONTSIZE.PRIMARY,
-          backgroundColor: color,
-          color: COLORS.WHITE,
-        }}
-        color={color ? "" : "primary"}
+        style={styles}
         variant="solid"
         className={margins}
       >

@@ -106,18 +106,10 @@ const DashboardSidebar = () => {
           }}
         >
           {collapsed && (
-            <img
-              src={LearLogo1}
-              alt="Lear Corp."
-              style={{ width: "40px",  }}
-            />
+            <img src={LearLogo1} alt="Lear Corp." style={{ width: "40px" }} />
           )}
           {!collapsed && (
-            <img
-              src={LearLogo}
-              alt="Lear Corp."
-              style={{ width: "150px" }}
-            />
+            <img src={LearLogo} alt="Lear Corp." style={{ width: "150px" }} />
           )}
         </div>
         <Menu
