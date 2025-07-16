@@ -40,7 +40,7 @@ const Login = () => {
     message.open({
       type: "error",
       content: msg,
-      duration: 100,
+      duration: 3,
 
     });
   };
