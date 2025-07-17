@@ -76,9 +76,12 @@ const Login = () => {
     !isAuthenticated === true && (
       <Flex align="center" justify="center" className={styles.container}>
         <img src={LearLogo} className={`${styles.logo} m-0`} alt="Lear Logo" />
-        <Divider className="my-4">Make Up System</Divider>
+        {/* <p className="my-3" >
+        Make Up System
+        </p> */}
+        <p className="my-3"></p>
         <Flex>
-          <Flex style={{ width: "350px" }} align="center" justify="center">
+          <Flex  style={{ width: "350px" }} align="center" justify="center">
             <Form
               name="basic"
               variant="filled"
@@ -124,7 +127,7 @@ const Login = () => {
               </Form.Item>
 
               <SharedButton
-                color={COLORS.BLACK}
+                color={COLORS.LearRed}
                 margins={"mt-1"}
                 width={"100%"}
                 name={"LOGIN"}
