@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { App, Divider, Form, Input, message } from "antd";
+import { App, Divider, Form, Input, message, notification } from "antd";
 import { Alert, Card, Flex } from "antd";
 import styles from "./login.module.css";
 import { login_api } from "../../api/login_api";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
   set_authenticated,
@@ -17,15 +17,19 @@ import SharedButton from "../../components/button/button";
 import LearLogo from "../../assets/img/LearLogo.png";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
+import { openNotification } from "../../components/notificationComponent/openNotification";
+import { FaArrowRight } from "react-icons/fa";
 
 const inputErrorMsg = {
-  username: "Please input your Username!",
-  password: "Please input your Password!",
+  username: "Veuillez saisir votre nom d'utilisateur!",
+  password: "Veuillez saisir votre mot de passe!",
 };
 
 const Login = () => {
   var navigate = useNavigate();
   const [response, setResponse] = useState();
+  const [api, contextHolder] = notification.useNotification();
+
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
   const { message } = App.useApp();
 
@@ -41,7 +45,6 @@ const Login = () => {
       type: "error",
       content: msg,
       duration: 3,
-
     });
   };
 
@@ -67,7 +70,8 @@ const Login = () => {
         dispatch(set_error(res.resError.response.data.error));
       } else {
         dispatch(set_loading(false));
-        errorAlert(res.resError.message);
+        // errorAlert(res.resError.message);
+        openNotification(api, res.resError.message);
       }
     }
   };
@@ -75,13 +79,17 @@ const Login = () => {
   return (
     !isAuthenticated === true && (
       <Flex align="center" justify="center" className={styles.container}>
+        {contextHolder}
         <img src={LearLogo} className={`${styles.logo} m-0`} alt="Lear Logo" />
-        {/* <p className="my-3" >
-        Make Up System
-        </p> */}
-        <p className="my-3"></p>
+
+        <div style={{
+          width:'200px'
+          }}>
+          <Divider />
+        </div>
+
         <Flex>
-          <Flex  style={{ width: "350px" }} align="center" justify="center">
+          <Flex style={{ width: "350px" }} align="center" justify="center">
             <Form
               name="basic"
               variant="filled"
@@ -121,7 +129,7 @@ const Login = () => {
                   prefix={
                     <AiOutlineLock style={{ fontSize: FONTSIZE.PRIMARY }} />
                   }
-                  placeholder="Password"
+                  placeholder="Mot de passe"
                   name="password"
                 />
               </Form.Item>
@@ -130,9 +138,20 @@ const Login = () => {
                 color={COLORS.LearRed}
                 margins={"mt-1"}
                 width={"100%"}
-                name={"LOGIN"}
+                name={"Connexion"}
                 loading={loading}
               />
+              {/* <div className="w-100 text-end mt-2">
+                <Link
+                  style={{
+                    fontSize: FONTSIZE.PRIMARY,
+                    textDecoration: "none",
+                    color: COLORS.BLACK,
+                  }}
+                >
+                  <div>Voir les demandes <FaArrowRight  /></div>
+                </Link>
+              </div> */}
             </Form>
           </Flex>
         </Flex>

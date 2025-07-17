@@ -10,6 +10,7 @@ const SharedButton = ({ name, loading, width, margins, color }) => {
     backgroundColor: color,
     color: COLORS.WHITE,
     border: "none",
+    
   };
   if (loading) {
     return (

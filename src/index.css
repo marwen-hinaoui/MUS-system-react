@@ -16,11 +16,22 @@ code {
   background-color: white !important;
 }
 
-/* .ant-message-notice-content {
-  background: #ffcdd2 !important;
-  color: #8B0000;
-} */
-/* 
-.ant-message-notice-content-success {
-  background: green !important;
-} */
+.ant-notification-notice .ant-notification-notice-closable {
+  display: flex !important;
+
+
+}
+.ant-notification-notice-wrapper {
+  background: #FFCDD2 !important;
+  display: flex !important;
+
+
+}
+.ant-notification-notice-message{
+  color: #8B0000 !important;
+}
+
+
+ .ant-notification-notice-icon-error{
+  color: #EE3124 !important;
+}
