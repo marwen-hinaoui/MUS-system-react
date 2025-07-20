@@ -38,7 +38,8 @@ const navItems = [
 ];
 
 const DashboardSidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
+  const [position, setPosition] = useState(true);
   const [activePage, setActivePage] = useState("dashboard");
 
   return (
@@ -81,12 +82,18 @@ const DashboardSidebar = () => {
         width={200}
         collapsedWidth={60}
         trigger={null}
-        onMouseEnter={() => setCollapsed(false)}
-        onMouseLeave={() => setCollapsed(true)}
+        onMouseEnter={() => {
+          setCollapsed(false);
+          setPosition("fixed");
+        }}
+        onMouseLeave={() => {
+          setCollapsed(true);
+          setPosition("sticky");
+        }}
         style={{
           overflow: "auto",
           height: "100vh",
-          position: "sticky",
+          position: position,
           left: 0,
           top: 0,
         }}
