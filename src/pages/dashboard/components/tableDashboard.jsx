@@ -1,6 +1,6 @@
-import React from 'react';
-import { Table } from 'antd';
-import { createStyles } from 'antd-style';
+import { Table } from "antd";
+import { createStyles } from "antd-style";
+import { Link } from "react-router-dom";
 const useStyle = createStyles(({ css, token }) => {
   const { antCls } = token;
   return {
@@ -20,61 +20,72 @@ const useStyle = createStyles(({ css, token }) => {
 });
 const columns = [
   {
-    title: 'Full Name',
-    width: 100,
-    dataIndex: 'name',
-    key: 'name',
-    fixed: 'left',
+    title: "id",
+    dataIndex: "id",
+    key: "name",
+    fixed: "id",
   },
   {
-    title: 'Age',
-    width: 100,
-    dataIndex: 'age',
-    key: 'age',
-    fixed: 'left',
-    sorter: true,
+    title: "Numéro Demande",
+    dataIndex: "numDemande",
+    key: "age",
+    fixed: "left",
   },
-  { title: 'Column 1', dataIndex: 'address', key: '1' },
-  { title: 'Column 2', dataIndex: 'address', key: '2' },
-  { title: 'Column 3', dataIndex: 'address', key: '3' },
-  { title: 'Column 4', dataIndex: 'address', key: '4' },
-  { title: 'Column 5', dataIndex: 'address', key: '5' },
-  { title: 'Column 6', dataIndex: 'address', key: '6' },
-  { title: 'Column 7', dataIndex: 'address', key: '7' },
-  { title: 'Column 8', dataIndex: 'address', key: '8' },
-  { title: 'Column 9', dataIndex: 'address', key: '9' },
-  { title: 'Column 10', dataIndex: 'address', key: '10' },
-  { title: 'Column 11', dataIndex: 'address', key: '11' },
-  { title: 'Column 12', dataIndex: 'address', key: '12' },
-  { title: 'Column 13', dataIndex: 'address', key: '13' },
-  { title: 'Column 14', dataIndex: 'address', key: '14' },
-  { title: 'Column 15', dataIndex: 'address', key: '15' },
-  { title: 'Column 16', dataIndex: 'address', key: '16' },
-  { title: 'Column 17', dataIndex: 'address', key: '17' },
-  { title: 'Column 18', dataIndex: 'address', key: '18' },
-  { title: 'Column 19', dataIndex: 'address', key: '19' },
-  { title: 'Column 20', dataIndex: 'address', key: '20' },
-  {
-    title: 'Action',
-    key: 'operation',
-    fixed: 'right',
-    width: 100,
-    render: () => <a>action</a>,
-  },
+
+  { title: "User", dataIndex: "user", key: "1" },
+  { title: "Site", dataIndex: "site", key: "5" },
+  { title: "Projet", dataIndex: "projet", key: "6" },
+  { title: "Lieu Défauet", dataIndex: "lieuDefaut", key: "2" },
+  { title: "Qte Demandé", dataIndex: "Qte_demande", key: "3" },
+  { title: "Défaut", dataIndex: "defaut", key: "4" },
+  { title: "Date Creation", dataIndex: "date_creation", key: "4" },
+
+  // {
+  //   title: "Action",
+  //   key: "operation",
+  //   fixed: "right",
+  //   width: 100,
+  //   render: () => {
+  //     <div></div>
+  //   },
+  // },
 ];
 const dataSource = [
-  { key: '1', name: 'Olivia', age: 32, address: 'New York Park' },
-  { key: '2', name: 'Ethan', age: 40, address: 'London Park' },
+  {
+    key: "1",
+    id: "1",
+    numDemande: "MUS1234567",
+    user: "Opérateur Marwen Hinaoui",
+    site: "Trim1",
+    projet: "MBEAM",
+    defaut: "A777",
+    Qte_demande: "3",
+    lieuDefaut: "SEWING",
+    date_creation: "28-12-2025",
+  },
+  {
+    key: "2",
+    id: "2",
+    numDemande: "MUS1234567",
+    user: "Opérateur Marwen Hinaoui",
+    site: "Trim1",
+    projet: "MBEAM",
+    defaut: "A777",
+    Qte_demande: "3",
+    lieuDefaut: "SEWING",
+    date_creation: "28-12-2025",
+  },
 ];
 const TableDashboard = () => {
   const { styles } = useStyle();
   return (
     <Table
+      bordered
       className={styles.customTable}
       pagination={false}
       columns={columns}
       dataSource={dataSource}
-      scroll={{ x: 'max-content' }}
+      scroll={{ x: "max-content" }}
     />
   );
 };

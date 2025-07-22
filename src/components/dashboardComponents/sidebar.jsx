@@ -3,10 +3,9 @@ import { Layout, Menu } from "antd";
 import {
   HomeOutlined,
   PlusSquareOutlined,
-  UnorderedListOutlined,
-  CheckSquareOutlined,
-  TruckOutlined,
-  BarChartOutlined,
+
+  ProfileFilled,
+
   SettingOutlined,
 } from "@ant-design/icons";
 
@@ -15,32 +14,27 @@ import LearLogo from "../../assets/img/LearLogo.png";
 import LearLogo1 from "../../assets/img/LearLogo1.png";
 import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
+import { MdOutlineAddBox, MdOutlinePerson, MdOutlineSpaceDashboard } from "react-icons/md";
+import { AiOutlineUser } from "react-icons/ai";
 const { Sider } = Layout;
 
 const navItems = [
   {
     key: "dashboard",
-    icon: <HomeOutlined size={ICONSIZE.SMALL} />,
+    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
     label: "Dashboard",
   },
   {
-    key: "create-request",
-    icon: <PlusSquareOutlined size={ICONSIZE.SMALL}/>,
-    label: "Create Request",
+    key: "cree_demande",
+    icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
+    label: "Crée Demande",
   },
+  
   {
-    key: "manage-requests",
-    icon: <UnorderedListOutlined size={ICONSIZE.SMALL}/>,
-    label: "Manage Requests",
+    key: "profil",
+    icon: <MdOutlinePerson size={ICONSIZE.SMALL} />,
+    label: "Profil",
   },
-  {
-    key: "approve-requests",
-    icon: <CheckSquareOutlined size={ICONSIZE.SMALL}/>,
-    label: "Approve Requests",
-  },
-  { key: "pls-request", icon: <TruckOutlined size={ICONSIZE.SMALL}/>, label: "PLS Request" },
-  { key: "reports", icon: <BarChartOutlined size={ICONSIZE.SMALL}/>, label: "Reports" },
-  { key: "settings", icon: <SettingOutlined size={ICONSIZE.SMALL}/>, label: "Settings" },
 ];
 
 const DashboardSidebar = () => {

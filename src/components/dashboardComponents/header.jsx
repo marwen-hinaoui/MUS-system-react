@@ -1,15 +1,11 @@
 import { COLORS } from "../../constant/colors";
 import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai";
-
 import "./dashboardComponents.css";
 import { useDispatch, useSelector } from "react-redux";
 import { set_collapsedSidebar } from "../../redux/slices";
-import { Link } from "react-router-dom";
 import ButtonHeader from "../button/buttonHeader/buttonHeader";
-import { BsPersonCircle } from "react-icons/bs";
-import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
-import { IoLogOut, IoLogOutOutline } from "react-icons/io5";
-import { CiUser } from "react-icons/ci";
+import { ICONSIZE } from "../../constant/FontSizes";
+import { MdOutlinePerson } from "react-icons/md";
 const DashboardHeader = () => {
   const dispatch = useDispatch();
   const collapsedSidebar = useSelector((state) => state.app.collapsedSidebar);
@@ -24,9 +20,10 @@ const DashboardHeader = () => {
       />
       <div className="d-flex">
         <div className="d-flex align-items-center">
-          
-
-          <ButtonHeader icon={<AiOutlineUser size={ICONSIZE.SMALL } />} content={"Full name"} />
+          <ButtonHeader
+            icon={<MdOutlinePerson size={ICONSIZE.SMALL} />}
+            content={"Nom prénom"}
+          />
         </div>
         <ButtonHeader content={"Role"} />
       </div>

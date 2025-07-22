@@ -1,0 +1,6 @@
+.searchInput {
+  border: 0;
+  outline: 0; /* focus style on parent */
+  background: transparent;
+  font: inherit;
+}

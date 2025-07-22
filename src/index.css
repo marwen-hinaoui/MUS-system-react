@@ -35,3 +35,13 @@ code {
  .ant-notification-notice-icon-error{
   color: #EE3124 !important;
 }
+
+
+.ant-card-body {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+p{
+  margin: 0;
+}
