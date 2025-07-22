@@ -8,6 +8,7 @@ const appSlices = createSlice({
     errorMsg: null,
     isAuthenticated: null,
     redirection: null,
+    collapsedSidebar: true,
   },
   reducers: {
     set_token: (state, action) => {
@@ -33,6 +34,9 @@ const appSlices = createSlice({
     set_redirection: (state, action) => {
       state.redirection = action.payload;
     },
+    set_collapsedSidebar: (state, action) => {
+      state.collapsedSidebar = action.payload;
+    },
   },
 });
 
@@ -43,6 +47,7 @@ export const {
   set_error,
   set_authenticated,
   set_redirection,
+  set_collapsedSidebar,
 } = appSlices.actions;
 
 export default appSlices.reducer;

@@ -1,4 +1,17 @@
-.header{
-    height: 70px;
-    width: 100% !important;
+.header {
+  height: 65px;
+  width: 100% !important;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.09);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu {
+  cursor: pointer;
+  transition: .2s;
+}
+.menu:hover {
+  color: #8b0000 !important;
 }

@@ -1,0 +1,19 @@
+.buttonHeader {
+  text-decoration: none !important;
+  transition: .2s;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 8px;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.buttonHeader:hover {
+  color: #8b0000 !important;
+  /* background-color: #ffcdd2 !important; */
+}
+
+

@@ -1,9 +1,9 @@
-import React from 'react'
+import TableDashboard from './components/tableDashboard'
 
 const Dashboard = () => {
   return (
-    <div>
-      Dashboard
+    <div className='dashboard'>
+      <TableDashboard />
 
     </div>
   )

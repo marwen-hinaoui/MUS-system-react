@@ -13,34 +13,41 @@ import {
 import { COLORS } from "../../constant/colors";
 import LearLogo from "../../assets/img/LearLogo.png";
 import LearLogo1 from "../../assets/img/LearLogo1.png";
+import { useSelector } from "react-redux";
+import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 const { Sider } = Layout;
 
 const navItems = [
-  { key: "dashboard", icon: <HomeOutlined />, label: "Dashboard" },
+  {
+    key: "dashboard",
+    icon: <HomeOutlined size={ICONSIZE.SMALL} />,
+    label: "Dashboard",
+  },
   {
     key: "create-request",
-    icon: <PlusSquareOutlined />,
+    icon: <PlusSquareOutlined size={ICONSIZE.SMALL}/>,
     label: "Create Request",
   },
   {
     key: "manage-requests",
-    icon: <UnorderedListOutlined />,
+    icon: <UnorderedListOutlined size={ICONSIZE.SMALL}/>,
     label: "Manage Requests",
   },
   {
     key: "approve-requests",
-    icon: <CheckSquareOutlined />,
+    icon: <CheckSquareOutlined size={ICONSIZE.SMALL}/>,
     label: "Approve Requests",
   },
-  { key: "pls-request", icon: <TruckOutlined />, label: "PLS Request" },
-  { key: "reports", icon: <BarChartOutlined />, label: "Reports" },
-  { key: "settings", icon: <SettingOutlined />, label: "Settings" },
+  { key: "pls-request", icon: <TruckOutlined size={ICONSIZE.SMALL}/>, label: "PLS Request" },
+  { key: "reports", icon: <BarChartOutlined size={ICONSIZE.SMALL}/>, label: "Reports" },
+  { key: "settings", icon: <SettingOutlined size={ICONSIZE.SMALL}/>, label: "Settings" },
 ];
 
 const DashboardSidebar = () => {
   const [collapsed, setCollapsed] = useState(true);
   const [position, setPosition] = useState(true);
   const [activePage, setActivePage] = useState("dashboard");
+  const collapsedSidebar = useSelector((state) => state.app.collapsedSidebar);
 
   return (
     <Layout style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif" }}>
@@ -77,19 +84,19 @@ const DashboardSidebar = () => {
       </style>
       <Sider
         collapsible
-        collapsed={collapsed}
+        collapsed={collapsedSidebar}
         onCollapse={setCollapsed}
         width={200}
         collapsedWidth={60}
         trigger={null}
-        onMouseEnter={() => {
-          setCollapsed(false);
-          setPosition("fixed");
-        }}
-        onMouseLeave={() => {
-          setCollapsed(true);
-          setPosition("sticky");
-        }}
+        // onMouseEnter={() => {
+        //   setCollapsed(false);
+        //   // setPosition("fixed");
+        // }}
+        // onMouseLeave={() => {
+        //   setCollapsed(true);
+        //   // setPosition("sticky");
+        // }}
         style={{
           overflow: "auto",
           height: "100vh",
@@ -112,10 +119,10 @@ const DashboardSidebar = () => {
             fontWeight: "bold",
           }}
         >
-          {collapsed && (
-            <img src={LearLogo1} alt="Lear Corp." style={{ width: "40px" }} />
+          {collapsedSidebar && (
+            <img src={LearLogo1} alt="Lear Corp." style={{ width: "42px" }} />
           )}
-          {!collapsed && (
+          {!collapsedSidebar && (
             <img src={LearLogo} alt="Lear Corp." style={{ width: "150px" }} />
           )}
         </div>
@@ -125,7 +132,7 @@ const DashboardSidebar = () => {
           selectedKeys={[activePage]}
           onClick={({ key }) => setActivePage(key)}
           items={navItems}
-          style={{ borderRight: 0 }}
+          style={{ borderRight: 0, fontSize: FONTSIZE.PRIMARY }}
         />
       </Sider>
     </Layout>
