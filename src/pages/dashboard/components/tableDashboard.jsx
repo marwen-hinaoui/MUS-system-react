@@ -1,6 +1,5 @@
 import { Table } from "antd";
 import { createStyles } from "antd-style";
-import { Link } from "react-router-dom";
 const useStyle = createStyles(({ css, token }) => {
   const { antCls } = token;
   return {
@@ -27,7 +26,7 @@ const columns = [
   },
   {
     title: "Numéro Demande",
-    dataIndex: "numDemande",
+    dataIndex: "numDemandeMUS",
     key: "age",
     fixed: "left",
   },
@@ -54,7 +53,7 @@ const dataSource = [
   {
     key: "1",
     id: "1",
-    numDemande: "MUS1234567",
+    numDemandeMUS: "MUS1234567",
     user: "Opérateur Marwen Hinaoui",
     site: "Trim1",
     projet: "MBEAM",
@@ -66,7 +65,7 @@ const dataSource = [
   {
     key: "2",
     id: "2",
-    numDemande: "MUS1234567",
+    numDemandeMUS: "MUS1234567",
     user: "Opérateur Marwen Hinaoui",
     site: "Trim1",
     projet: "MBEAM",
