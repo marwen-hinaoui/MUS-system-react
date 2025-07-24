@@ -72,14 +72,14 @@ const rows = [
     "PROJECT_Y",
     "1624251117973",
     2,
-    "30-12-2025"
+    "30-11-2025"
   ),
 ];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    // backgroundColor:COLORS.BLACK,
-    color: COLORS.BLACK,
+    backgroundColor:COLORS.BLACK,
+    color: COLORS.WHITE,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -87,9 +87,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: COLORS.bgWHITE,
-  },
+
   "&:last-child td, &:last-child th": {
     border: 0,
   },

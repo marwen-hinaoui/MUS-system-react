@@ -21,7 +21,7 @@ const Dashboard = () => {
       </div>
 
       <div className="py-2"></div>
-      <CardComponent width={"100%"} padding={"0"} margin={0}>
+      <CardComponent className={"overflow-hidden"} padding={"0"} margin={"0"}>
         {/* <TableDashboard /> */}
         <TableDashboard2 />
       </CardComponent>
