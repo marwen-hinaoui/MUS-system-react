@@ -10,6 +10,8 @@ const appSlices = createSlice({
     redirection: null,
     collapsedSidebar: true,
     openDrawer: false,
+    searchingData: [],
+    demandeData: null,
   },
   reducers: {
     set_token: (state, action) => {
@@ -41,6 +43,12 @@ const appSlices = createSlice({
     set_drawer: (state, action) => {
       state.openDrawer = action.payload;
     },
+    set_data_searching: (state, action) => {
+      state.searchingData = action.payload;
+    },
+    set_demande_data_table: (state, action) => {
+      state.demandeData = action.payload;
+    },
   },
 });
 
@@ -53,6 +61,8 @@ export const {
   set_redirection,
   set_collapsedSidebar,
   set_drawer,
+  set_data_searching,
+  set_demande_data_table,
 } = appSlices.actions;
 
 export default appSlices.reducer;

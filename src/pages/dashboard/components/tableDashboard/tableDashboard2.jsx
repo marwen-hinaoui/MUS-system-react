@@ -13,13 +13,73 @@ import { FaBoxOpen } from "react-icons/fa";
 import ButtonHeader from "../../../../components/button/buttonHeader/buttonHeader";
 import DrawerComponent from "../../../../components/drawer/drawerComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { set_drawer } from "../../../../redux/slices";
+import {
+  set_data_searching,
+  set_demande_data_table,
+  set_drawer,
+} from "../../../../redux/slices";
 import { COLORS } from "../../../../constant/colors";
+import { Empty } from "antd/lib";
+
+function createData(
+  id,
+  numDemandeMUS,
+  user,
+  site,
+  projet,
+  sequence,
+  Qte_demande,
+  date_creation
+) {
+  return {
+    id,
+    numDemandeMUS,
+    user,
+    site,
+    projet,
+    sequence,
+    Qte_demande,
+    date_creation,
+  };
+}
+
+const rows = [
+  createData(
+    1,
+    "MUS1234567",
+    "Opérateur Marwen Hinaoui",
+    "Trim1",
+    "MBEAM",
+    "1624251117971",
+    3,
+    "28-12-2025"
+  ),
+  createData(
+    2,
+    "MUS1234568",
+    "Opérateur John Doe",
+    "Trim2",
+    "PROJECT_X",
+    "1624251117972",
+    5,
+    "29-12-2025"
+  ),
+  createData(
+    3,
+    "MUS1234569",
+    "Opérateur Jane Smith",
+    "Trim3",
+    "PROJECT_Y",
+    "1624251117973",
+    2,
+    "30-12-2025"
+  ),
+];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-
-    color: theme.palette.common.black,
+    // backgroundColor:COLORS.BLACK,
+    color: COLORS.BLACK,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -28,7 +88,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: COLORS.bgWHITE,
   },
   "&:last-child td, &:last-child th": {
     border: 0,
@@ -40,7 +100,14 @@ export default function TableDashboard2() {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selectedRow, setSelectedRow] = React.useState(null);
   const dispatch = useDispatch();
+  const searchingData = useSelector((state) => state.app.searchingData);
+
   const openDrawer = useSelector((state) => state.app.openDrawer);
+
+  React.useEffect(() => {
+    dispatch(set_demande_data_table(rows));
+    dispatch(set_data_searching(rows));
+  }, [dispatch]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -52,7 +119,7 @@ export default function TableDashboard2() {
   };
 
   const handleDetails = (row) => {
-    setSelectedRow(row)
+    setSelectedRow(row);
     dispatch(set_drawer(true));
   };
   const handleCloseDrawer = () => {
@@ -113,64 +180,10 @@ export default function TableDashboard2() {
     },
   ];
 
-  function createData(
-    id,
-    numDemandeMUS,
-    user,
-    site,
-    projet,
-    sequence,
-    Qte_demande,
-    date_creation
-  ) {
-    return {
-      id,
-      numDemandeMUS,
-      user,
-      site,
-      projet,
-      sequence,
-      Qte_demande,
-      date_creation,
-    };
-  }
-
-  const rows = [
-    createData(
-      1,
-      "MUS1234567",
-      "Opérateur Marwen Hinaoui",
-      "Trim1",
-      "MBEAM",
-      "1624251117971",
-      3,
-      "28-12-2025"
-    ),
-    createData(
-      2,
-      "MUS1234568",
-      "Opérateur John Doe",
-      "Trim2",
-      "PROJECT_X",
-      "1624251117972",
-      5,
-      "29-12-2025"
-    ),
-    createData(
-      3,
-      "MUS1234569",
-      "Opérateur Jane Smith",
-      "Trim3",
-      "PROJECT_Y",
-      "1624251117973",
-      2,
-      "30-12-2025"
-    ),
-  ];
-
   return (
     <div>
-      <TableContainer component={Paper}>
+      {/* <TableContainer component={Paper}> */}
+      <TableContainer>
         <Table sx={{ minWidth: 700 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -182,21 +195,34 @@ export default function TableDashboard2() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <StyledTableRow key={row.id}>
-                  {columns.map((column) => {
-                    const value = row[column.id];
-
-                    return (
-                      <StyledTableCell key={column.id} align={column.align}>
-                        {column.format ? column.format(value, row) : value}
-                      </StyledTableCell>
-                    );
-                  })}
-                </StyledTableRow>
-              ))}
+            {searchingData.length > 0 ? (
+              searchingData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <StyledTableRow key={row.id}>
+                    {columns.map((column) => {
+                      const value = row[column.id];
+                      return (
+                        <StyledTableCell key={column.id} align={column.align}>
+                          {column.format ? column.format(value, row) : value}
+                        </StyledTableCell>
+                      );
+                    })}
+                  </StyledTableRow>
+                ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  className="border-none "
+                  colSpan={columns.length}
+                  align="center"
+                >
+                  <div py={4}>
+                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -208,8 +234,7 @@ export default function TableDashboard2() {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        // This style will hide the "Rows per page:" text
-        labelRowsPerPage="" // Set to an empty string to remove the label
+        labelRowsPerPage=""
       />
       <DrawerComponent
         open={openDrawer}

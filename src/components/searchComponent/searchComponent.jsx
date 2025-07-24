@@ -3,22 +3,42 @@ import "./searchComponent.css";
 import { MdSearch } from "react-icons/md";
 import { ICONSIZE } from "../../constant/FontSizes";
 import CardComponent from "../card/cardComponent";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { set_data_searching } from "../../redux/slices";
 const SearchComponent = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const dispatch = useDispatch();
+  const demandeData = useSelector((state) => state.app.demandeData);
+
+  useEffect(() => {
+    const term = searchTerm.toLowerCase();
+
+    const filtered = demandeData.filter((item) =>
+      Object.values(item.numDemandeMUS).some((val) =>
+        String(item.numDemandeMUS).toLowerCase().includes(term)
+      )
+    );
+    dispatch(set_data_searching(filtered));
+  }, [searchTerm, demandeData, dispatch]);
+
+  
   return (
     <div>
-      <CardComponent padding={'8px'}>
-        <form action="#" method="GET" id="searchForm">
-          <label class="searchLabelWrap">
-            <span class="visually-hidden">Search</span>
-            <MdSearch className="icon" size={ICONSIZE.PRIMARY} />
-            <input
-              type="search"
-              placeholder="Recherche"
-              className="searchInput"
-              name="s"
-            />
-          </label>
-        </form>
+      <CardComponent padding={"8px"}>
+        <label class="searchLabelWrap">
+          <span class="visually-hidden">Search</span>
+          <MdSearch className="icon" size={ICONSIZE.PRIMARY} />
+          <input
+            type="search"
+            placeholder="Recherche"
+            className="searchInput"
+            name="s"
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+          />
+        </label>
       </CardComponent>
     </div>
   );

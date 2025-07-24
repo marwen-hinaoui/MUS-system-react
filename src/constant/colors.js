@@ -2,7 +2,7 @@ export const COLORS = {
   LearRed: "#EE3124",
   LearRedDark: "#8B0000",
   WHITE: "#FFFFFF",
-  bgWHITE: "#fbfbfbff",
+  bgWHITE: "#f1f2f3ff",
   BLACK: "#000000",
   Gray1: "#F0EFEE",
   Gray2: "#E1DFDE",
