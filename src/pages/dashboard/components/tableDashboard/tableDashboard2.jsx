@@ -8,10 +8,12 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { FaBoxOpen } from "react-icons/fa"; // Keep if you still use FaBoxOpen, otherwise remove
-import ButtonHeader from "../../../components/button/buttonHeader/buttonHeader";
+import { FaBoxOpen } from "react-icons/fa";
+import ButtonHeader from "../../../../components/button/buttonHeader/buttonHeader";
+import DrawerComponent from "../../../../components/drawer/drawerComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { set_drawer } from "../../../../redux/slices";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -35,6 +37,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function TableDashboard2() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const dispatch = useDispatch();
+  const openDrawer = useSelector((state) => state.app.openDrawer);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -45,9 +49,11 @@ export default function TableDashboard2() {
     setPage(0);
   };
 
-  const handleDetails = (rowId) => {
-    console.log(`handleDetails button clicked for row ID: ${rowId}`);
-    // Implement your details logic here
+  const handleDetails = () => {
+    dispatch(set_drawer(true));
+  };
+  const handleCloseDrawer = () => {
+    dispatch(set_drawer(false));
   };
 
   const columns = [
@@ -86,14 +92,16 @@ export default function TableDashboard2() {
     {
       id: "actions",
 
-      label: "Actions", // Changed label to plural as it will contain multiple actions
+      label: "Actions",
 
-      align: "center", // Center align actions for better UX
+      align: "center",
 
       format: (value, row) => {
         return (
           <Stack direction="row" spacing={1} justifyContent="center">
-            <ButtonHeader content={"Détails"} icon={<FaBoxOpen />} />
+            <div onClick={() => handleDetails()}>
+              <ButtonHeader content={"Détails"} icon={<FaBoxOpen />} />
+            </div>
           </Stack>
         );
       },
@@ -196,6 +204,11 @@ export default function TableDashboard2() {
         onRowsPerPageChange={handleChangeRowsPerPage}
         // This style will hide the "Rows per page:" text
         labelRowsPerPage="" // Set to an empty string to remove the label
+      />
+      <DrawerComponent
+        open={openDrawer}
+        handleCloseDrawer={handleCloseDrawer}
+        idRow={0}
       />
     </div>
   );

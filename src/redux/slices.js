@@ -9,6 +9,7 @@ const appSlices = createSlice({
     isAuthenticated: null,
     redirection: null,
     collapsedSidebar: true,
+    openDrawer: false,
   },
   reducers: {
     set_token: (state, action) => {
@@ -37,6 +38,9 @@ const appSlices = createSlice({
     set_collapsedSidebar: (state, action) => {
       state.collapsedSidebar = action.payload;
     },
+    set_drawer: (state, action) => {
+      state.openDrawer = action.payload;
+    },
   },
 });
 
@@ -48,6 +52,7 @@ export const {
   set_authenticated,
   set_redirection,
   set_collapsedSidebar,
+  set_drawer,
 } = appSlices.actions;
 
 export default appSlices.reducer;

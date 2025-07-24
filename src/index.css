@@ -1,8 +1,10 @@
+@font-face {
+  font-family: Roboto;
+  src: url("./assets/font/Roboto-Regular.ttf");
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -18,31 +20,28 @@ code {
 
 .ant-notification-notice .ant-notification-notice-closable {
   display: flex !important;
-
-
 }
 .ant-notification-notice-wrapper {
-  background: #FFCDD2 !important;
+  background: #ffcdd2 !important;
   display: flex !important;
-
-
 }
-.ant-notification-notice-message{
-  color: #8B0000 !important;
+.ant-notification-notice-message {
+  color: #8b0000 !important;
 }
 
-
- .ant-notification-notice-icon-error{
-  color: #EE3124 !important;
+.ant-notification-notice-icon-error {
+  color: #ee3124 !important;
 }
-
 
 .ant-card-body {
   padding: 0 !important;
   margin: 0 !important;
 }
 
-p{
+p {
   margin: 0;
-  
 }
+
+/* * {
+  font-family: "Arial" !important;
+} */

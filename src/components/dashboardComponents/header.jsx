@@ -21,11 +21,12 @@ const DashboardHeader = () => {
       <div className="d-flex">
         <div className="d-flex align-items-center">
           <ButtonHeader
+            backgroundColor
             icon={<MdOutlinePerson size={ICONSIZE.SMALL} />}
             content={"Nom prénom"}
           />
         </div>
-        <ButtonHeader content={"Role"} />
+        <ButtonHeader bg={false} content={"Role"} />
       </div>
     </div>
   );
