@@ -14,11 +14,12 @@ import ButtonHeader from "../../../../components/button/buttonHeader/buttonHeade
 import DrawerComponent from "../../../../components/drawer/drawerComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { set_drawer } from "../../../../redux/slices";
+import { COLORS } from "../../../../constant/colors";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+
+    color: theme.palette.common.black,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -37,6 +38,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function TableDashboard2() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [selectedRow, setSelectedRow] = React.useState(null);
   const dispatch = useDispatch();
   const openDrawer = useSelector((state) => state.app.openDrawer);
 
@@ -49,7 +51,8 @@ export default function TableDashboard2() {
     setPage(0);
   };
 
-  const handleDetails = () => {
+  const handleDetails = (row) => {
+    setSelectedRow(row)
     dispatch(set_drawer(true));
   };
   const handleCloseDrawer = () => {
@@ -98,11 +101,13 @@ export default function TableDashboard2() {
 
       format: (value, row) => {
         return (
-          <Stack direction="row" spacing={1} justifyContent="center">
-            <div onClick={() => handleDetails()}>
-              <ButtonHeader content={"Détails"} icon={<FaBoxOpen />} />
-            </div>
-          </Stack>
+          <>
+            <Stack direction="row" spacing={1} justifyContent="center">
+              <div onClick={() => handleDetails(row)}>
+                <ButtonHeader content={"Détails"} icon={<FaBoxOpen />} />
+              </div>
+            </Stack>
+          </>
         );
       },
     },
@@ -166,7 +171,7 @@ export default function TableDashboard2() {
   return (
     <div>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <Table sx={{ minWidth: 700 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -183,6 +188,7 @@ export default function TableDashboard2() {
                 <StyledTableRow key={row.id}>
                   {columns.map((column) => {
                     const value = row[column.id];
+
                     return (
                       <StyledTableCell key={column.id} align={column.align}>
                         {column.format ? column.format(value, row) : value}
@@ -208,7 +214,7 @@ export default function TableDashboard2() {
       <DrawerComponent
         open={openDrawer}
         handleCloseDrawer={handleCloseDrawer}
-        idRow={0}
+        row={selectedRow}
       />
     </div>
   );

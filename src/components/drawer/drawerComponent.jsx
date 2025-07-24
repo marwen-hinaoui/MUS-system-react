@@ -1,7 +1,7 @@
 import { Drawer } from 'antd';
 
-const DrawerComponent = ({ open, idRow, handleCloseDrawer }) => {
-  return (
+const DrawerComponent = ({ open, row, handleCloseDrawer }) => {
+  return row && (
     <Drawer
       title="Détails demande"
       placement="right"
@@ -9,9 +9,7 @@ const DrawerComponent = ({ open, idRow, handleCloseDrawer }) => {
       onClose={handleCloseDrawer}
       open={open}
     >
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
+      <p>{row.id}</p>
     </Drawer>
   );
 };
