@@ -1,33 +1,40 @@
 import { COLORS } from "../../constant/colors";
-import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai";
+import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
+import ClickingIcon from "../clickingIcon/clickingIcon";
 import "./dashboardComponents.css";
-import { useDispatch, useSelector } from "react-redux";
-import { set_collapsedSidebar } from "../../redux/slices";
-import ButtonHeader from "../button/buttonHeader/buttonHeader";
-import { ICONSIZE } from "../../constant/FontSizes";
-import { MdOutlinePerson } from "react-icons/md";
+
+import { BsPerson } from "react-icons/bs";
+import { IoLogOut } from "react-icons/io5";
+
 const DashboardHeader = () => {
-  const dispatch = useDispatch();
-  const collapsedSidebar = useSelector((state) => state.app.collapsedSidebar);
+  const logout = () => {
+    alert();
+  };
   return (
-    <div style={{ backgroundColor: COLORS.WHITE }} className="header p-2">
-      <AiOutlineMenu
-        className="menu"
-        onClick={() => {
-          dispatch(set_collapsedSidebar(!collapsedSidebar));
-        }}
-        size={20}
-      />
-      <div className="d-flex">
-        <div className="d-flex align-items-center">
-          <ButtonHeader
-            backgroundColor
-            icon={<MdOutlinePerson size={ICONSIZE.SMALL} />}
-            content={"Nom prénom"}
-          />
+    <div style={{ backgroundColor: COLORS.WHITE }} className="header px-4">
+      <div className="">
+        <div className="d-flex">
+          <div className="d-flex align-items-center">
+            <BsPerson size={ICONSIZE.SMALL} />
+            <p style={{ fontSize: FONTSIZE.PRIMARY }} className="ps-1 pe-3">
+              Hinaoui Marwen
+            </p>
+          </div>
+          <p style={{ fontSize: FONTSIZE.PRIMARY }}>Agent</p>
         </div>
-        <ButtonHeader bg={false} content={"Role"} />
       </div>
+
+      <p
+        onClick={() => {
+          logout();
+        }}
+      >
+        <ClickingIcon
+          color={COLORS.LearRed}
+          name={"Déconnexion"}
+          icon={<IoLogOut color={COLORS.LearRed} size={ICONSIZE.SMALL} />}
+        />
+      </p>
     </div>
   );
 };

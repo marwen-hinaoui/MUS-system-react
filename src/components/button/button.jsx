@@ -2,26 +2,36 @@ import { Button, Spin } from "antd";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 
-const SharedButton = ({ name, loading, width, margins, color }) => {
+const SharedButton = ({
+  name,
+  loading,
+  width,
+  margins,
+  color,
+  icon,
+  padding,
+  colorText,
+}) => {
   const styles = {
-    padding: "20px",
+    padding: !padding ? "20px" : padding,
     width: width,
     fontSize: FONTSIZE.PRIMARY,
-    backgroundColor: color,
-    color: COLORS.WHITE,
+    backgroundColor: color ? color : "none",
+    color: !colorText ? COLORS.WHITE : colorText,
     border: "none",
-    
   };
   if (loading) {
     return (
       <Button
-        htmlType="submit" 
+        htmlType="submit"
         style={styles}
-        color={color ? "" : "primary"}
         variant="solid"
         className={margins}
       >
-        {name}
+        <p>
+          {icon ? icon : ""}
+          {name}
+        </p>
         <Spin size="small" />
       </Button>
     );
@@ -33,7 +43,10 @@ const SharedButton = ({ name, loading, width, margins, color }) => {
         variant="solid"
         className={margins}
       >
-        {name}
+        <p>
+          {icon ? icon : ""}
+          {name}
+        </p>
       </Button>
     );
   }

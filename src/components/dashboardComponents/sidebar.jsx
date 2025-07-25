@@ -3,9 +3,7 @@ import { Layout, Menu } from "antd";
 import {
   HomeOutlined,
   PlusSquareOutlined,
-
   ProfileFilled,
-
   SettingOutlined,
 } from "@ant-design/icons";
 
@@ -14,8 +12,13 @@ import LearLogo from "../../assets/img/LearLogo.png";
 import LearLogo1 from "../../assets/img/LearLogo1.png";
 import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
-import { MdOutlineAddBox, MdOutlinePerson, MdOutlineSpaceDashboard } from "react-icons/md";
+import {
+  MdOutlineAddBox,
+  MdOutlinePerson,
+  MdOutlineSpaceDashboard,
+} from "react-icons/md";
 import { AiOutlineUser } from "react-icons/ai";
+import { BsPerson, BsPersonFill } from "react-icons/bs";
 const { Sider } = Layout;
 
 const navItems = [
@@ -29,10 +32,11 @@ const navItems = [
     icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
     label: "Crée Demande",
   },
-  
+
   {
     key: "profil",
-    icon: <MdOutlinePerson size={ICONSIZE.SMALL} />,
+    icon: <BsPerson size={ICONSIZE.SMALL} />,
+
     label: "Profil",
   },
 ];
@@ -58,21 +62,21 @@ const DashboardSidebar = () => {
           padding: 0 16px !important;
         }
         .ant-menu-light .ant-menu-item-selected {
-          background-color: #FFCDD2 !important;
-          color: ${COLORS.LearRedDark} !important;
+          background-color: ${COLORS.LearRed} !important;
+          color: ${COLORS.WHITE} !important;
         }
         .ant-menu-light .ant-menu-item-selected .anticon {
-          color: ${COLORS.LearRedDark} !important;
+          color: ${COLORS.WHITE} !important;
         }
         .ant-menu-light .ant-menu-item-selected .ant-menu-title-content {
-          color: ${COLORS.LearRedDark} !important;
+          color: ${COLORS.WHITE} !important;
         }
         .ant-menu-light .ant-menu-item:hover {
-          background-color: #FFCDD2 !important;
-          color: ${COLORS.LearRedDark} !important;
+          background-color: ${COLORS.LearRed} !important;
+          color: ${COLORS.WHITE} !important;
         }
         .ant-menu-light .ant-menu-item:hover .anticon {
-          color: ${COLORS.LearRedDark} !important;
+          color: ${COLORS.WHITE} !important;
         }
         `}
       </style>
@@ -114,10 +118,10 @@ const DashboardSidebar = () => {
           }}
         >
           {collapsedSidebar && (
-            <img src={LearLogo1}  style={{ width: "42px" }} />
+            <img src={LearLogo1} style={{ width: "42px" }} />
           )}
           {!collapsedSidebar && (
-            <img src={LearLogo}  style={{ width: "150px" }} />
+            <img src={LearLogo} style={{ width: "150px" }} />
           )}
         </div>
         <Menu
