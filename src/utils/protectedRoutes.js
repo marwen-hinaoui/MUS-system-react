@@ -24,7 +24,9 @@ export const ProtectedRoutes = ({ children }) => {
         backgroundColor:COLORS.bgWHITE
       }} className="d-flex flex-column w-100">
         <DashboardHeader />
-        <div>{children}</div>
+        <div style={{
+          marginTop:'63px'
+        }}>{children}</div>
       </div>
     </div>
   ) : null;

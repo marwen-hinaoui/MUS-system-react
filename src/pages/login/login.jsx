@@ -2,6 +2,7 @@ import { useState } from "react";
 import { App, Divider, Form, Input, message, notification } from "antd";
 import { Alert, Card, Flex } from "antd";
 import styles from "./login.module.css";
+import "./login.css";
 import { login_api } from "../../api/login_api";
 import { Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";

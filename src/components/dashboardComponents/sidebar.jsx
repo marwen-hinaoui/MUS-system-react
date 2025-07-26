@@ -53,7 +53,7 @@ const DashboardSidebar = () => {
         {`
         .ant-layout-sider {
           background-color: ${COLORS.WHITE} !important;
-          box-shadow: 2px 0 8px rgba(0, 0, 0, 0.09);
+          box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
           border-right: 1px solid rgba(0, 0, 0, 0.05);
         }
         .ant-menu-light.ant-menu-inline-collapsed > .ant-menu-item,
@@ -98,7 +98,8 @@ const DashboardSidebar = () => {
         style={{
           overflow: "auto",
           height: "100vh",
-          position: position,
+          position: 'sticky',
+          zIndex:999,
           left: 0,
           top: 0,
         }}

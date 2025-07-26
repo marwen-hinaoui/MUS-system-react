@@ -1,6 +1,8 @@
-import { Drawer } from 'antd';
+import { Drawer, Spin } from 'antd';
 
 const DrawerComponent = ({ open, row, handleCloseDrawer }) => {
+
+
   return row && (
     <Drawer
       title="Détails demande"

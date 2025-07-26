@@ -12,17 +12,17 @@ const SearchComponent = () => {
   const demandeData = useSelector((state) => state.app.demandeData);
 
   useEffect(() => {
-    const term = searchTerm.toLowerCase();
-
-    const filtered = demandeData.filter((item) =>
-      Object.values(item.numDemandeMUS).some((val) =>
-        String(item.numDemandeMUS).toLowerCase().includes(term)
-      )
-    );
-    dispatch(set_data_searching(filtered));
+    if (demandeData) {
+      const term = searchTerm.toLowerCase();
+      const filtered = demandeData.filter((item) =>
+        Object.values(item.numDemandeMUS).some((val) =>
+          String(item.numDemandeMUS).toLowerCase().includes(term)
+        )
+      );
+      dispatch(set_data_searching(filtered));
+    }
   }, [searchTerm, demandeData, dispatch]);
 
-  
   return (
     <div>
       <CardComponent padding={"8px"}>
