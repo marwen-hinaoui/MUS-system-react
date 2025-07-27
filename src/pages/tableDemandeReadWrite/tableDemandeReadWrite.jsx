@@ -54,10 +54,10 @@ const TableDemandeReadWrite = ({ data }) => {
       title: "id",
       dataIndex: "id",
       width: 60,
-      sorter: (a, b) => a.id - b.id,
+
     },
     {
-      title: "N° Demande",
+      title: "Numéro demande",
       dataIndex: "numDemandeMUS",
       sorter: (a, b) => a.numDemandeMUS.localeCompare(b.numDemandeMUS),
     },
@@ -84,7 +84,7 @@ const TableDemandeReadWrite = ({ data }) => {
       sorter: (a, b) => a.Qte_demande - b.Qte_demande,
     },
     {
-      title: "Date Création",
+      title: "Date création",
       dataIndex: "date_creation",
       sorter: (a, b) => new Date(a.date_creation) - new Date(b.date_creation),
     },
@@ -122,38 +122,38 @@ const TableDemandeReadWrite = ({ data }) => {
     },
     {
       title: "Actions",
-      width: 90,
+      width: role == "Admin" ? 100 : 80,
       render: (_, row) => (
-        <div className="d-flex justify-content-center">
-          <div className={role == "Admin" ? "pe-2" : "pe-3"}>
+        <div className="d-flex justify-content-around">
+          <div>
             <Tooltip title="Détails">
               <div className="icon-wrapper" onClick={() => handleDetails(row)}>
-                <FaBoxOpen color={COLORS.Blue} size={ICONSIZE.SMALL} />
-              </div>
-            </Tooltip>
-          </div>
-          <div className={role == "Admin" ? "pe-2" : ""}>
-            <Tooltip title="Valider">
-              <div className="icon-wrapper" onClick={() => setVisible(true)}>
-                <IoIosCheckmarkCircle
-                  color={COLORS.GREEN}
-                  size={ICONSIZE.SMALL}
-                />
+                <FaBoxOpen color={COLORS.Blue} size={ICONSIZE.SMALL + 1} />
               </div>
             </Tooltip>
           </div>
           <div>
-            {role == "Admin" && (
+            <Tooltip title="Valider">
+              <div className="icon-wrapper" onClick={() => setVisible(true)}>
+                <IoIosCheckmarkCircle
+                  color={COLORS.GREEN}
+                  size={ICONSIZE.SMALL + 1}
+                />
+              </div>
+            </Tooltip>
+          </div>
+          {role == "Admin" && (
+            <div>
               <Tooltip placement="bottomLeft" title="Supprimer">
                 <div
                   onClick={() => setVisibleDelete(true)}
                   className="icon-wrapper"
                 >
-                  <MdDelete color={COLORS.LearRed} size={ICONSIZE.SMALL} />
+                  <MdDelete color={COLORS.LearRed} size={ICONSIZE.SMALL + 1} />
                 </div>
               </Tooltip>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       ),
     },
@@ -161,14 +161,15 @@ const TableDemandeReadWrite = ({ data }) => {
 
   return (
     <>
-
-
       {/* Terminer Modal  */}
 
       <Modal
         title={
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <CheckCircleOutlined size={ ICONSIZE.SMALL} style={{ color: COLORS.GREEN}} />
+            <CheckCircleOutlined
+              size={ICONSIZE.SMALL}
+              style={{ color: COLORS.GREEN }}
+            />
             <span style={{ color: COLORS.GREEN }}>Confirmation</span>
           </div>
         }
@@ -176,9 +177,10 @@ const TableDemandeReadWrite = ({ data }) => {
         // onOk={}
         onCancel={() => setVisible(false)}
         okText="Oui"
-        cancelText="Annuler"
+        onOk={() => alert("Confirmé")}
+        cancelText="Non"
         okButtonProps={{
-          style: { backgroundColor: COLORS.GREEN, borderColor: COLORS.GREEN },
+          style: {},
         }}
       >
         <p style={{ fontSize: FONTSIZE.PRIMARY }}>
@@ -186,21 +188,23 @@ const TableDemandeReadWrite = ({ data }) => {
         </p>
       </Modal>
 
-
       {/* Delete Modal  */}
       {role == "Admin" && (
         <Modal
           title={
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <CloseCircleOutlined size={ ICONSIZE.SMALL} style={{ color: COLORS.LearRed }} />
-              <span style={{ color: COLORS.LearRed, }}>Supprimer</span>
+              <CloseCircleOutlined
+                size={ICONSIZE.SMALL}
+                style={{ color: COLORS.LearRed }}
+              />
+              <span style={{ color: COLORS.LearRed }}>Supprimer</span>
             </div>
           }
           open={visibleDelete}
-          onOk={() => alert("Confirmé")}
+          onOk={() => alert("Supprimé")}
           onCancel={() => setVisibleDelete(false)}
           okText="Oui"
-          cancelText="Annuler"
+          cancelText="Non"
           okButtonProps={{
             style: {
               backgroundColor: COLORS.LearRed,
@@ -209,7 +213,7 @@ const TableDemandeReadWrite = ({ data }) => {
           }}
         >
           <p style={{ fontSize: FONTSIZE.PRIMARY }}>
-            Voulez-vous terminer cette demande avec succès ?
+            Voulez-vous supprimer cette demande avec succès ?
           </p>
         </Modal>
       )}
