@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   set_authenticated,
   set_error,
+  set_fullname,
   set_loading,
   set_redirection,
   set_role,
@@ -65,6 +66,7 @@ const Login = () => {
       dispatch(set_redirection(res.resData.redirect));
       dispatch(set_role(res.resData.roleMUS));
       dispatch(set_token(res.resData.accessToken));
+      dispatch(set_fullname(`${res.resData.firstName} ${res.resData.lastName}`));
       setResponse(res.resData);
       dispatch(set_authenticated(true));
     } else {

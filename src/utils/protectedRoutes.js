@@ -24,7 +24,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
     }
   }, [isAuthenticated]);
 
-  if (isAuthenticated === null || role === null) {
+  if (isAuthenticated === null || role === null || fullname === null) {
     return (
       <div className="d-flex justify-content-center py-3">
         <Spin />

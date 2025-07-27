@@ -7,6 +7,7 @@ import {
   set_authenticated,
   set_redirection,
   set_role,
+  set_fullname,
 } from "../../redux/slices";
 
 export const useRefreshAccessToken = () => {
@@ -22,10 +23,12 @@ export const useRefreshAccessToken = () => {
         },
       });
       if (res.status === 200) {
-
+        console.log(res);
+        
         dispatch(set_authenticated(true));
         dispatch(set_token(res.data.accessToken));
         dispatch(set_role(res.data.roleMUS));
+        dispatch(set_fullname(`${res.data.firstName} ${res.data.lastName}`));
         
 
         if (location.pathname == "/" || location.pathname == "/")
