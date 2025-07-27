@@ -4,7 +4,7 @@ const appSlices = createSlice({
   name: "app",
   initialState: {
     tokenValue: 'sdsdssssssssss',
-    role: 'ROLE_AGENT_MUS',
+    role: 'Admin',
     fullname: 'Hinaoui Marwen',
     isLoading: false,
     errorMsg: null,

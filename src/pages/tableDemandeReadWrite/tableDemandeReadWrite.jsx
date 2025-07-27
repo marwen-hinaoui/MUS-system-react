@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Spin, Table, Tag, Tooltip, Empty, Divider } from "antd";
+import { Modal, Spin, Table, Tag, Tooltip, Empty, Divider, Alert } from "antd";
 import { FaBoxOpen } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,6 +8,7 @@ import {
   set_drawer,
 } from "../../redux/slices";
 import {
+  CheckCircleOutlined,
   CloseCircleOutlined,
   DeleteFilled,
   SyncOutlined,
@@ -19,7 +20,7 @@ import { MdDelete } from "react-icons/md";
 import DrawerComponent from "../../components/drawer/drawerComponent";
 
 import { COLORS } from "../../constant/colors";
-import { ICONSIZE } from "../../constant/FontSizes";
+import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import "./tableDemandeReadWrite.css";
 
 const TableDemandeReadWrite = ({ data }) => {
@@ -32,10 +33,9 @@ const TableDemandeReadWrite = ({ data }) => {
   const [visible, setVisible] = useState(false);
   const [visibleDelete, setVisibleDelete] = useState(false);
 
-  const isLoading = useSelector(state => state.app.isLoading)
+  const isLoading = useSelector((state) => state.app.isLoading);
 
   useEffect(() => {
-
     dispatch(set_demande_data_table(data));
     dispatch(set_data_searching(data));
   }, [dispatch, data]);
@@ -125,14 +125,14 @@ const TableDemandeReadWrite = ({ data }) => {
       width: 90,
       render: (_, row) => (
         <div className="d-flex justify-content-center">
-          <div className={role == "Admin" ? "pe-2" :"pe-3"}>
+          <div className={role == "Admin" ? "pe-2" : "pe-3"}>
             <Tooltip title="Détails">
               <div className="icon-wrapper" onClick={() => handleDetails(row)}>
                 <FaBoxOpen color={COLORS.Blue} size={ICONSIZE.SMALL} />
               </div>
             </Tooltip>
           </div>
-          <div className={role == "Admin" ? "pe-2" :""}>
+          <div className={role == "Admin" ? "pe-2" : ""}>
             <Tooltip title="Valider">
               <div className="icon-wrapper" onClick={() => setVisible(true)}>
                 <IoIosCheckmarkCircle
@@ -161,26 +161,58 @@ const TableDemandeReadWrite = ({ data }) => {
 
   return (
     <>
+
+
+      {/* Terminer Modal  */}
+
       <Modal
-        title="Confirmation"
+        title={
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <CheckCircleOutlined size={ ICONSIZE.SMALL} style={{ color: COLORS.GREEN}} />
+            <span style={{ color: COLORS.GREEN }}>Confirmation</span>
+          </div>
+        }
         open={visible}
-        onOk={() => alert("Confirmé")}
+        // onOk={}
         onCancel={() => setVisible(false)}
         okText="Oui"
         cancelText="Annuler"
+        okButtonProps={{
+          style: { backgroundColor: COLORS.GREEN, borderColor: COLORS.GREEN },
+        }}
       >
-        <p>Voulez-vous terminé cette action ?</p>
+        <p style={{ fontSize: FONTSIZE.PRIMARY }}>
+          Voulez-vous terminer cette demande avec succès ?
+        </p>
       </Modal>
-      {role == 'Admin' && <Modal
-        title="Confirmation"
-        open={visibleDelete}
-        onOk={() => alert("Confirmé")}
-        onCancel={() => setVisibleDelete(false)}
-        okText="Oui"
-        cancelText="Annuler"
-      >
-        <p>Voulez-vous supprimer cette action ?</p>
-      </Modal>}
+
+
+      {/* Delete Modal  */}
+      {role == "Admin" && (
+        <Modal
+          title={
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <CloseCircleOutlined size={ ICONSIZE.SMALL} style={{ color: COLORS.LearRed }} />
+              <span style={{ color: COLORS.LearRed, }}>Supprimer</span>
+            </div>
+          }
+          open={visibleDelete}
+          onOk={() => alert("Confirmé")}
+          onCancel={() => setVisibleDelete(false)}
+          okText="Oui"
+          cancelText="Annuler"
+          okButtonProps={{
+            style: {
+              backgroundColor: COLORS.LearRed,
+              borderColor: COLORS.LearRed,
+            },
+          }}
+        >
+          <p style={{ fontSize: FONTSIZE.PRIMARY }}>
+            Voulez-vous terminer cette demande avec succès ?
+          </p>
+        </Modal>
+      )}
 
       {isLoading ? (
         <div style={{ textAlign: "center", margin: "20px 0" }}>
