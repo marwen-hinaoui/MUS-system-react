@@ -25,7 +25,7 @@ const SearchComponent = () => {
 
   return (
     <div>
-      <CardComponent padding={"8px"}>
+      <CardComponent padding={"6px"}>
         <label class="searchLabelWrap">
           <span class="visually-hidden">Search</span>
           <MdSearch className="icon" size={ICONSIZE.PRIMARY} />

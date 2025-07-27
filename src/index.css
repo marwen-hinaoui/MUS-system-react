@@ -56,3 +56,20 @@ p {
   color: #8b0000;
   cursor: pointer;
 }
+/* 
+.ant-table-thead th{
+  background-color: #000 !important;
+  color: #fff !important;
+  border-radius: 0px !important;
+} */
+
+
+
+.ant-row-no-hover:hover > td {
+  background: none !important;
+}
+
+/* Optional: also remove pointer cursor if you want */
+.ant-row-no-hover:hover {
+  cursor: default !important;
+}

@@ -5,6 +5,7 @@ export const FONTSIZE = {
 };
 
 export const ICONSIZE = {
+  XSMALL: 15,
   SMALL: 18,
   PRIMARY: 22,
   LARGE: 24,

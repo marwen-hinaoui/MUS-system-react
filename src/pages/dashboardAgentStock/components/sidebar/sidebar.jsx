@@ -1,74 +1,65 @@
 import React, { useState } from "react";
 import { Layout, Menu } from "antd";
-import {
-  HomeOutlined,
-  PlusSquareOutlined,
-  ProfileFilled,
-  SettingOutlined,
-} from "@ant-design/icons";
+import { useNavigate } from "react-router-dom"; 
 
-import { COLORS } from "../../constant/colors";
-import LearLogo from "../../assets/img/LearLogo.png";
-import LearLogo1 from "../../assets/img/LearLogo1.png";
+import { COLORS } from "../../../../constant/colors";
+import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { useSelector } from "react-redux";
-import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
-import {
-  MdOutlineAddBox,
-  MdOutlinePerson,
-  MdOutlineSpaceDashboard,
-} from "react-icons/md";
-import { AiOutlineUser } from "react-icons/ai";
-import { BsPerson, BsPersonFill } from "react-icons/bs";
+import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { BsPerson } from "react-icons/bs";
+import { SiDatabricks } from "react-icons/si";
+
 const { Sider } = Layout;
 
 const navItems = [
   {
-    key: "dashboard",
+    key: "demandeur",
     icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
     label: "Dashboard",
-  },
-  {
-    key: "cree_demande",
-    icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
-    label: "Crée Demande",
+    route: "/agent",
   },
 
+
+
+  {
+    key: "stock",
+    icon: <SiDatabricks size={ICONSIZE.SMALL} />,
+    label: "Gestion stock",
+    route: "/agent/stock",
+  },
   {
     key: "profil",
     icon: <BsPerson size={ICONSIZE.SMALL} />,
-
     label: "Profil",
+    route: "/agent/profil",
   },
 ];
 
-const DashboardSidebar = () => {
+const DashboardSidebarAgent = () => {
   const [collapsed, setCollapsed] = useState(true);
-  const [position, setPosition] = useState(true);
-  const [activePage, setActivePage] = useState("dashboard");
   const collapsedSidebar = useSelector((state) => state.app.collapsedSidebar);
+  const [activePage, setActivePage] = useState("demandeur");
+  const navigate = useNavigate();
+
+  const handleMenuClick = ({ key }) => {
+    const item = navItems.find((item) => item.key === key);
+    if (item && item.route) {
+      navigate(item.route);
+      setActivePage(key);
+    }
+  };
 
   return (
     <Layout style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif" }}>
-      <style>
-        {`
+      <style>{`
         .ant-layout-sider {
           background-color: ${COLORS.WHITE} !important;
           box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
           border-right: 1px solid rgba(0, 0, 0, 0.05);
         }
-        .ant-menu-light.ant-menu-inline-collapsed > .ant-menu-item,
-        .ant-menu-light.ant-menu-inline-collapsed > .ant-menu-item-group > .ant-menu-item-group-list > .ant-menu-item,
-        .ant-menu-light.ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
-          padding: 0 16px !important;
-        }
         .ant-menu-light .ant-menu-item-selected {
           background-color: ${COLORS.LearRed} !important;
-          color: ${COLORS.WHITE} !important;
-        }
-        .ant-menu-light .ant-menu-item-selected .anticon {
-          color: ${COLORS.WHITE} !important;
-        }
-        .ant-menu-light .ant-menu-item-selected .ant-menu-title-content {
           color: ${COLORS.WHITE} !important;
         }
         .ant-menu-light .ant-menu-item:hover {
@@ -78,8 +69,8 @@ const DashboardSidebar = () => {
         .ant-menu-light .ant-menu-item:hover .anticon {
           color: ${COLORS.WHITE} !important;
         }
-        `}
-      </style>
+      `}</style>
+
       <Sider
         collapsible
         collapsed={collapsedSidebar}
@@ -87,19 +78,11 @@ const DashboardSidebar = () => {
         width={200}
         collapsedWidth={60}
         trigger={null}
-        // onMouseEnter={() => {
-        //   setCollapsed(false);
-        //   // setPosition("fixed");
-        // }}
-        // onMouseLeave={() => {
-        //   setCollapsed(true);
-        //   // setPosition("sticky");
-        // }}
         style={{
           overflow: "auto",
           height: "100vh",
-          position: 'sticky',
-          zIndex:999,
+          position: "sticky",
+          zIndex: 999,
           left: 0,
           top: 0,
         }}
@@ -113,23 +96,18 @@ const DashboardSidebar = () => {
             justifyContent: collapsed ? "center" : "flex-start",
             paddingLeft: collapsed ? "0" : "16px",
             borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
-            color: COLORS.BLACK,
             fontSize: "1.25rem",
             fontWeight: "bold",
           }}
         >
-          {collapsedSidebar && (
-            <img src={LearLogo1} style={{ width: "42px" }} />
-          )}
-          {!collapsedSidebar && (
-            <img src={LearLogo} style={{ width: "150px" }} />
-          )}
+          <img src={LearLogo} style={{ width: "40px" }} />
         </div>
+
         <Menu
           theme="light"
           mode="inline"
           selectedKeys={[activePage]}
-          onClick={({ key }) => setActivePage(key)}
+          onClick={handleMenuClick}
           items={navItems}
           style={{ borderRight: 0, fontSize: FONTSIZE.PRIMARY }}
         />
@@ -138,4 +116,4 @@ const DashboardSidebar = () => {
   );
 };
 
-export default DashboardSidebar;
+export default DashboardSidebarAgent;

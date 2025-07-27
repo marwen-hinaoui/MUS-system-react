@@ -1,13 +1,19 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useRefreshAccessToken } from "../api/shared/refresh";
-import DashboardHeader from "../components/dashboardComponents/header";
-import DashboardSidebar from "../components/dashboardComponents/sidebar";
-import { COLORS } from "../constant/colors";
 
-export const ProtectedRoutes = ({ children }) => {
+import { COLORS } from "../constant/colors";
+import DashboardHeader from "../pages/header/header";
+import DashboardSidebarDemandeur from "../pages/dashboardDemandeur/components/sidebar/sidebar";
+import DashboardSidebarAgent from "../pages/dashboardAgentStock/components/sidebar/sidebar";
+import DashboardSidebarAdmin from "../pages/dashboardAdmin/components/sidebar/sidebar";
+import { Navigate } from "react-router-dom";
+
+export const ProtectedRoutes = ({ children, allowedRoles }) => {
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
   const token = useSelector((state) => state.app.tokenValue);
+  const role = useSelector((state) => state.app.role);
+  const fullname = useSelector((state) => state.app.fullname);
 
   const refreshAccessToken = useRefreshAccessToken();
 
@@ -17,17 +23,81 @@ export const ProtectedRoutes = ({ children }) => {
     }
   }, [isAuthenticated]);
 
-  return !isAuthenticated ? (
-    <div className="d-flex">
-      <DashboardSidebar />
-      <div style={{
-        backgroundColor:COLORS.bgWHITE
-      }} className="d-flex flex-column w-100">
-        <DashboardHeader />
-        <div style={{
-          marginTop:'63px'
-        }}>{children}</div>
-      </div>
-    </div>
-  ) : null;
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to="/unauthorized" />;
+  }
+  if (!isAuthenticated) {
+    return <Navigate to="/" />;
+  }
+
+
+  
+  if (isAuthenticated) {
+    if (role == "ROLE_AGENT_MUS") {
+      return (
+        <div className="d-flex">
+          <DashboardSidebarAgent />
+          <div
+            style={{
+              backgroundColor: COLORS.bgWHITE,
+            }}
+            className="d-flex flex-column w-100"
+          >
+            <DashboardHeader role={'Agent stock'} fullname={fullname} />
+            <div
+              style={{
+                marginTop: "63px",
+              }}
+            >
+              {children}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    if (role == "Admin") {
+      return (
+        <div className="d-flex">
+          <DashboardSidebarAdmin />
+          <div
+            style={{
+              backgroundColor: COLORS.bgWHITE,
+            }}
+            className="d-flex flex-column w-100"
+          >
+            <DashboardHeader role={'Admin'} fullname={fullname} />
+            <div
+              style={{
+                marginTop: "63px",
+              }}
+            >
+              {children}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    if (role == "ROLE_DEMANDEUR") {
+      return (
+        <div className="d-flex">
+          <DashboardSidebarDemandeur />
+          <div
+            style={{
+              backgroundColor: COLORS.bgWHITE,
+            }}
+            className="d-flex flex-column w-100"
+          >
+            <DashboardHeader role={'Demendeur'} fullname={fullname} />
+            <div
+              style={{
+                marginTop: "63px",
+              }}
+            >
+              {children}
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
 };

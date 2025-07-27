@@ -3,10 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 const appSlices = createSlice({
   name: "app",
   initialState: {
-    tokenValue: null,
+    tokenValue: 'sdsdssssssssss',
+    role: 'ROLE_AGENT_MUS',
+    fullname: 'Hinaoui Marwen',
     isLoading: false,
     errorMsg: null,
-    isAuthenticated: null,
+    isAuthenticated: true,
     redirection: null,
     collapsedSidebar: true,
     openDrawer: false,
@@ -19,6 +21,12 @@ const appSlices = createSlice({
       state.isLoading = false;
       state.isAuthenticated = true;
       state.errorMsg = null;
+    },
+    set_role: (state, action) => {
+      state.isLoading = action.payload;
+    },
+    set_fullname: (state, action) => {
+      state.fullname = action.payload;
     },
     clear_auth: (state) => {
       state.tokenValue = null;
@@ -63,6 +71,7 @@ export const {
   set_drawer,
   set_data_searching,
   set_demande_data_table,
+  set_fullname,
 } = appSlices.actions;
 
 export default appSlices.reducer;
