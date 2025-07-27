@@ -11,6 +11,7 @@ import {
   set_error,
   set_loading,
   set_redirection,
+  set_role,
   set_token,
 } from "../../redux/slices";
 import { AiOutlineLock, AiOutlineMail, AiOutlineUser } from "react-icons/ai";
@@ -56,14 +57,14 @@ const Login = () => {
       username: form.username,
       password: form.password,
     };
-    console.log(formData);
 
     const res = await login_api(formData);
 
     if (res.resData) {
-      dispatch(set_token(res.resData.access));
-      dispatch(set_redirection(res.resData.redirect));
       navigate(res.resData.redirect, { replace: true });
+      dispatch(set_redirection(res.resData.redirect));
+      dispatch(set_role(res.resData.roleMUS));
+      dispatch(set_token(res.resData.accessToken));
       setResponse(res.resData);
       dispatch(set_authenticated(true));
     } else {
@@ -83,9 +84,11 @@ const Login = () => {
         {contextHolder}
         <img src={LearLogo} className={`${styles.logo} m-0`} alt="Lear Logo" />
 
-        <div style={{
-          width:'200px'
-          }}>
+        <div
+          style={{
+            width: "200px",
+          }}
+        >
           <Divider />
         </div>
 

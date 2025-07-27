@@ -6,23 +6,27 @@ import {
   set_token,
   set_authenticated,
   set_redirection,
+  set_role,
 } from "../../redux/slices";
 
 export const useRefreshAccessToken = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
+  
   const refreshToken = async () => {
     try {
-      const res = await apiInstance.post("/ref", {
+      const res = await apiInstance.post("/auth/ref", {
         headers: {
           "Content-Type": "application/json",
         },
       });
       if (res.status === 200) {
+
         dispatch(set_authenticated(true));
-        dispatch(set_token(res.data.access));
+        dispatch(set_token(res.data.accessToken));
+        dispatch(set_role(res.data.roleMUS));
+        
 
         if (location.pathname == "/" || location.pathname == "/")
           navigate(res.data.redirection);

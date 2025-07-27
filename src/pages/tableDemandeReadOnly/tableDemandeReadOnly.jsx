@@ -10,9 +10,10 @@ import {
 } from "../../redux/slices";
 import { ICONSIZE } from "../../constant/FontSizes";
 import DrawerComponent from "../../components/drawer/drawerComponent";
-import ClickingIcon from "../../components/clickingIcon/clickingIcon";
 import { CloseCircleOutlined, SyncOutlined } from "@ant-design/icons";
 import { TbChecklist } from "react-icons/tb";
+import { RiFileListFill } from "react-icons/ri";
+import { IoDocumentText } from "react-icons/io5";
 
 const TableDashboardReadOnly = ({ data }) => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -112,7 +113,7 @@ const TableDashboardReadOnly = ({ data }) => {
           <div className="pe-2">
             <Tooltip title="Détails">
               <div className="icon-wrapper" onClick={() => handleDetails(row)}>
-                <FaBoxOpen color={COLORS.Blue} size={ICONSIZE.SMALL} />
+                <IoDocumentText color={COLORS.Blue} size={ICONSIZE.SMALL} />
               </div>
             </Tooltip>
           </div>

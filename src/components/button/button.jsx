@@ -11,6 +11,7 @@ const SharedButton = ({
   icon,
   padding,
   colorText,
+  callBack,
 }) => {
   const styles = {
     padding: !padding ? "20px" : padding,
@@ -27,6 +28,7 @@ const SharedButton = ({
         style={styles}
         variant="solid"
         className={margins}
+        onClick={callBack}
       >
         <p>
           {icon ? icon : ""}
@@ -42,6 +44,7 @@ const SharedButton = ({
         style={styles}
         variant="solid"
         className={margins}
+        onClick={callBack}
       >
         <p>
           {icon ? icon : ""}

@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Spin, Table, Tag, Tooltip, Empty, Divider, Alert } from "antd";
-import { FaBoxOpen } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
   set_data_searching,
   set_demande_data_table,
   set_drawer,
 } from "../../redux/slices";
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  DeleteFilled,
-  SyncOutlined,
-} from "@ant-design/icons";
-import { IoIosCheckmarkCircle } from "react-icons/io";
-import { TbChecklist } from "react-icons/tb";
+import { CloseCircleOutlined, SyncOutlined } from "@ant-design/icons";
+import { HiMiniDocumentCheck } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 
 import DrawerComponent from "../../components/drawer/drawerComponent";
@@ -22,6 +15,11 @@ import DrawerComponent from "../../components/drawer/drawerComponent";
 import { COLORS } from "../../constant/colors";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import "./tableDemandeReadWrite.css";
+
+import { AiFillCloseCircle, AiOutlineCheckCircle } from "react-icons/ai";
+import ClickingIcon from "../../components/clickingIcon/clickingIcon";
+import { IoDocumentText } from "react-icons/io5";
+
 
 const TableDemandeReadWrite = ({ data }) => {
   const dispatch = useDispatch();
@@ -54,7 +52,6 @@ const TableDemandeReadWrite = ({ data }) => {
       title: "id",
       dataIndex: "id",
       width: 60,
-
     },
     {
       title: "Numéro demande",
@@ -101,7 +98,7 @@ const TableDemandeReadWrite = ({ data }) => {
       render: (status) => {
         const tagProps = {
           Terminé: {
-            icon: <TbChecklist size={ICONSIZE.XSMALL} />,
+            icon: <AiOutlineCheckCircle size={ICONSIZE.XSMALL} />,
             color: COLORS.GREEN,
           },
           "En cours": {
@@ -122,20 +119,20 @@ const TableDemandeReadWrite = ({ data }) => {
     },
     {
       title: "Actions",
-      width: role == "Admin" ? 100 : 80,
+      width: role == "Admin" ? 90 : 80,
       render: (_, row) => (
         <div className="d-flex justify-content-around">
           <div>
             <Tooltip title="Détails">
               <div className="icon-wrapper" onClick={() => handleDetails(row)}>
-                <FaBoxOpen color={COLORS.Blue} size={ICONSIZE.SMALL + 1} />
+                <IoDocumentText color={COLORS.Blue} size={ICONSIZE.SMALL + 1} />
               </div>
             </Tooltip>
           </div>
           <div>
             <Tooltip title="Valider">
               <div className="icon-wrapper" onClick={() => setVisible(true)}>
-                <IoIosCheckmarkCircle
+                <HiMiniDocumentCheck
                   color={COLORS.GREEN}
                   size={ICONSIZE.SMALL + 1}
                 />
@@ -166,26 +163,33 @@ const TableDemandeReadWrite = ({ data }) => {
       <Modal
         title={
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <CheckCircleOutlined
+            <HiMiniDocumentCheck
               size={ICONSIZE.SMALL}
               style={{ color: COLORS.GREEN }}
             />
-            <span style={{ color: COLORS.GREEN }}>Confirmation</span>
+            <span style={{ fontSize: FONTSIZE.PRIMARY, color: COLORS.GREEN }}>
+              Confirmation
+            </span>
           </div>
         }
         open={visible}
-        // onOk={}
-        onCancel={() => setVisible(false)}
-        okText="Oui"
-        onOk={() => alert("Confirmé")}
-        cancelText="Non"
-        okButtonProps={{
-          style: {},
-        }}
+        footer={[
+          <div className="d-flex justify-content-end">
+            <div className="pe-3" onClick={() => setVisible(false)}>
+              <ClickingIcon name={"Non"} />
+            </div>
+            <div onClick={() => alert("Terminé")}>
+              <ClickingIcon
+                color={COLORS.GREEN}
+                icon={<HiMiniDocumentCheck color={COLORS.GREEN} />}
+                name={"Oui"}
+              />
+            </div>
+          </div>,
+        ]}
       >
-        <p style={{ fontSize: FONTSIZE.PRIMARY }}>
-          Voulez-vous terminer cette demande avec succès ?
-        </p>
+        <Alert message="Voulez-vous terminer cette demande?" type="success" />
+        <p style={{ fontSize: FONTSIZE.PRIMARY }}></p>
       </Modal>
 
       {/* Delete Modal  */}
@@ -193,11 +197,15 @@ const TableDemandeReadWrite = ({ data }) => {
         <Modal
           title={
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <CloseCircleOutlined
+              <AiFillCloseCircle
                 size={ICONSIZE.SMALL}
                 style={{ color: COLORS.LearRed }}
               />
-              <span style={{ color: COLORS.LearRed }}>Supprimer</span>
+              <span
+                style={{ fontSize: FONTSIZE.PRIMARY, color: COLORS.LearRed }}
+              >
+                Supprimer
+              </span>
             </div>
           }
           open={visibleDelete}
@@ -205,16 +213,22 @@ const TableDemandeReadWrite = ({ data }) => {
           onCancel={() => setVisibleDelete(false)}
           okText="Oui"
           cancelText="Non"
-          okButtonProps={{
-            style: {
-              backgroundColor: COLORS.LearRed,
-              borderColor: COLORS.LearRed,
-            },
-          }}
+          footer={[
+            <div className="d-flex justify-content-end">
+              <div className="pe-3" onClick={() => setVisibleDelete(false)}>
+                <ClickingIcon name={"Non"} />
+              </div>
+              <div onClick={() => alert("Supprimé")}>
+                <ClickingIcon
+                  color={COLORS.LearRed}
+                  icon={<AiFillCloseCircle color={COLORS.LearRed} />}
+                  name={"Oui"}
+                />
+              </div>
+            </div>,
+          ]}
         >
-          <p style={{ fontSize: FONTSIZE.PRIMARY }}>
-            Voulez-vous supprimer cette demande avec succès ?
-          </p>
+          <Alert message=" Voulez-vous supprimer cette demande?" type="error" />
         </Modal>
       )}
 

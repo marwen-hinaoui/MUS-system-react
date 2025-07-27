@@ -8,6 +8,7 @@ import DashboardSidebarDemandeur from "../pages/dashboardDemandeur/components/si
 import DashboardSidebarAgent from "../pages/dashboardAgentStock/components/sidebar/sidebar";
 import DashboardSidebarAdmin from "../pages/dashboardAdmin/components/sidebar/sidebar";
 import { Navigate } from "react-router-dom";
+import { Spin } from "antd/lib";
 
 export const ProtectedRoutes = ({ children, allowedRoles }) => {
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
@@ -23,81 +24,86 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
     }
   }, [isAuthenticated]);
 
-  if (!allowedRoles.includes(role)) {
-    return <Navigate to="/unauthorized" />;
+  if (isAuthenticated === null || role === null) {
+    return (
+      <div className="d-flex justify-content-center py-3">
+        <Spin />
+      </div>
+    );
   }
   if (!isAuthenticated) {
     return <Navigate to="/" />;
   }
+  if (!allowedRoles.includes(role)) {
+    console.log(role, "******");
+    console.log(token, "******");
+    return <Navigate to="/unauthorized" />;
+  }
 
-
-  
-  if (isAuthenticated) {
-    if (role == "ROLE_AGENT_MUS") {
-      return (
-        <div className="d-flex">
-          <DashboardSidebarAgent />
+  if (role == "ROLE_AGENT_MUS") {
+    return (
+      <div className="d-flex">
+        <DashboardSidebarAgent />
+        <div
+          style={{
+            backgroundColor: COLORS.bgWHITE,
+          }}
+          className="d-flex flex-column w-100"
+        >
+          <DashboardHeader role={"Agent stock"} fullname={fullname} />
           <div
             style={{
-              backgroundColor: COLORS.bgWHITE,
+              marginTop: "63px",
             }}
-            className="d-flex flex-column w-100"
           >
-            <DashboardHeader role={'Agent stock'} fullname={fullname} />
-            <div
-              style={{
-                marginTop: "63px",
-              }}
-            >
-              {children}
-            </div>
+            {children}
           </div>
         </div>
-      );
-    }
-    if (role == "Admin") {
-      return (
-        <div className="d-flex">
-          <DashboardSidebarAdmin />
+      </div>
+    );
+  }
+  if (role == "Admin") {
+    return (
+      <div className="d-flex">
+        <DashboardSidebarAdmin />
+        <div
+          style={{
+            backgroundColor: COLORS.bgWHITE,
+          }}
+          className="d-flex flex-column w-100"
+        >
+          <DashboardHeader role={"Admin"} fullname={fullname} />
           <div
             style={{
-              backgroundColor: COLORS.bgWHITE,
+              marginTop: "63px",
             }}
-            className="d-flex flex-column w-100"
           >
-            <DashboardHeader role={'Admin'} fullname={fullname} />
-            <div
-              style={{
-                marginTop: "63px",
-              }}
-            >
-              {children}
-            </div>
+            {children}
           </div>
         </div>
-      );
-    }
-    if (role == "ROLE_DEMANDEUR") {
-      return (
-        <div className="d-flex">
-          <DashboardSidebarDemandeur />
+      </div>
+    );
+  }
+  if (role == "ROLE_DEMANDEUR") {
+    return (
+      <div className="d-flex">
+        <DashboardSidebarDemandeur />
+        <div
+          style={{
+            backgroundColor: COLORS.bgWHITE,
+          }}
+          className="d-flex flex-column w-100"
+        >
+          <DashboardHeader role={"Demendeur"} fullname={fullname} />
           <div
             style={{
-              backgroundColor: COLORS.bgWHITE,
+              marginTop: "63px",
             }}
-            className="d-flex flex-column w-100"
           >
-            <DashboardHeader role={'Demendeur'} fullname={fullname} />
-            <div
-              style={{
-                marginTop: "63px",
-              }}
-            >
-              {children}
-            </div>
+            {children}
           </div>
         </div>
-      );
-    }
+      </div>
+    );
   }
 };
