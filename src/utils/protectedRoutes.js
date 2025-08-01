@@ -24,19 +24,21 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
     }
   }, [isAuthenticated]);
 
-  if (isAuthenticated === null || role === null || fullname === null) {
+  if (fullname === null || isAuthenticated === null || role === null  ) {
+
     return (
       <div className="d-flex justify-content-center py-3">
         <Spin />
       </div>
     );
   }
+
+
   if (!isAuthenticated) {
     return <Navigate to="/" />;
   }
   if (!allowedRoles.includes(role)) {
-    console.log(role, "******");
-    console.log(token, "******");
+
     return <Navigate to="/unauthorized" />;
   }
 
@@ -50,7 +52,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
           }}
           className="d-flex flex-column w-100"
         >
-          <DashboardHeader role={"Agent stock"} fullname={fullname} />
+          <DashboardHeader token={token}  role={"Agent stock"} fullname={fullname} />
           <div
             style={{
               marginTop: "63px",
@@ -72,7 +74,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
           }}
           className="d-flex flex-column w-100"
         >
-          <DashboardHeader role={"Admin"} fullname={fullname} />
+          <DashboardHeader token={token}  role={"Admin"} fullname={fullname} />
           <div
             style={{
               marginTop: "63px",
@@ -94,7 +96,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
           }}
           className="d-flex flex-column w-100"
         >
-          <DashboardHeader role={"Demendeur"} fullname={fullname} />
+          <DashboardHeader token={token}  role={"Demandeur"} fullname={fullname} />
           <div
             style={{
               marginTop: "63px",

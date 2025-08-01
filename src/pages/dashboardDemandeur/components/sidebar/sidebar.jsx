@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Layout, Menu } from "antd";
-import { useNavigate } from "react-router-dom"; 
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
@@ -13,16 +13,16 @@ const { Sider } = Layout;
 
 const navItems = [
   {
-    key: "demandeur",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
-    label: "Dashboard",
-    route: "/demandeur",
-  },
-  {
     key: "cree_demande",
     icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
     label: "Créer Demande",
     route: "/demandeur/cree_demande",
+  },
+  {
+    key: "demande",
+    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    label: "Demande",
+    route: "/demandeur",
   },
   {
     key: "profil",
@@ -35,8 +35,13 @@ const navItems = [
 const DashboardSidebarDemandeur = () => {
   const [collapsed, setCollapsed] = useState(true);
   const collapsedSidebar = useSelector((state) => state.app.collapsedSidebar);
-  const [activePage, setActivePage] = useState("demandeur");
+  const location = useLocation();
   const navigate = useNavigate();
+  const [activePage, setActivePage] = useState("cree_demande");
+
+  const selectedKey = navItems.find(
+    (item) => location.pathname === item.route
+  )?.key;
 
   const handleMenuClick = ({ key }) => {
     const item = navItems.find((item) => item.key === key);
@@ -102,7 +107,7 @@ const DashboardSidebarDemandeur = () => {
         <Menu
           theme="light"
           mode="inline"
-          selectedKeys={[activePage]}
+          selectedKeys={[selectedKey]}
           onClick={handleMenuClick}
           items={navItems}
           style={{ borderRight: 0, fontSize: FONTSIZE.PRIMARY }}

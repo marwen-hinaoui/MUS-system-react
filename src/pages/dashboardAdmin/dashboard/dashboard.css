@@ -1,3 +1,11 @@
-.dashboard{
-    max-width: 100%;
+.dashboard {
+  max-width: 100%;
 }
+
+.flex-container {
+  display: flex;
+  justify-content: center;
+  gap: 7rem;
+}
+
+

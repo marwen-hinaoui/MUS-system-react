@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Spin, Table, Tag, Tooltip, Empty, Divider, Alert } from "antd";
+import {  Spin, Table,  Tooltip, Empty,  Alert } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   set_data_searching,
@@ -7,19 +7,14 @@ import {
   set_drawer,
 } from "../../redux/slices";
 import { CloseCircleOutlined, SyncOutlined } from "@ant-design/icons";
-import { HiMiniDocumentCheck } from "react-icons/hi2";
-import { MdDelete } from "react-icons/md";
 
 import DrawerComponent from "../../components/drawer/drawerComponent";
 
 import { COLORS } from "../../constant/colors";
-import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
+import { ICONSIZE } from "../../constant/FontSizes";
 import "./tableDemandeReadWrite.css";
 
-import { AiFillCloseCircle, AiOutlineCheckCircle } from "react-icons/ai";
-import ClickingIcon from "../../components/clickingIcon/clickingIcon";
-import { IoDocumentText } from "react-icons/io5";
-
+import { AiOutlineCheckCircle } from "react-icons/ai";
 
 const TableDemandeReadWrite = ({ data }) => {
   const dispatch = useDispatch();
@@ -28,9 +23,6 @@ const TableDemandeReadWrite = ({ data }) => {
   const role = useSelector((state) => state.app.role);
 
   const [selectedRow, setSelectedRow] = useState(null);
-  const [visible, setVisible] = useState(false);
-  const [visibleDelete, setVisibleDelete] = useState(false);
-
   const isLoading = useSelector((state) => state.app.isLoading);
 
   useEffect(() => {
@@ -70,15 +62,15 @@ const TableDemandeReadWrite = ({ data }) => {
     {
       title: "Projet",
       dataIndex: "projet",
+      filters: [...new Set(data.map((d) => d.projet))].map((projet) => ({
+        text: projet,
+        value: projet,
+      })),
+      onFilter: (value, record) => record.projet === value,
     },
     {
-      title: "Séquence",
-      dataIndex: "sequence",
-    },
-    {
-      title: "Quantité",
-      dataIndex: "Qte_demande",
-      sorter: (a, b) => a.Qte_demande - b.Qte_demande,
+      title: "Part number",
+      dataIndex: "part_number",
     },
     {
       title: "Date création",
@@ -88,7 +80,7 @@ const TableDemandeReadWrite = ({ data }) => {
     {
       title: "Statut",
       dataIndex: "status",
-      width: 100,
+      width: 25,
       align: "center",
       filters: [...new Set(data.map((d) => d.status))].map((status) => ({
         text: status,
@@ -97,7 +89,7 @@ const TableDemandeReadWrite = ({ data }) => {
       onFilter: (value, record) => record.status === value,
       render: (status) => {
         const tagProps = {
-          Terminé: {
+          "Cloturé": {
             icon: <AiOutlineCheckCircle size={ICONSIZE.XSMALL} />,
             color: COLORS.GREEN,
           },
@@ -111,46 +103,38 @@ const TableDemandeReadWrite = ({ data }) => {
           },
         };
         return (
-          <Tag icon={tagProps[status]?.icon} color={tagProps[status]?.color}>
-            {status}
-          </Tag>
+          <div className="d-flex justify-content-center">
+            <Tooltip title={status}>
+              <div
+                style={{
+                  width: "25px",
+                  backgroundColor: tagProps[status]?.color,
+                  color: COLORS.WHITE,
+                  borderRadius: "5px",
+                }}
+              >
+                {tagProps[status]?.icon}
+              </div>
+            </Tooltip>
+          </div>
         );
       },
     },
     {
-      title: "Actions",
-      width: role == "Admin" ? 90 : 80,
+      title: "Détails",
+      width: 80,
+      align: "center",
+
       render: (_, row) => (
-        <div className="d-flex justify-content-around">
+        <div className="d-flex justify-content-center">
           <div>
-            <Tooltip title="Détails">
-              <div className="icon-wrapper" onClick={() => handleDetails(row)}>
-                <IoDocumentText color={COLORS.Blue} size={ICONSIZE.SMALL + 1} />
-              </div>
-            </Tooltip>
-          </div>
-          <div>
-            <Tooltip title="Valider">
-              <div className="icon-wrapper" onClick={() => setVisible(true)}>
-                <HiMiniDocumentCheck
-                  color={COLORS.GREEN}
-                  size={ICONSIZE.SMALL + 1}
-                />
-              </div>
-            </Tooltip>
-          </div>
-          {role == "Admin" && (
-            <div>
-              <Tooltip placement="bottomLeft" title="Supprimer">
-                <div
-                  onClick={() => setVisibleDelete(true)}
-                  className="icon-wrapper"
-                >
-                  <MdDelete color={COLORS.LearRed} size={ICONSIZE.SMALL + 1} />
-                </div>
-              </Tooltip>
+            <div
+              className="icon-wrapper pe-2"
+              onClick={() => handleDetails(row)}
+            >
+              Voir
             </div>
-          )}
+          </div>
         </div>
       ),
     },
@@ -158,88 +142,14 @@ const TableDemandeReadWrite = ({ data }) => {
 
   return (
     <>
-      {/* Terminer Modal  */}
-
-      <Modal
-        title={
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <HiMiniDocumentCheck
-              size={ICONSIZE.SMALL}
-              style={{ color: COLORS.GREEN }}
-            />
-            <span style={{ fontSize: FONTSIZE.PRIMARY, color: COLORS.GREEN }}>
-              Confirmation
-            </span>
-          </div>
-        }
-        open={visible}
-        footer={[
-          <div className="d-flex justify-content-end">
-            <div className="pe-3" onClick={() => setVisible(false)}>
-              <ClickingIcon name={"Non"} />
-            </div>
-            <div onClick={() => alert("Terminé")}>
-              <ClickingIcon
-                color={COLORS.GREEN}
-                icon={<HiMiniDocumentCheck color={COLORS.GREEN} />}
-                name={"Oui"}
-              />
-            </div>
-          </div>,
-        ]}
-      >
-        <Alert message="Voulez-vous terminer cette demande?" type="success" />
-        <p style={{ fontSize: FONTSIZE.PRIMARY }}></p>
-      </Modal>
-
-      {/* Delete Modal  */}
-      {role == "Admin" && (
-        <Modal
-          title={
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <AiFillCloseCircle
-                size={ICONSIZE.SMALL}
-                style={{ color: COLORS.LearRed }}
-              />
-              <span
-                style={{ fontSize: FONTSIZE.PRIMARY, color: COLORS.LearRed }}
-              >
-                Supprimer
-              </span>
-            </div>
-          }
-          open={visibleDelete}
-          onOk={() => alert("Supprimé")}
-          onCancel={() => setVisibleDelete(false)}
-          okText="Oui"
-          cancelText="Non"
-          footer={[
-            <div className="d-flex justify-content-end">
-              <div className="pe-3" onClick={() => setVisibleDelete(false)}>
-                <ClickingIcon name={"Non"} />
-              </div>
-              <div onClick={() => alert("Supprimé")}>
-                <ClickingIcon
-                  color={COLORS.LearRed}
-                  icon={<AiFillCloseCircle color={COLORS.LearRed} />}
-                  name={"Oui"}
-                />
-              </div>
-            </div>,
-          ]}
-        >
-          <Alert message=" Voulez-vous supprimer cette demande?" type="error" />
-        </Modal>
-      )}
-
       {isLoading ? (
         <div style={{ textAlign: "center", margin: "20px 0" }}>
           <Spin size="middle" />
         </div>
       ) : (
         <Table
-          className="custom-table"
           rowClassName={() => "ant-row-no-hover"}
+          className="custom-table"
           bordered
           columns={columns}
           dataSource={searchingData}
@@ -257,6 +167,7 @@ const TableDemandeReadWrite = ({ data }) => {
       )}
 
       <DrawerComponent
+        role={role}
         open={openDrawer}
         handleCloseDrawer={handleCloseDrawer}
         row={selectedRow}

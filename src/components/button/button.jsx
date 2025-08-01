@@ -8,7 +8,7 @@ const SharedButton = ({
   width,
   margins,
   color,
-  icon,
+
   padding,
   colorText,
   callBack,
@@ -16,7 +16,7 @@ const SharedButton = ({
   const styles = {
     padding: !padding ? "20px" : padding,
     width: width,
-    fontSize: FONTSIZE.PRIMARY,
+    fontSize: FONTSIZE.PRIMARY -1,
     backgroundColor: color ? color : "none",
     color: !colorText ? COLORS.WHITE : colorText,
     border: "none",
@@ -30,8 +30,8 @@ const SharedButton = ({
         className={margins}
         onClick={callBack}
       >
-        <p>
-          {icon ? icon : ""}
+        <p className="d-flex align-items-center">
+
           {name}
         </p>
         <Spin size="small" />
@@ -46,8 +46,8 @@ const SharedButton = ({
         className={margins}
         onClick={callBack}
       >
-        <p>
-          {icon ? icon : ""}
+        <p className="d-flex align-items-center">
+          
           {name}
         </p>
       </Button>

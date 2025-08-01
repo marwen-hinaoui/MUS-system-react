@@ -55,7 +55,6 @@ p {
   cursor: pointer;
 }
 
-
 .ant-row-no-hover:hover > td {
   background: none !important;
 }
@@ -64,3 +63,17 @@ p {
 .ant-row-no-hover:hover {
   cursor: default !important;
 }
+
+/* .ant-table-thead th {
+  background-color: #000 !important;
+  color: #fff !important;
+
+} */
+
+/* .ant-table-column-sorter {
+  color: #fff !important;
+}
+
+.ant-table-filter-trigger {
+  color: #fff !important;
+} */

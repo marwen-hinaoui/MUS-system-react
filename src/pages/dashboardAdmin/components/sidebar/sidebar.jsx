@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Layout, Menu } from "antd";
-import { useNavigate } from "react-router-dom"; 
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
@@ -8,23 +8,11 @@ import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 import { MdOutlineAddBox, MdOutlineSpaceDashboard } from "react-icons/md";
 import { BsPerson } from "react-icons/bs";
-import { IoPeopleOutline } from "react-icons/io5";
+import { IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 
 const { Sider } = Layout;
 
 const navItems = [
-  {
-    key: "demandeur",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
-    label: "Dashboard",
-    route: "/admin",
-  },
-  {
-    key: "gestion_user",
-    icon: <IoPeopleOutline size={ICONSIZE.SMALL} />,
-    label: "Gestion users",
-    route: "/admin/users",
-  },
   {
     key: "cree_demande",
     icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
@@ -32,18 +20,31 @@ const navItems = [
     route: "/admin/cree_demande",
   },
   {
-    key: "profil",
-    icon: <BsPerson size={ICONSIZE.SMALL} />,
-    label: "Profil",
-    route: "/admin/profil",
+    key: "gestion_user",
+    icon: <IoSettingsOutline size={ICONSIZE.SMALL} />,
+    label: "Gestion utilisateurs",
+    route: "/admin/users",
+  },
+
+  {
+    key: "demande",
+    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    label: "Demande",
+    route: "/admin",
   },
 ];
 
-const DashboardSidebarAdmin  = () => {
+const DashboardSidebarAdmin = () => {
   const [collapsed, setCollapsed] = useState(true);
   const collapsedSidebar = useSelector((state) => state.app.collapsedSidebar);
-  const [activePage, setActivePage] = useState("demandeur");
+  const location = useLocation();
+
+  const [activePage, setActivePage] = useState("demande");
   const navigate = useNavigate();
+
+  const selectedKey = navItems.find(
+    (item) => location.pathname === item.route
+  )?.key;
 
   const handleMenuClick = ({ key }) => {
     const item = navItems.find((item) => item.key === key);
@@ -109,7 +110,7 @@ const DashboardSidebarAdmin  = () => {
         <Menu
           theme="light"
           mode="inline"
-          selectedKeys={[activePage]}
+          selectedKeys={[selectedKey]}
           onClick={handleMenuClick}
           items={navItems}
           style={{ borderRight: 0, fontSize: FONTSIZE.PRIMARY }}
@@ -119,4 +120,4 @@ const DashboardSidebarAdmin  = () => {
   );
 };
 
-export default DashboardSidebarAdmin ;
+export default DashboardSidebarAdmin;

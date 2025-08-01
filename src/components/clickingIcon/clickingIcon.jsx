@@ -1,7 +1,7 @@
 import React from "react";
 import { FONTSIZE } from "../../constant/FontSizes";
 
-const ClickingIcon = ({ icon, hover, name, color }) => {
+const ClickingIcon = ({ icon, hover, name, color, background }) => {
   return (
     <div
       className={!hover ? hover : "clickingIcon"}
@@ -9,6 +9,8 @@ const ClickingIcon = ({ icon, hover, name, color }) => {
         cursor: "pointer",
         display: "flex",
         alignItems: "center",
+        background:background ? background : "none",
+        borderRadius:'8px'
       }}
     >
       {icon}

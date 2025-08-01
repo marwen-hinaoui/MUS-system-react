@@ -28,10 +28,10 @@ const SearchComponent = () => {
       <CardComponent padding={"6px"}>
         <label class="searchLabelWrap">
           <span class="visually-hidden">Search</span>
-          <MdSearch className="icon" size={ICONSIZE.PRIMARY} />
+          <MdSearch  size={ICONSIZE.PRIMARY} />
           <input
             type="search"
-            placeholder="Recherche"
+            placeholder="Numéro demande"
             className="searchInput"
             name="s"
             onChange={(e) => {
