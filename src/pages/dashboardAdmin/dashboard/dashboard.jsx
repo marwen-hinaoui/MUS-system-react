@@ -130,21 +130,7 @@ const DashboardAdmin = () => {
     <div className="dashboard pt-5 px-3 pe-3">
       {" "}
       <div className="flex-container">
-        {/* 
-       
-        <StatisticsComponent
-          chiffre={6}
-          valuePercent={55}
-          borderColor={COLORS.Blue}
-          title={"Cloturé"}
-          icon={<AiOutlineCheckCircle />}
-        />
-        <StatisticsComponent
-          chiffre={10}
-          borderColor={COLORS.Blue}
-          title={"Total"}
-          icon={<IoIosList  />}
-        /> */}
+        
         <StatisticsComponent
           icon={<PiClockClockwiseBold />}
           title="En cours"
