@@ -7,7 +7,7 @@ import { useState } from "react";
 import { HiMiniDocumentCheck } from "react-icons/hi2";
 import ClickingIcon from "../clickingIcon/clickingIcon";
 import SharedButton from "../button/button";
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle, AiOutlineCheckCircle } from "react-icons/ai";
 
 const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
   const [visible, setVisible] = useState(false);
@@ -40,6 +40,7 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
                   padding={"8px"}
                   color={COLORS.GREEN}
                   name={"Cloturé"}
+                  icon={<AiOutlineCheckCircle />}
                 />
               </div>
             )}
@@ -50,6 +51,7 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
                 padding={"10px"}
                 color={COLORS.LearRed}
                 name={"Supprimer"}
+                icon={<MdDelete />}
               />
             </div>
           )}

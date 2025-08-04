@@ -7,7 +7,7 @@ import { Spin } from "antd/lib";
 
 import CardComponent from "../../../components/card/cardComponent";
 import StatisticsComponent from "../../../components/statistics/statisticsComponent";
-import { AiOutlineCheckCircle } from "react-icons/ai";
+import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
 import { COLORS } from "../../../constant/colors";
 import { PiClockClockwiseBold } from "react-icons/pi";
 import { CloseCircleOutlined, SyncOutlined } from "@ant-design/icons";
@@ -127,17 +127,15 @@ const responseDataDemande = [
 ];
 const DashboardAdmin = () => {
   return (
-    <div className="dashboard pt-5 px-3 pe-3">
+    <div className="dashboard pt-4 px-3 pe-3">
       {" "}
       <div className="flex-container">
-        
         <StatisticsComponent
-          icon={<PiClockClockwiseBold />}
+          icon={<AiOutlineHistory />}
           title="En cours"
           valuePercent={60}
           chiffre={6}
           borderColor={COLORS.GREEN}
-          tooltip="Les demande en cours"
         />
         <StatisticsComponent
           icon={<CloseCircleOutlined />}
@@ -145,7 +143,6 @@ const DashboardAdmin = () => {
           valuePercent={80}
           chiffre={3}
           borderColor={COLORS.LearRed}
-          tooltip="Les demande hors stock"
         />
         <StatisticsComponent
           icon={<AiOutlineCheckCircle />}
@@ -153,22 +150,11 @@ const DashboardAdmin = () => {
           valuePercent={65}
           chiffre={3}
           borderColor={COLORS.Warning}
-          tooltip="Les demande cloturé"
         />
-  
-      </div>
-      <div className="d-flex justify-content-between align-items-center pt-5">
-        <SearchComponent />
-        <p
-          style={{
-            fontSize: FONTSIZE.TITLE,
-            fontWeight: "500",
-          }}
-        ></p>
       </div>
       {responseDataDemande ? (
         <>
-          <div className="py-2"></div>
+          <div className="py-3"></div>
           <CardComponent>
             <TableDemandeReadWrite data={responseDataDemande} />
           </CardComponent>

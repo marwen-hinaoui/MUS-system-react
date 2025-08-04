@@ -7,12 +7,17 @@ import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 import { MdOutlineAddBox, MdOutlineSpaceDashboard } from "react-icons/md";
-import { BsPerson } from "react-icons/bs";
-import { IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoSettingsOutline } from "react-icons/io5";
 
 const { Sider } = Layout;
 
 const navItems = [
+  {
+    key: "demande",
+    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    label: "Demande",
+    route: "/admin",
+  },
   {
     key: "cree_demande",
     icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
@@ -24,13 +29,6 @@ const navItems = [
     icon: <IoSettingsOutline size={ICONSIZE.SMALL} />,
     label: "Gestion utilisateurs",
     route: "/admin/users",
-  },
-
-  {
-    key: "demande",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
-    label: "Demande",
-    route: "/admin",
   },
 ];
 

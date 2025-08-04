@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Divider, Empty, Spin, Table, Tag, Tooltip } from "antd";
-import { FaBoxOpen } from "react-icons/fa";
+import { Empty, Table, Tooltip } from "antd";
 import { COLORS } from "../../constant/colors";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,10 +9,9 @@ import {
 } from "../../redux/slices";
 import { ICONSIZE } from "../../constant/FontSizes";
 import DrawerComponent from "../../components/drawer/drawerComponent";
-import { CloseCircleOutlined, SyncOutlined } from "@ant-design/icons";
-import { TbChecklist } from "react-icons/tb";
-import { RiFileListFill } from "react-icons/ri";
-import { IoDocumentText } from "react-icons/io5";
+
+import { IoCloseCircleOutline, IoDocumentText } from "react-icons/io5";
+import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
 
 const TableDashboardReadOnly = ({ data }) => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -85,23 +83,32 @@ const TableDashboardReadOnly = ({ data }) => {
       onFilter: (value, record) => record.status === value,
       render: (status) => {
         const tagProps = {
-          Terminé: {
-            icon: <TbChecklist size={ICONSIZE.XSMALL} />,
-            color: COLORS.GREEN,
+          Cloturé: {
+            icon: (
+              <AiOutlineCheckCircle
+                color={COLORS.GREEN}
+                size={ICONSIZE.PRIMARY}
+              />
+            ),
           },
           "En cours": {
-            icon: <SyncOutlined size={ICONSIZE.XSMALL} />,
-            color: COLORS.Blue,
+            icon: (
+              <AiOutlineHistory color={COLORS.Blue} size={ICONSIZE.PRIMARY} />
+            ),
           },
           "Hors stock": {
-            icon: <CloseCircleOutlined size={ICONSIZE.XSMALL} />,
-            color: COLORS.LearRed,
+            icon: (
+              <IoCloseCircleOutline
+                color={COLORS.LearRed}
+                size={ICONSIZE.PRIMARY}
+              />
+            ),
           },
         };
         return (
-          <Tag icon={tagProps[status]?.icon} color={tagProps[status]?.color}>
-            {status}
-          </Tag>
+          <div className="d-flex justify-content-center">
+            <Tooltip title={status}>{tagProps[status]?.icon}</Tooltip>
+          </div>
         );
       },
     },

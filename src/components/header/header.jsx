@@ -1,6 +1,6 @@
 import { COLORS } from "../../constant/colors";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
-import ClickingIcon from "../../components/clickingIcon/clickingIcon";
+import ClickingIcon from "../clickingIcon/clickingIcon";
 import "./header.css";
 
 import { BsPerson } from "react-icons/bs";

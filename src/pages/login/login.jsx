@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { App, Divider, Form, Input, message, notification, Spin } from "antd";
-import { Alert, Card, Flex } from "antd";
+import { App, Divider, Form, Input, notification } from "antd";
+import { Flex } from "antd";
 import styles from "./login.module.css";
 import "./login.css";
 import { login_api } from "../../api/login_api";
-import { Link, Navigate, redirect, useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
   set_authenticated,
@@ -15,14 +15,16 @@ import {
   set_role,
   set_token,
 } from "../../redux/slices";
-import { AiOutlineLock, AiOutlineMail, AiOutlineUser } from "react-icons/ai";
+import { AiOutlineLock, AiOutlineUser } from "react-icons/ai";
 import SharedButton from "../../components/button/button";
 import LearLogo from "../../assets/img/LearLogo.png";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
-
+import { BsUnlock } from "react-icons/bs";
 import SpinComponent from "../../components/spinComponent/spinComponent";
+import { TbLockPassword } from "react-icons/tb";
+import { MdOutlinePassword } from "react-icons/md";
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -35,7 +37,7 @@ const Login = () => {
   const [fullName, setFullName] = useState();
   const [api, contextHolder] = notification.useNotification();
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
-  const { message } = App.useApp();
+
 
   //DISPATCH
   const dispatch = useDispatch();
@@ -88,8 +90,7 @@ const Login = () => {
           width: "200px",
         }}
       >
-
-              {/* <p className="text-center fw-5">Make Up Area System</p> */}
+        {/* <p className="text-center fw-5">Make Up Area System</p> */}
         <Divider />
       </div>
 
@@ -131,11 +132,14 @@ const Login = () => {
               <Input.Password
                 style={{ fontSize: FONTSIZE.PRIMARY }}
                 className="p-2"
-                prefix={
-                  <AiOutlineLock style={{ fontSize: FONTSIZE.PRIMARY }} />
-                }
                 placeholder="Mot de passe"
                 name="password"
+                prefix={
+                  <TbLockPassword style={{ fontSize: FONTSIZE.PRIMARY }} />
+                }
+                iconRender={() => (
+                  <MdOutlinePassword style={{ fontSize: FONTSIZE.PRIMARY }} />
+                )}
               />
             </Form.Item>
 

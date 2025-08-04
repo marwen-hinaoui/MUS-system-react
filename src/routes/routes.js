@@ -8,8 +8,7 @@ import DashboardDemandeur from "../pages/dashboardDemandeur/dashboard/dashboard"
 import DashboardAgentStock from "../pages/dashboardAgentStock/dashboard/dashboard";
 import DashboardAdmin from "../pages/dashboardAdmin/dashboard/dashboard";
 
-const MUSRoutes = () => {
-
+const AppRoutes = () => {
   return (
     <BrowserRouter>
       <LoginProvider>
@@ -24,7 +23,7 @@ const MUSRoutes = () => {
             <Route
               index
               element={
-                <ProtectedRoutes  allowedRoles={["ROLE_DEMANDEUR"]}>
+                <ProtectedRoutes allowedRoles={["ROLE_DEMANDEUR"]}>
                   <DashboardDemandeur />
                 </ProtectedRoutes>
               }
@@ -32,7 +31,7 @@ const MUSRoutes = () => {
             <Route
               path="cree_demande"
               element={
-                <ProtectedRoutes  allowedRoles={["ROLE_DEMANDEUR"]}>
+                <ProtectedRoutes allowedRoles={["ROLE_DEMANDEUR"]}>
                   <>cree_demande demandeur</>
                 </ProtectedRoutes>
               }
@@ -47,7 +46,6 @@ const MUSRoutes = () => {
             />
           </Route>
 
-          
           {/*Dashboard Demandeur agent*/}
           <Route path="/agent">
             <Route
@@ -76,13 +74,8 @@ const MUSRoutes = () => {
             />
           </Route>
 
-          
-
-
-
-
           {/*Dashboard Demandeur admin*/}
-          <Route path="/admin" >
+          <Route path="/admin">
             <Route
               index
               element={
@@ -122,4 +115,4 @@ const MUSRoutes = () => {
   );
 };
 
-export default MUSRoutes;
+export default AppRoutes;

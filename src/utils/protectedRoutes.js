@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useRefreshAccessToken } from "../api/shared/refresh";
 
 import { COLORS } from "../constant/colors";
-import DashboardHeader from "../pages/header/header";
+import DashboardHeader from "../components/header/header";
 import DashboardSidebarDemandeur from "../pages/dashboardDemandeur/components/sidebar/sidebar";
 import DashboardSidebarAgent from "../pages/dashboardAgentStock/components/sidebar/sidebar";
 import DashboardSidebarAdmin from "../pages/dashboardAdmin/components/sidebar/sidebar";

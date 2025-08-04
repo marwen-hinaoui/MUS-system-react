@@ -7,7 +7,7 @@ export const FONTSIZE = {
 export const ICONSIZE = {
   XSMALL: 15,
   SMALL: 18,
-  PRIMARY: 22,
+  PRIMARY: 23,
   LARGE: 24,
   XLARGE: 30,
   BACKGROUND: 120,

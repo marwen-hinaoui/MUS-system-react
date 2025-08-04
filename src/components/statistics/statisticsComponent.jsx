@@ -10,15 +10,15 @@ const StatisticsComponent = ({
 }) => {
   return (
     <Card
-      className="cardStatistic"
       bordered={false}
       style={{
         borderRadius: 8,
-        padding: 20,
+        padding: 55,
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
         justifyContent: "center",
+
         height: 160,
       }}
     >

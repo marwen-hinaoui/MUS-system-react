@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {  Spin, Table,  Tooltip, Empty,  Alert } from "antd";
+import { Spin, Table, Tooltip, Empty } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   set_data_searching,
   set_demande_data_table,
   set_drawer,
 } from "../../redux/slices";
-import { CloseCircleOutlined, SyncOutlined } from "@ant-design/icons";
 
 import DrawerComponent from "../../components/drawer/drawerComponent";
 
@@ -14,7 +13,10 @@ import { COLORS } from "../../constant/colors";
 import { ICONSIZE } from "../../constant/FontSizes";
 import "./tableDemandeReadWrite.css";
 
-import { AiOutlineCheckCircle } from "react-icons/ai";
+import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
+import { IoCloseCircleOutline } from "react-icons/io5";
+import { render } from "@testing-library/react";
+import SearchComponent from "../../components/searchComponent/searchComponent";
 
 const TableDemandeReadWrite = ({ data }) => {
   const dispatch = useDispatch();
@@ -46,7 +48,18 @@ const TableDemandeReadWrite = ({ data }) => {
       width: 60,
     },
     {
-      title: "Numéro demande",
+      title: () => {
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <SearchComponent />
+          </div>
+        );
+      },
       dataIndex: "numDemandeMUS",
       sorter: (a, b) => a.numDemandeMUS.localeCompare(b.numDemandeMUS),
     },
@@ -89,33 +102,31 @@ const TableDemandeReadWrite = ({ data }) => {
       onFilter: (value, record) => record.status === value,
       render: (status) => {
         const tagProps = {
-          "Cloturé": {
-            icon: <AiOutlineCheckCircle size={ICONSIZE.XSMALL} />,
-            color: COLORS.GREEN,
+          Cloturé: {
+            icon: (
+              <AiOutlineCheckCircle
+                color={COLORS.GREEN}
+                size={ICONSIZE.PRIMARY}
+              />
+            ),
           },
           "En cours": {
-            icon: <SyncOutlined size={ICONSIZE.XSMALL} />,
-            color: COLORS.Blue,
+            icon: (
+              <AiOutlineHistory color={COLORS.Blue} size={ICONSIZE.PRIMARY} />
+            ),
           },
           "Hors stock": {
-            icon: <CloseCircleOutlined size={ICONSIZE.XSMALL} />,
-            color: COLORS.LearRed,
+            icon: (
+              <IoCloseCircleOutline
+                color={COLORS.LearRed}
+                size={ICONSIZE.PRIMARY}
+              />
+            ),
           },
         };
         return (
           <div className="d-flex justify-content-center">
-            <Tooltip title={status}>
-              <div
-                style={{
-                  width: "25px",
-                  backgroundColor: tagProps[status]?.color,
-                  color: COLORS.WHITE,
-                  borderRadius: "5px",
-                }}
-              >
-                {tagProps[status]?.icon}
-              </div>
-            </Tooltip>
+            <Tooltip title={status}>{tagProps[status]?.icon}</Tooltip>
           </div>
         );
       },
@@ -129,7 +140,7 @@ const TableDemandeReadWrite = ({ data }) => {
         <div className="d-flex justify-content-center">
           <div>
             <div
-              className="icon-wrapper pe-2"
+              style={{ cursor: "pointer", fontWeight: 500 }}
               onClick={() => handleDetails(row)}
             >
               Voir

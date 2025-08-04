@@ -1,8 +1,8 @@
-import MUSRoutes from './routes/musRoutes'
+import AppRoutes from './routes/routes'
 
 const App = () => {
   return (
-    <MUSRoutes />
+    <AppRoutes />
   )
 }
 
