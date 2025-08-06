@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRefreshAccessToken } from "../api/shared/refresh";
 
 import { COLORS } from "../constant/colors";
@@ -8,29 +8,24 @@ import DashboardSidebarDemandeur from "../pages/dashboardDemandeur/components/si
 import DashboardSidebarAgent from "../pages/dashboardAgentStock/components/sidebar/sidebar";
 import DashboardSidebarAdmin from "../pages/dashboardAdmin/components/sidebar/sidebar";
 import { Navigate } from "react-router-dom";
-import { Spin } from "antd/lib";
+import { set_loading } from "../redux/slices";
 
 export const ProtectedRoutes = ({ children, allowedRoles }) => {
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
   const token = useSelector((state) => state.app.tokenValue);
   const role = useSelector((state) => state.app.role);
   const fullname = useSelector((state) => state.app.fullname);
-
+  const dispatch = useDispatch()
   const refreshAccessToken = useRefreshAccessToken();
 
   useEffect(() => {
     if (!token) {
       refreshAccessToken();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, token]);
 
   if (fullname === null || isAuthenticated === null || role === null  ) {
-
-    return (
-      <div className="d-flex justify-content-center py-3">
-        <Spin />
-      </div>
-    );
+    dispatch(set_loading(true))
   }
 
 

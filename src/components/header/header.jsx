@@ -7,8 +7,14 @@ import { BsPerson } from "react-icons/bs";
 import { IoLogOut } from "react-icons/io5";
 import { logout_api } from "../../api/logout_api";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { set_authenticated, set_fullname, set_redirection, set_role, set_token } from "../../redux/slices";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  set_authenticated,
+  set_fullname,
+  set_redirection,
+  set_role,
+  set_token,
+} from "../../redux/slices";
 
 const DashboardHeader = ({ role, fullname, token }) => {
   const navigate = useNavigate();
@@ -17,7 +23,7 @@ const DashboardHeader = ({ role, fullname, token }) => {
   const logout = async () => {
     const res = await logout_api(token);
     if (res.resData) {
-      dispatch(set_redirection('/'));
+      dispatch(set_redirection("/"));
       navigate("/");
       dispatch(set_role(null));
       dispatch(set_token(null));

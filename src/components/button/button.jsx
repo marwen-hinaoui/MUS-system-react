@@ -1,4 +1,4 @@
-import { Button, Spin } from "antd";
+import { Button } from "antd";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 
@@ -29,11 +29,11 @@ const SharedButton = ({
         variant="solid"
         className={margins}
         onClick={callBack}
+
       >
-        <p className="d-flex align-items-center">
-          {icon && icon} {name}
-        </p>
-        <Spin size="small" />
+        <span className="d-flex align-items-center">
+          {icon && icon} {name && name}
+        </span>
       </Button>
     );
   } else {
@@ -46,7 +46,7 @@ const SharedButton = ({
         onClick={callBack}
       >
         <p className="d-flex align-items-center">
-          {icon && icon} {name}
+          {icon && icon} {name && name}
         </p>
       </Button>
     );

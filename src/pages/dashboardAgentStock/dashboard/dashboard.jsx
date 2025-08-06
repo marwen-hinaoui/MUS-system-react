@@ -3,14 +3,14 @@ import "./dashboard.css";
 
 import SearchComponent from "../../../components/searchComponent/searchComponent";
 
-import { Spin } from "antd/lib";
+import { Empty } from "antd/lib";
 import TableDemandeReadWrite from "../../tableDemandeReadWrite/tableDemandeReadWrite";
 
 const responseDataDemande = [
   {
     id: 1,
     numDemandeMUS: "MUS1234567",
-    site: "Trim1", 
+    site: "Trim1",
     projet: "MBEAM",
     sequence: "1624251117971",
     Qte_demande: 3,
@@ -140,7 +140,7 @@ const DashboardAgentStock = () => {
           <TableDemandeReadWrite data={responseDataDemande} />
         </>
       ) : (
-        <Spin />
+        <Empty />
       )}
     </div>
   );

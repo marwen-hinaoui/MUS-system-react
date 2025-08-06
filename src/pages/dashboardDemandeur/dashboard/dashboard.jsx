@@ -2,14 +2,13 @@ import { FONTSIZE } from "../../../constant/FontSizes";
 import "./dashboard.css";
 
 import SearchComponent from "../../../components/searchComponent/searchComponent";
-import { Spin } from "antd/lib";
 import TableDashboardReadOnly from "../../tableDemandeReadOnly/tableDemandeReadOnly";
 
 const responseDataDemande = [
   {
     id: 1,
     numDemandeMUS: "MUS1234567",
-    site: "Trim1", 
+    site: "Trim1",
     projet: "MBEAM",
     sequence: "1624251117971",
     Qte_demande: 3,
@@ -119,29 +118,27 @@ const responseDataDemande = [
 ];
 const DashboardDemandeur = () => {
   return (
-    <div className="dashboard p-3">
-      <div className="d-flex justify-content-between align-items-center">
-        <SearchComponent />
+    responseDataDemande && (
+      <div className="dashboard p-3">
+        <div className="d-flex justify-content-between align-items-center">
+          <SearchComponent />
 
-        <p
-          style={{
-            fontSize: FONTSIZE.TITLE,
-            fontWeight: "500",
-          }}
-        >
-          {/* Tableau Demandes MUS */}
-        </p>
-      </div>
+          <p
+            style={{
+              fontSize: FONTSIZE.TITLE,
+              fontWeight: "500",
+            }}
+          >
+            {/* Tableau Demandes MUS */}
+          </p>
+        </div>
 
-      {responseDataDemande ? (
         <>
           <div className="py-2"></div>
           <TableDashboardReadOnly data={responseDataDemande} />
         </>
-      ) : (
-        <Spin />
-      )}
-    </div>
+      </div>
+    )
   );
 };
 

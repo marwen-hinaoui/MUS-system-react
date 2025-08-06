@@ -1,18 +1,12 @@
-import { FONTSIZE } from "../../../constant/FontSizes";
 import "./dashboard.css";
 
-import SearchComponent from "../../../components/searchComponent/searchComponent";
 import TableDemandeReadWrite from "../../tableDemandeReadWrite/tableDemandeReadWrite";
-import { Spin } from "antd/lib";
 
 import CardComponent from "../../../components/card/cardComponent";
 import StatisticsComponent from "../../../components/statistics/statisticsComponent";
 import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
 import { COLORS } from "../../../constant/colors";
-import { PiClockClockwiseBold } from "react-icons/pi";
-import { CloseCircleOutlined, SyncOutlined } from "@ant-design/icons";
-import { IoIosList } from "react-icons/io";
-import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { CloseCircleOutlined } from "@ant-design/icons";
 
 const responseDataDemande = [
   {
@@ -127,42 +121,47 @@ const responseDataDemande = [
 ];
 const DashboardAdmin = () => {
   return (
-    <div className="dashboard pt-4 px-3 pe-3">
-      {" "}
-      <div className="flex-container">
-        <StatisticsComponent
-          icon={<AiOutlineHistory />}
-          title="En cours"
-          valuePercent={60}
-          chiffre={6}
-          borderColor={COLORS.GREEN}
-        />
-        <StatisticsComponent
-          icon={<CloseCircleOutlined />}
-          title="Hors stock"
-          valuePercent={80}
-          chiffre={3}
-          borderColor={COLORS.LearRed}
-        />
-        <StatisticsComponent
-          icon={<AiOutlineCheckCircle />}
-          title="Cloturé"
-          valuePercent={65}
-          chiffre={3}
-          borderColor={COLORS.Warning}
-        />
-      </div>
-      {responseDataDemande ? (
+    responseDataDemande && (
+      <div className="dashboard pt-4 px-3 pe-3">
+        {" "}
+        <div className="flex-container">
+          <StatisticsComponent
+            icon={<AiOutlineHistory />}
+            title="En cours"
+            valuePercent={60}
+            chiffre={6}
+            borderColor={COLORS.GREEN}
+          />
+          <StatisticsComponent
+            icon={<CloseCircleOutlined />}
+            title="Hors stock"
+            valuePercent={80}
+            chiffre={3}
+            borderColor={COLORS.LearRed}
+          />
+          <StatisticsComponent
+            icon={<AiOutlineCheckCircle />}
+            title="Cloturé"
+            valuePercent={65}
+            chiffre={3}
+            borderColor={COLORS.Warning}
+          />
+          <StatisticsComponent
+            icon={<AiOutlineCheckCircle />}
+            title="Cloturé"
+            valuePercent={65}
+            chiffre={3}
+            borderColor={COLORS.Warning}
+          />
+        </div>
         <>
           <div className="py-3"></div>
           <CardComponent>
             <TableDemandeReadWrite data={responseDataDemande} />
           </CardComponent>
         </>
-      ) : (
-        <Spin />
-      )}
-    </div>
+      </div>
+    )
   );
 };
 

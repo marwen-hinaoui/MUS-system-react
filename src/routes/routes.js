@@ -9,6 +9,7 @@ import DashboardAgentStock from "../pages/dashboardAgentStock/dashboard/dashboar
 import DashboardAdmin from "../pages/dashboardAdmin/dashboard/dashboard";
 
 const AppRoutes = () => {
+
   return (
     <BrowserRouter>
       <LoginProvider>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Spin, Table, Tooltip, Empty } from "antd";
+import { Table, Tooltip, Empty } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   set_data_searching,
@@ -15,7 +15,6 @@ import "./tableDemandeReadWrite.css";
 
 import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
 import { IoCloseCircleOutline } from "react-icons/io5";
-import { render } from "@testing-library/react";
 import SearchComponent from "../../components/searchComponent/searchComponent";
 
 const TableDemandeReadWrite = ({ data }) => {
@@ -25,7 +24,7 @@ const TableDemandeReadWrite = ({ data }) => {
   const role = useSelector((state) => state.app.role);
 
   const [selectedRow, setSelectedRow] = useState(null);
-  const isLoading = useSelector((state) => state.app.isLoading);
+  // const isLoading = useSelector((state) => state.app.isLoading);
 
   useEffect(() => {
     dispatch(set_demande_data_table(data));
@@ -153,29 +152,23 @@ const TableDemandeReadWrite = ({ data }) => {
 
   return (
     <>
-      {isLoading ? (
-        <div style={{ textAlign: "center", margin: "20px 0" }}>
-          <Spin size="middle" />
-        </div>
-      ) : (
-        <Table
-          rowClassName={() => "ant-row-no-hover"}
-          className="custom-table"
-          bordered
-          columns={columns}
-          dataSource={searchingData}
-          pagination={{
-            position: ["bottomCenter"],
-            showSizeChanger: true,
-            pageSizeOptions: ["5", "10", "25", "50", "100"],
-            showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
-          }}
-          locale={{
-            emptyText: <Empty description="Aucune donnée trouvée" />,
-          }}
-          size="small"
-        />
-      )}
+      <Table
+        rowClassName={() => "ant-row-no-hover"}
+        className="custom-table"
+        bordered
+        columns={columns}
+        dataSource={searchingData}
+        pagination={{
+          position: ["bottomCenter"],
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "25", "50", "100"],
+          showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
+        }}
+        locale={{
+          emptyText: <Empty description="Aucune donnée trouvée" />,
+        }}
+        size="small"
+      />
 
       <DrawerComponent
         role={role}

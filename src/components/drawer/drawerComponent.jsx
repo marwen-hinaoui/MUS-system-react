@@ -1,11 +1,8 @@
-import { Drawer, Modal, Tooltip } from "antd";
+import { Button, Drawer, Modal, Popconfirm, Tooltip } from "antd";
 import { IoCheckmarkCircle } from "react-icons/io5";
 import { COLORS } from "../../constant/colors";
-import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import { MdDelete } from "react-icons/md";
 import { useState } from "react";
-import { HiMiniDocumentCheck } from "react-icons/hi2";
-import ClickingIcon from "../clickingIcon/clickingIcon";
 import SharedButton from "../button/button";
 import { AiFillCloseCircle, AiOutlineCheckCircle } from "react-icons/ai";
 
@@ -29,113 +26,48 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
         <p>{row.status}</p>
 
         <div className="d-flex justify-content-end">
-          <div>
-            {row.status == "En cours" && (
-              /* Backend Check status before change in db */
-              <div
-                className="icon-wrapper pe-2"
-                onClick={() => setVisible(true)}
+          <div className="pe-1">
+            {role == "Admin" && (
+              <Popconfirm
+                title="Supprimer"
+                description="Voulez-vous supprimer cette demande?"
+                onConfirm={() => alert("deleted")}
               >
-                <SharedButton
-                  padding={"8px"}
-                  color={COLORS.GREEN}
-                  name={"Cloturé"}
-                  icon={<AiOutlineCheckCircle />}
-                />
-              </div>
+                <Button
+                  style={{
+                    padding: "10px",
+                    border: "none",
+                    background: COLORS.LearRed,
+                    color: COLORS.WHITE,
+                  }}
+                >
+                  <MdDelete />
+                </Button>
+              </Popconfirm>
             )}
           </div>
-          {role == "Admin" && (
-            <div onClick={() => setVisibleDelete(true)}>
-              <SharedButton
-                padding={"10px"}
-                color={COLORS.LearRed}
-                name={"Supprimer"}
-                icon={<MdDelete />}
-              />
-            </div>
-          )}
+
+          {row.status == "En cours" &&
+            (role == "Admin" || role == "ROLE_AGENT_MUS") && (
+              /* Backend Check status before change in db */
+              <Popconfirm
+                title="Confirmation"
+                description="Voulez-vous cloturer cette demande?"
+                onConfirm={() => alert("confirmed")}
+              >
+                <Button
+                  style={{
+                    padding: "10px",
+                    border: "none",
+                    background: COLORS.GREEN,
+                    color: COLORS.WHITE,
+                  }}
+                >
+                  <AiOutlineCheckCircle />
+                </Button>
+              </Popconfirm>
+            )}
         </div>
-        {/* Terminer Modal  */}
-
-        <Modal
-          title={
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <IoCheckmarkCircle
-                size={ICONSIZE.PRIMARY}
-                style={{ color: COLORS.GREEN }}
-              />
-              <span style={{ fontSize: FONTSIZE.TITLE }}>Confirmation</span>
-            </div>
-          }
-          onCancel={() => setVisible(false)}
-          open={visible}
-          footer={[
-            <div className="d-flex justify-content-end">
-              <div className="pe-3" onClick={() => setVisible(false)}>
-                <SharedButton
-                  color={COLORS.WHITE}
-                  colorText={COLORS.BLACK}
-                  padding={"10px"}
-                  name={"Non"}
-                />
-              </div>
-              <div onClick={() => alert("Cloturé")}>
-                <SharedButton
-                  padding={"10px"}
-                  color={COLORS.Blue}
-                  name={"Oui"}
-                />
-              </div>
-            </div>,
-          ]}
-        >
-          <p style={{ fontSize: FONTSIZE.PRIMARY }}>
-            Voulez-vous cloturer cette demande?
-          </p>
-        </Modal>
-
-        {/* Delete Modal  */}
-        {role == "Admin" && (
-          <Modal
-            title={
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <AiFillCloseCircle
-                  size={ICONSIZE.PRIMARY}
-                  style={{ color: COLORS.LearRed }}
-                />
-                <span style={{ fontSize: FONTSIZE.TITLE }}>Supprimer</span>
-              </div>
-            }
-            open={visibleDelete}
-            onCancel={() => setVisibleDelete(false)}
-            okText="Oui"
-            cancelText="Non"
-            footer={[
-              <div className="d-flex justify-content-end">
-                <div className="pe-3" onClick={() => setVisibleDelete(false)}>
-                  <SharedButton
-                    color={COLORS.WHITE}
-                    colorText={COLORS.BLACK}
-                    padding={"10px"}
-                    name={"Non"}
-                  />
-                </div>
-                <div onClick={() => alert("Supprimé")}>
-                  <SharedButton
-                    padding={"10px"}
-                    color={COLORS.Blue}
-                    name={"Oui"}
-                  />
-                </div>
-              </div>,
-            ]}
-          >
-            <p style={{ fontSize: FONTSIZE.PRIMARY }}>
-              Voulez-vous supprimer cette demande?
-            </p>
-          </Modal>
-        )}
       </Drawer>
     )
   );

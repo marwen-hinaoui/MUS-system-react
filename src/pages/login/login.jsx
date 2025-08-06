@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { App, Divider, Form, Input, notification } from "antd";
+import { Divider, Form, Input, notification } from "antd";
 import { Flex } from "antd";
 import styles from "./login.module.css";
 import "./login.css";
@@ -15,14 +15,12 @@ import {
   set_role,
   set_token,
 } from "../../redux/slices";
-import { AiOutlineLock, AiOutlineUser } from "react-icons/ai";
+import { AiOutlineUser } from "react-icons/ai";
 import SharedButton from "../../components/button/button";
 import LearLogo from "../../assets/img/LearLogo.png";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
-import { BsUnlock } from "react-icons/bs";
-import SpinComponent from "../../components/spinComponent/spinComponent";
 import { TbLockPassword } from "react-icons/tb";
 import { MdOutlinePassword } from "react-icons/md";
 
@@ -34,17 +32,14 @@ const inputErrorMsg = {
 const Login = () => {
   var navigate = useNavigate();
   const [response, setResponse] = useState();
-  const [fullName, setFullName] = useState();
   const [api, contextHolder] = notification.useNotification();
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
-
 
   //DISPATCH
   const dispatch = useDispatch();
 
   //SUBSCRIBE TO STORE
 
-  const loading = useSelector((state) => state.app.isLoading); //Loading testa3melha ken fl auth ----> arja3 lel user_slice
   const redirection = useSelector((state) => state.app.redirection);
 
   //LOGIN ACTION
@@ -58,12 +53,18 @@ const Login = () => {
     const res = await login_api(formData);
 
     if (res.resData) {
-      setFullName(`${res.resData.firstName} ${res.resData.lastName}`);
+      console.log(res.resData);
+
       navigate(res.resData.redirect, { replace: true });
       dispatch(set_redirection(res.resData.redirect));
       dispatch(set_role(res.resData.roleMUS));
       dispatch(set_token(res.resData.accessToken));
-      dispatch(set_fullname(fullName));
+      dispatch(
+        set_fullname(`${res.resData.firstName} ${res.resData.lastName}`)
+      );
+      console.log(res.resData.firstName);
+      console.log(res.resData.lastName);
+
       setResponse(res.resData);
       dispatch(set_authenticated(true));
     } else {
@@ -72,10 +73,6 @@ const Login = () => {
         dispatch(set_error(res.resError.response.data.message));
         openNotification(api, res.resError.response.data.message);
       }
-      // else {
-      //   // errorAlert(res.resError.message);
-      //   openNotification(api, res.resError.response.data.message);
-      // }
     }
     dispatch(set_loading(false));
   };
@@ -166,7 +163,7 @@ const Login = () => {
       </Flex>
     </Flex>
   ) : (
-    <>{!redirection ? <SpinComponent /> : <Navigate to={redirection} />}</>
+    <>{redirection && <Navigate to={redirection} />}</>
   );
 };
 
