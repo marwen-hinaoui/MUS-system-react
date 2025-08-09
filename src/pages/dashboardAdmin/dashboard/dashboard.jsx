@@ -123,10 +123,7 @@ const responseDataDemande = [
 const DashboardAdmin = () => {
   return (
     responseDataDemande && (
-      <div className="dashboard pt-4 px-3 pe-3">
-        {/* <CardComponent> */}
-        {/* <h4 style={{ padding: "15px" }}>Statistics</h4> */}
-        {/* <Divider style={{ margin: "0" }} /> */}
+      <div className="dashboard">
         <div className="flex-container">
           <StatisticsComponent
             icon={<AiOutlineHistory />}
@@ -157,10 +154,9 @@ const DashboardAdmin = () => {
             borderColor={COLORS.Blue}
           />
         </div>
-        {/* </CardComponent> */}
 
         <>
-          <div className="py-3"></div>
+          <div style={{ padding: "17px 0 0 0" }}></div>
           <CardComponent>
             <h4 style={{ padding: "15px" }}>Total demande</h4>
             <TableDemandeReadWrite data={responseDataDemande} />
