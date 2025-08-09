@@ -124,43 +124,40 @@ const DashboardAdmin = () => {
   return (
     responseDataDemande && (
       <div className="dashboard pt-4 px-3 pe-3">
-        <CardComponent>
-          <h4 style={{ padding: "15px" }}>Statistics</h4>
-          {/* <Divider style={{ margin: "0" }} /> */}
-          <div
-            style={{ padding: "0 15px 15px 15px" }}
-            className="flex-container"
-          >
-            <StatisticsComponent
-              icon={<AiOutlineHistory />}
-              title="En cours"
-              valuePercent={60}
-              chiffre={6}
-              borderColor={COLORS.GREEN}
-            />
-            <StatisticsComponent
-              icon={<CloseCircleOutlined />}
-              title="Hors stock"
-              valuePercent={80}
-              chiffre={3}
-              borderColor={COLORS.LearRed}
-            />
-            <StatisticsComponent
-              icon={<AiOutlineCheckCircle />}
-              title="Cloturé"
-              valuePercent={65}
-              chiffre={3}
-              borderColor={COLORS.Warning}
-            />
-            <StatisticsComponent
-              icon={<SiDatabricks />}
-              title="Total"
-              valuePercent={65}
-              chiffre={3}
-              borderColor={COLORS.Blue}
-            />
-          </div>
-        </CardComponent>
+        {/* <CardComponent> */}
+        {/* <h4 style={{ padding: "15px" }}>Statistics</h4> */}
+        {/* <Divider style={{ margin: "0" }} /> */}
+        <div className="flex-container">
+          <StatisticsComponent
+            icon={<AiOutlineHistory />}
+            title="En cours"
+            valuePercent={60}
+            chiffre={6}
+            borderColor={COLORS.GREEN}
+          />
+          <StatisticsComponent
+            icon={<CloseCircleOutlined />}
+            title="Hors stock"
+            valuePercent={80}
+            chiffre={3}
+            borderColor={COLORS.LearRed}
+          />
+          <StatisticsComponent
+            icon={<AiOutlineCheckCircle />}
+            title="Cloturé"
+            valuePercent={65}
+            chiffre={3}
+            borderColor={COLORS.Warning}
+          />
+          <StatisticsComponent
+            icon={<SiDatabricks />}
+            title="Total"
+            valuePercent={65}
+            chiffre={3}
+            borderColor={COLORS.Blue}
+          />
+        </div>
+        {/* </CardComponent> */}
 
         <>
           <div className="py-3"></div>
