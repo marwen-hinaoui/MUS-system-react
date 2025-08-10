@@ -45,6 +45,9 @@ p {
   margin: 0;
 }
 
+.ant-row-no-hover:hover > td {
+  background: none !important;
+}
 /* * {
   font-family: "Open Sans" !important;
 } */
@@ -55,25 +58,11 @@ p {
   cursor: pointer;
 }
 
-.ant-row-no-hover:hover > td {
+/* .ant-row-no-hover:hover > td {
   background: none !important;
-}
-
-/* Optional: also remove pointer cursor if you want */
-.ant-row-no-hover:hover {
-  cursor: default !important;
-}
-
-/* .ant-table-thead th {
-  background-color: #000 !important;
-  color: #fff !important;
-
 } */
 
-/* .ant-table-column-sorter {
-  color: #fff !important;
-}
-
-.ant-table-filter-trigger {
-  color: #fff !important;
+/* Optional: also remove pointer cursor if you want */
+/* .ant-row-no-hover:hover {
+  cursor: default !important;
 } */

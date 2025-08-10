@@ -8,9 +8,10 @@ import DashboardSidebarAgent from "../pages/dashboardAgentStock/components/sideb
 import DashboardSidebarAdmin from "../pages/dashboardAdmin/components/sidebar/sidebar";
 import { Navigate } from "react-router-dom";
 import { set_loading } from "../redux/slices";
+import { COLORS } from "../constant/colors";
 
 const bgStyles = {
-  backgroundColor: "#fbfbfbff",
+  backgroundColor: COLORS.WHITE,
 };
 export const ProtectedRoutes = ({ children, allowedRoles }) => {
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);

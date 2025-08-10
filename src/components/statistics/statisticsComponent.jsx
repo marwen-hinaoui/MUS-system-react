@@ -19,18 +19,20 @@ const StatisticsComponent = ({
       <CardComponent padding={"10px 13px"}>
         <div
           style={{
-            backgroundColor: backgroundColor,
-            borderRadius: "50%",
-            width: 50,
-            height: 50,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            backgroundColor: backgroundColor,
+            borderRadius: "50%",
+            margin: "0",
+            padding: "0",
+            width: 50,
+            height: 50,
+            color: COLORS.WHITE,
+            fontSize: ICONSIZE.PRIMARY,
           }}
         >
-          <div style={{ color: COLORS.WHITE, fontSize: ICONSIZE.MAIN || 24 }}>
-            {icon}
-          </div>
+          {icon}
         </div>
         <div style={{ float: "right" }}>
           <div
