@@ -130,28 +130,28 @@ const DashboardAdmin = () => {
             title="En cours"
             valuePercent={60}
             chiffre={6}
-            borderColor={COLORS.GREEN}
+            backgroundColor={COLORS.GREEN}
           />
           <StatisticsComponent
             icon={<CloseCircleOutlined />}
             title="Hors stock"
             valuePercent={80}
             chiffre={3}
-            borderColor={COLORS.LearRed}
+            backgroundColor={COLORS.LearRed}
           />
           <StatisticsComponent
             icon={<AiOutlineCheckCircle />}
             title="Cloturé"
             valuePercent={65}
             chiffre={3}
-            borderColor={COLORS.Warning}
+            backgroundColor={COLORS.Warning}
           />
           <StatisticsComponent
             icon={<SiDatabricks />}
             title="Total"
             valuePercent={65}
             chiffre={3}
-            borderColor={COLORS.Blue}
+            backgroundColor={COLORS.Blue}
           />
         </div>
 

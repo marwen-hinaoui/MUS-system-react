@@ -37,7 +37,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
     return <Navigate to="/unauthorized" />;
   }
 
-  if (role == "ROLE_AGENT_MUS") {
+  if (role === "AGENT_MUS") {
     return (
       <div className="d-flex">
         <DashboardSidebarAgent />
@@ -59,7 +59,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
       </div>
     );
   }
-  if (role == "Admin") {
+  if (role === "Admin") {
     return (
       <div className="d-flex">
         <DashboardSidebarAdmin />
@@ -81,7 +81,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
       </div>
     );
   }
-  if (role == "ROLE_DEMANDEUR") {
+  if (role === "DEMANDEUR") {
     return (
       <div className="d-flex">
         <DashboardSidebarDemandeur />

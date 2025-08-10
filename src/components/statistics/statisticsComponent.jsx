@@ -1,69 +1,74 @@
-import { Card } from "antd";
 import CardComponent from "../card/cardComponent";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
+import { COLORS } from "../../constant/colors";
 
 const StatisticsComponent = ({
   icon,
   title,
   valuePercent,
   chiffre,
-  borderColor = "#1890ff",
+  backgroundColor,
 }) => {
   return (
     <div
       style={{
         borderRadius: 8,
         width: "25%",
-
       }}
     >
-      <CardComponent padding={'8px'} >
-        {/* Icon in colored circle */}
+      <CardComponent padding={"10px 13px"}>
         <div
           style={{
-            marginLeft: "auto",
-            backgroundColor: borderColor,
+            backgroundColor: backgroundColor,
             borderRadius: "50%",
             width: 50,
             height: 50,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: 16,
           }}
         >
-          <div style={{ color: "white", fontSize: ICONSIZE.MAIN || 24 }}>
+          <div style={{ color: COLORS.WHITE, fontSize: ICONSIZE.MAIN || 24 }}>
             {icon}
           </div>
         </div>
-
-        {/* Value and percentage */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: 4,
-          }}
-        >
+        <div style={{ float: "right" }}>
           <div
             style={{
-              fontSize: FONTSIZE.TITLE + 6,
-              fontWeight: 600,
-              color: "#000",
-              marginRight: 8,
+              display: "flex",
+              alignItems: "center",
             }}
           >
-            {chiffre}
-          </div>
-          {valuePercent !== undefined && (
-            <div style={{ color: "green", fontSize: FONTSIZE.TEXT }}>
-              +{valuePercent}%
+            <div
+              style={{
+                fontSize: FONTSIZE.TITLE + 6,
+                fontWeight: 600,
+                color: "#000",
+                marginRight: 8,
+              }}
+            >
+              {chiffre}
             </div>
-          )}
-        </div>
 
-        {/* Title */}
-        <div style={{ color: "#999", fontSize: FONTSIZE.TEXT }}>{title}</div>
+            <div
+              style={{
+                color: "green",
+                fontSize: FONTSIZE.SMALL,
+              }}
+            >
+              {valuePercent !== undefined && valuePercent}%
+            </div>
+          </div>
+          {/* Title */}
+          <div
+            style={{
+              color: "#999",
+              fontSize: FONTSIZE.XPRIMARY,
+            }}
+          >
+            {title}
+          </div>
+        </div>
       </CardComponent>
     </div>
   );

@@ -24,7 +24,7 @@ const AppRoutes = () => {
             <Route
               index
               element={
-                <ProtectedRoutes allowedRoles={["ROLE_DEMANDEUR"]}>
+                <ProtectedRoutes allowedRoles={["DEMANDEUR"]}>
                   <DashboardDemandeur />
                 </ProtectedRoutes>
               }
@@ -32,7 +32,7 @@ const AppRoutes = () => {
             <Route
               path="cree_demande"
               element={
-                <ProtectedRoutes allowedRoles={["ROLE_DEMANDEUR"]}>
+                <ProtectedRoutes allowedRoles={["DEMANDEUR"]}>
                   <>cree_demande demandeur</>
                 </ProtectedRoutes>
               }
@@ -40,7 +40,7 @@ const AppRoutes = () => {
             <Route
               path="profil"
               element={
-                <ProtectedRoutes allowedRoles={["ROLE_DEMANDEUR"]}>
+                <ProtectedRoutes allowedRoles={["DEMANDEUR"]}>
                   <Profil />
                 </ProtectedRoutes>
               }
@@ -52,7 +52,7 @@ const AppRoutes = () => {
             <Route
               index
               element={
-                <ProtectedRoutes allowedRoles={["ROLE_AGENT_MUS"]}>
+                <ProtectedRoutes allowedRoles={["AGENT_MUS"]}>
                   <DashboardAgentStock />
                 </ProtectedRoutes>
               }
@@ -60,7 +60,7 @@ const AppRoutes = () => {
             <Route
               path="stock"
               element={
-                <ProtectedRoutes allowedRoles={["ROLE_AGENT_MUS"]}>
+                <ProtectedRoutes allowedRoles={["AGENT_MUS"]}>
                   <>stock</>
                 </ProtectedRoutes>
               }
@@ -68,7 +68,7 @@ const AppRoutes = () => {
             <Route
               path="profil"
               element={
-                <ProtectedRoutes allowedRoles={["ROLE_AGENT_MUS"]}>
+                <ProtectedRoutes allowedRoles={["AGENT_MUS"]}>
                   <Profil />
                 </ProtectedRoutes>
               }

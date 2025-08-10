@@ -1,14 +1,9 @@
-import { Button, Drawer, Modal, Popconfirm, Tooltip } from "antd";
-import { IoCheckmarkCircle } from "react-icons/io5";
+import { Button, Drawer, Popconfirm } from "antd";
 import { COLORS } from "../../constant/colors";
 import { MdDelete } from "react-icons/md";
-import { useState } from "react";
-import SharedButton from "../button/button";
-import { AiFillCloseCircle, AiOutlineCheckCircle } from "react-icons/ai";
+import { AiOutlineCheckCircle } from "react-icons/ai";
 
 const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
-  const [visible, setVisible] = useState(false);
-  const [visibleDelete, setVisibleDelete] = useState(false);
   return (
     row && (
       <Drawer
@@ -27,7 +22,7 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
 
         <div className="d-flex justify-content-end">
           <div className="pe-1">
-            {role == "Admin" && (
+            {role === "Admin" && (
               <Popconfirm
                 title="Supprimer"
                 description="Voulez-vous supprimer cette demande?"
@@ -47,8 +42,8 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
             )}
           </div>
 
-          {row.status == "En cours" &&
-            (role == "Admin" || role == "ROLE_AGENT_MUS") && (
+          {row.status === "En cours" &&
+            (role === "Admin" || role === "AGENT_MUS") && (
               /* Backend Check status before change in db */
               <Popconfirm
                 title="Confirmation"
