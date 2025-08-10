@@ -3,6 +3,7 @@ export const FONTSIZE = {
   XPRIMARY: 14,
   PRIMARY: 16,
   TITLE: 20,
+  XTITLE: 22,
 };
 
 export const ICONSIZE = {

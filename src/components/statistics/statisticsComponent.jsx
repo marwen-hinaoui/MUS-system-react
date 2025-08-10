@@ -41,7 +41,7 @@ const StatisticsComponent = ({
           >
             <div
               style={{
-                fontSize: FONTSIZE.TITLE + 6,
+                fontSize: FONTSIZE.XTITLE,
                 fontWeight: 600,
                 color: "#000",
                 marginRight: 8,
