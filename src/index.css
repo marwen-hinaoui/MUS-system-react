@@ -45,6 +45,11 @@ p {
   margin: 0;
 }
 
+.dashboard {
+  max-width: 100%;
+  padding: 17px 17px 0 17px;
+}
+
 .ant-row-no-hover:hover > td {
   background: none !important;
 }

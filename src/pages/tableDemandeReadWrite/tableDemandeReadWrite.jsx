@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tooltip, Empty } from "antd";
+import { Table, Tooltip, Empty, Tag } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   set_data_searching,
@@ -92,8 +92,7 @@ const TableDemandeReadWrite = ({ data }) => {
     {
       title: "Statut",
       dataIndex: "status",
-      width: 25,
-      align: "center",
+
       filters: [...new Set(data.map((d) => d.status))].map((status) => ({
         text: status,
         value: status,
@@ -124,8 +123,11 @@ const TableDemandeReadWrite = ({ data }) => {
           },
         };
         return (
-          <div className="d-flex justify-content-center">
-            <Tooltip title={status}>{tagProps[status]?.icon}</Tooltip>
+          <div className="d-flex ">
+            <p>
+              {tagProps[status]?.icon}
+              <span style={{paddingLeft:'5px'}}>{status}</span>
+            </p>
           </div>
         );
       },

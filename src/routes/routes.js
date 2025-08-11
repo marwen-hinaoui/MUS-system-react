@@ -7,6 +7,7 @@ import Profil from "../pages/profil/profil";
 import DashboardDemandeur from "../pages/dashboardDemandeur/dashboard/dashboard";
 import DashboardAgentStock from "../pages/dashboardAgentStock/dashboard/dashboard";
 import DashboardAdmin from "../pages/dashboardAdmin/dashboard/dashboard";
+import ChartPage from "../pages/dashboardAdmin/charts/chartPage";
 
 const AppRoutes = () => {
 
@@ -106,6 +107,14 @@ const AppRoutes = () => {
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <Profil />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="statistics"
+              element={
+                <ProtectedRoutes allowedRoles={["Admin"]}>
+                  <ChartPage />
                 </ProtectedRoutes>
               }
             />

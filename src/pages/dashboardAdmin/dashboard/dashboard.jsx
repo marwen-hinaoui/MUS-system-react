@@ -5,9 +5,10 @@ import TableDemandeReadWrite from "../../tableDemandeReadWrite/tableDemandeReadW
 import CardComponent from "../../../components/card/cardComponent";
 import StatisticsComponent from "../../../components/statistics/statisticsComponent";
 import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
-import { COLORS } from "../../../constant/colors";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { SiDatabricks } from "react-icons/si";
+import { Breadcrumb } from "antd/lib";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
 
 const responseDataDemande = [
   {
@@ -120,48 +121,59 @@ const responseDataDemande = [
     date_creation: "28-12-2025",
   },
 ];
+const total = responseDataDemande.length;
+const breadcrumb = [
+  {
+    title: <MdOutlineSpaceDashboard />,
+  },
+
+  {
+    title: "Demande",
+  },
+];
 const DashboardAdmin = () => {
   return (
     responseDataDemande && (
       <div className="dashboard">
+        <div style={{ paddingBottom: "17px" }}>
+          <Breadcrumb items={breadcrumb} />
+        </div>
+
         <div className="flex-container">
           <StatisticsComponent
             icon={<AiOutlineHistory />}
-            title="En cours"
-            valuePercent={60}
+            status="En cours"
+            valuePercent={(6 / total) * 100}
             chiffre={6}
-            backgroundColor={COLORS.GREEN}
+            total={total}
           />
           <StatisticsComponent
             icon={<CloseCircleOutlined />}
-            title="Hors stock"
-            valuePercent={80}
-            chiffre={3}
-            backgroundColor={COLORS.LearRed}
+            status="Hors stock"
+            valuePercent={(2 / total) * 100}
+            chiffre={2}
+            total={total}
           />
           <StatisticsComponent
             icon={<AiOutlineCheckCircle />}
-            title="Cloturé"
-            valuePercent={65}
+            status="Cloturé"
+            valuePercent={(3 / total) * 100}
             chiffre={3}
-            backgroundColor={COLORS.Warning}
+            total={total}
           />
           <StatisticsComponent
             icon={<SiDatabricks />}
-            title="Total"
-            valuePercent={65}
-            chiffre={3}
-            backgroundColor={COLORS.Blue}
+            status="Total"
+            chiffre={total}
+            total={total}
           />
         </div>
 
-        <>
-          <div style={{ padding: "17px 0 0 0" }}></div>
+        <div style={{ padding: "17px 0 0 0" }}>
           <CardComponent>
-            <h4 style={{ padding: "15px" }}>Total demande</h4>
             <TableDemandeReadWrite data={responseDataDemande} />
           </CardComponent>
-        </>
+        </div>
       </div>
     )
   );
