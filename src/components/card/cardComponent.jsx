@@ -1,20 +1,13 @@
 import { Card } from "antd";
 
-const CardComponent = ({
-  children,
-  width,
-  padding,
-  className,
-  margin,
-  borderRaduis,
-}) => {
+const CardComponent = ({ children, width, padding, className, margin }) => {
   return (
     <Card
       bordered={false}
       variant="borderless"
       className={className}
       style={{
-        borderRadius: borderRaduis,
+        borderRadius: "5px",
         width: width,
         padding: padding,
         margin: margin,
