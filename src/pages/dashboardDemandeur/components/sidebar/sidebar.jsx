@@ -6,21 +6,21 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { MdOutlineAddBox, MdOutlineSpaceDashboard } from "react-icons/md";
 import { BsPerson } from "react-icons/bs";
+import { PiGridNine, PiStackPlus } from "react-icons/pi";
 
 const { Sider } = Layout;
 
 const navItems = [
   {
     key: "cree_demande",
-    icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
+    icon: <PiStackPlus size={ICONSIZE.SMALL} />,
     label: "Créer Demande",
     route: "/demandeur/cree_demande",
   },
   {
     key: "demande",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    icon: <PiGridNine size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/demandeur",
   },

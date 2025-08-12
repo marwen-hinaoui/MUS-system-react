@@ -8,9 +8,9 @@ import DashboardDemandeur from "../pages/dashboardDemandeur/dashboard/dashboard"
 import DashboardAgentStock from "../pages/dashboardAgentStock/dashboard/dashboard";
 import DashboardAdmin from "../pages/dashboardAdmin/dashboard/dashboard";
 import ChartPage from "../pages/dashboardAdmin/charts/chartPage";
+import CreeDemande from "../pages/creeDemande/CreeDemande";
 
 const AppRoutes = () => {
-
   return (
     <BrowserRouter>
       <LoginProvider>
@@ -98,7 +98,7 @@ const AppRoutes = () => {
               path="cree_demande"
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
-                  <>cree_demande</>
+                  <CreeDemande />
                 </ProtectedRoutes>
               }
             />

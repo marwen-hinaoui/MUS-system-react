@@ -9,13 +9,14 @@ import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { BsPerson } from "react-icons/bs";
 import { SiDatabricks } from "react-icons/si";
+import { PiGridNine } from "react-icons/pi";
 
 const { Sider } = Layout;
 
 const navItems = [
   {
     key: "demande",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    icon: <PiGridNine size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/agent",
   },
@@ -41,7 +42,6 @@ const DashboardSidebarAgent = () => {
 
   const [activePage, setActivePage] = useState("demande");
   const navigate = useNavigate();
-
 
   const selectedKey = navItems.find(
     (item) => location.pathname === item.route

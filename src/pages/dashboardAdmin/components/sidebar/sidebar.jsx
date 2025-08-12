@@ -6,27 +6,28 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { MdOutlineAddBox, MdOutlineSpaceDashboard } from "react-icons/md";
-import { IoSettingsOutline } from "react-icons/io5";
+// import { MdOutlineAddToPhotos } from "react-icons/md";
+// import { LuSettings } from "react-icons/lu";
+import { PiGearFine, PiStackPlus, PiGridNine } from "react-icons/pi";
 
 const { Sider } = Layout;
 
 const navItems = [
   {
     key: "demande",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    icon: <PiGridNine size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/admin",
   },
   {
     key: "cree_demande",
-    icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
+    icon: <PiStackPlus size={ICONSIZE.SMALL} />,
     label: "Créer Demande",
     route: "/admin/cree_demande",
   },
   {
     key: "gestion_user",
-    icon: <IoSettingsOutline size={ICONSIZE.SMALL} />,
+    icon: <PiGearFine size={ICONSIZE.SMALL} />,
     label: "Gestion utilisateurs",
     route: "/admin/users",
   },

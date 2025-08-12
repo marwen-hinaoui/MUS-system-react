@@ -92,7 +92,7 @@ const StatisticsComponent = ({
           />
         )}
         {status === "Total" && (
-          <Tooltip title="Voir charts">
+          <Tooltip title="Voir courbes">
             <IoStatsChart
               onClick={() => navigate("/admin/statistics")}
               style={{ cursor: "pointer" }}
