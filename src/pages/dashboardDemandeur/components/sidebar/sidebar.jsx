@@ -15,7 +15,7 @@ const navItems = [
   {
     key: "cree_demande",
     icon: <PiStackPlus size={ICONSIZE.SMALL} />,
-    label: "Créer Demande",
+    label: "Creation demande",
     route: "/demandeur/cree_demande",
   },
   {

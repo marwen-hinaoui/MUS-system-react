@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 // import { MdOutlineAddToPhotos } from "react-icons/md";
 import { LuSettings } from "react-icons/lu";
-import { PiStackPlus, PiStackPlusBold } from "react-icons/pi";
+import { PiStackPlusBold } from "react-icons/pi";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 
 const { Sider } = Layout;
@@ -22,8 +22,8 @@ const navItems = [
   },
   {
     key: "cree_demande",
-    icon: <PiStackPlusBold  size={ICONSIZE.SMALL} />,
-    label: "Créer Demande",
+    icon: <PiStackPlusBold size={ICONSIZE.SMALL} />,
+    label: "Creation demande",
     route: "/admin/cree_demande",
   },
   {

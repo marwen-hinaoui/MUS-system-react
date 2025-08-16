@@ -4,3 +4,9 @@ export const openNotification = (api, msg) => {
     duration: 5,
   });
 };
+export const openNotificationSuccess = (api, msg) => {
+  api['success']({
+    message: msg,
+    duration: 5,
+  });
+};
