@@ -12,6 +12,7 @@ import DrawerComponent from "../../components/drawer/drawerComponent";
 
 import { IoCloseCircleOutline, IoDocumentText } from "react-icons/io5";
 import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
+import SearchComponent from "../../components/searchComponent/searchComponent";
 
 const TableDashboardReadOnly = ({ data }) => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -40,7 +41,18 @@ const TableDashboardReadOnly = ({ data }) => {
       sorter: (a, b) => a.id - b.id,
     },
     {
-      title: "N° Demande",
+      title: () => {
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <SearchComponent />
+          </div>
+        );
+      },
       dataIndex: "numDemandeMUS",
       sorter: (a, b) => a.numDemandeMUS.localeCompare(b.numDemandeMUS),
     },

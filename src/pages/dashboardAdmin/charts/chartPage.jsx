@@ -1,16 +1,17 @@
 import { Breadcrumb } from "antd/lib";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 
 const ChartPage = () => {
   const navigate = useNavigate();
   const breadcrumb = [
     {
-      title: <MdOutlineSpaceDashboard />,
+      title: <RiDashboardHorizontalLine />,
     },
 
     {
-      title: <Link to={"/admin"}>Demande</Link>,
+      title: <Link to={"/admin"}>Dashboard</Link>,
     },
     {
       title: "Statistics",

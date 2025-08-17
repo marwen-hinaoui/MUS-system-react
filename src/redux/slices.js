@@ -4,6 +4,7 @@ const appSlices = createSlice({
   name: "app",
   initialState: {
     tokenValue: null,
+    userId: null,
     role: null,
     fullname: null,
     isLoading: false,
@@ -24,6 +25,9 @@ const appSlices = createSlice({
     },
     set_role: (state, action) => {
       state.role = action.payload;
+    },
+    set_userId: (state, action) => {
+      state.userId = action.payload;
     },
     set_fullname: (state, action) => {
       state.fullname = action.payload;
@@ -73,6 +77,7 @@ export const {
   set_demande_data_table,
   set_fullname,
   set_role,
+  set_userId,
 } = appSlices.actions;
 
 export default appSlices.reducer;

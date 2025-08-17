@@ -80,10 +80,7 @@ const TableDemandeReadWrite = ({ data }) => {
       })),
       onFilter: (value, record) => record.projet === value,
     },
-    {
-      title: "Part number",
-      dataIndex: "part_number",
-    },
+
     {
       title: "Date création",
       dataIndex: "date_creation",
@@ -126,7 +123,7 @@ const TableDemandeReadWrite = ({ data }) => {
           <div className="d-flex ">
             <p>
               {tagProps[status]?.icon}
-              <span style={{paddingLeft:'5px'}}>{status}</span>
+              <span style={{ paddingLeft: "5px" }}>{status}</span>
             </p>
           </div>
         );

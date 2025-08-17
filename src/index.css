@@ -24,16 +24,31 @@ code {
 .ant-notification-notice .ant-notification-notice-closable {
   display: flex !important;
 }
-.ant-notification-notice-wrapper {
+/* .ant-notification-notice-wrapper {
   background: #ffcdd2 !important;
   display: flex !important;
 }
 .ant-notification-notice-message {
   color: #8b0000 !important;
+} */
+
+.ant-notification-notice-success {
+  background-color: #f6ffed !important; /* green */
+  color: #389e0d !important;
+  border-radius: 8px;
 }
 
-.ant-notification-notice-icon-error {
-  color: #ee3124 !important;
+/* Error notification */
+.ant-notification-notice-error {
+  background-color: #fff1f0 !important; /* red */
+  color: #cf1322 !important;
+  border-radius: 8px;
+}
+
+/* Make the description text white too */
+.ant-notification-notice-success .ant-notification-notice-description,
+.ant-notification-notice-error .ant-notification-notice-description {
+  color: white !important;
 }
 
 .ant-card-body {

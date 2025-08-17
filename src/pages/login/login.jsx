@@ -14,6 +14,7 @@ import {
   set_redirection,
   set_role,
   set_token,
+  set_userId,
 } from "../../redux/slices";
 import { AiOutlineUser } from "react-icons/ai";
 import SharedButton from "../../components/button/button";
@@ -59,6 +60,7 @@ const Login = () => {
       dispatch(set_redirection(res.resData.redirect));
       dispatch(set_role(res.resData.roleMUS));
       dispatch(set_token(res.resData.accessToken));
+      dispatch(set_userId(res.resData.id));
       dispatch(
         set_fullname(`${res.resData.firstName} ${res.resData.lastName}`)
       );
@@ -112,7 +114,7 @@ const Login = () => {
               ]}
             >
               <Input
-                style={{ fontSize: FONTSIZE.PRIMARY }}
+                style={{ fontSize: FONTSIZE.PRIMARY, borderRadius: "5px" }}
                 className="input p-2"
                 prefix={
                   <AiOutlineUser style={{ fontSize: FONTSIZE.PRIMARY }} />
@@ -127,7 +129,7 @@ const Login = () => {
               rules={[{ required: true, message: inputErrorMsg.password }]}
             >
               <Input.Password
-                style={{ fontSize: FONTSIZE.PRIMARY }}
+                style={{ fontSize: FONTSIZE.PRIMARY, borderRadius: "5px" }}
                 className="p-2"
                 placeholder="Mot de passe"
                 name="password"

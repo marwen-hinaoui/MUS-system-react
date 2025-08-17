@@ -1,35 +1,80 @@
 import React, { useState, useEffect } from "react";
 import {
   Input,
-  Button,
   Select,
   Form,
   Table,
-  message,
-  Card,
-  Popconfirm,
   notification,
   Spin,
+  Breadcrumb,
+  Tooltip,
+  Empty,
 } from "antd";
-import { openNotification, openNotificationSuccess } from "../../components/notificationComponent/openNotification";
+import CardComponent from "../../components/card/cardComponent";
+import {
+  openNotification,
+  openNotificationSuccess,
+} from "../../components/notificationComponent/openNotification";
+import { RiDashboardHorizontalLine } from "react-icons/ri";
+import { Link } from "react-router-dom";
+import { MdAdd, MdDelete, MdOutlineLibraryAdd } from "react-icons/md";
+import { COLORS } from "../../constant/colors";
+import { ICONSIZE } from "../../constant/FontSizes";
+import SharedButton from "../../components/button/button";
+import { PiStackPlusBold } from "react-icons/pi";
+import { get_project } from "../../api/get_project";
+import { get_sites } from "../../api/get_sites";
+import { get_lieuDetection } from "../../api/get_lieuDetection";
+import { create_demande_api } from "../../api/create_demande_api";
+import { useDispatch, useSelector } from "react-redux";
 
 const { Option } = Select;
+const breadcrumb = [
+  {
+    title: <RiDashboardHorizontalLine />,
+  },
 
+  {
+    title: <Link to={"/admin"}>Dashboard</Link>,
+  },
+  {
+    title: "Creation demande",
+  },
+];
 const CreeDemande = () => {
   const [data, setData] = useState(null);
+  const [projects, setProjetcs] = useState(null);
+  const [sites, setSites] = useState(null);
+  const [lieuDetection, setLieuDetection] = useState(null);
   const [sequence, setSequence] = useState("");
   const [sequenceValid, setSequenceValid] = useState(false);
   const [subDemandes, setSubDemandes] = useState([]);
   const [api, contextHolder] = notification.useNotification();
+
+  const [demande, setDemande] = useState({});
+  const token = useSelector((state) => state.app.tokenValue);
+  const id_userMUS = useSelector((state) => state.app.userId);
 
   useEffect(() => {
     fetch("/cms.json")
       .then((res) => res.json())
       .then((json) => setData(json))
       .catch((err) => console.error("Failed to fetch JSON:", err));
+    fetchTrim();
   }, []);
 
-  if (!data) return <Spin />;
+  const fetchTrim = async () => {
+    const resProjet = await get_project();
+    setProjetcs(resProjet.resData.data);
+
+    const resSites = await get_sites();
+    setSites(resSites.resData.data);
+
+    const resLieu = await get_lieuDetection();
+    setLieuDetection(resLieu.resData.data);
+  };
+
+  if (!data || !projects || !sites || !lieuDetection) return <Spin />;
 
   // validate sequence
   const handleSequenceChange = (val) => {
@@ -38,12 +83,15 @@ const CreeDemande = () => {
       const exists = data.CMS.some((c) => c.sequence === val);
       setSequenceValid(exists);
       if (exists) {
-        // initialize first row
         setSubDemandes([
-          { key: Date.now(), part: "", pattern: "", material: "" },
+          {
+            key: Date.now(),
+            partNumber: "",
+            pattern: "",
+            material: "",
+          },
         ]);
       } else if (val.length === 12) {
-        message.error("Sequence does not exist!");
         setSubDemandes([]);
       }
     } else {
@@ -60,7 +108,12 @@ const CreeDemande = () => {
   const handleAddRow = () => {
     setSubDemandes((prev) => [
       ...prev,
-      { key: Date.now(), part: "", pattern: "", material: "" },
+      {
+        key: Date.now(),
+        partNumber: "",
+        pattern: "",
+        material: "",
+      },
     ]);
   };
 
@@ -69,11 +122,19 @@ const CreeDemande = () => {
     setSubDemandes((prev) =>
       prev.map((row) => {
         if (row.key !== key) return row;
-        const updatedRow = { ...row, [field]: value };
+
+        const updatedRow = { ...row };
+
+        if (field === "defaut") {
+          updatedRow.code_defaut = value.code_defaut;
+          updatedRow.typeDefaut = value.typeDefaut;
+        } else {
+          updatedRow[field] = value;
+        }
 
         if (field === "pattern") {
           const partObj = partNumbers.find(
-            (p) => p.partNumber === updatedRow.part
+            (p) => p.partNumber === updatedRow.partNumber
           );
           const partMaterials = partObj?.materials || [];
           const matchedMaterial =
@@ -101,12 +162,12 @@ const CreeDemande = () => {
       key: "partNumber",
       render: (text, record) => (
         <Select
-          value={record.part || undefined}
-          placeholder="Select Part"
-          onChange={(val) => handleChange(record.key, "part", val)}
+          value={record.partNumber || undefined}
+          placeholder="Select Part Number"
+          onChange={(val) => handleChange(record.key, "partNumber", val)}
           showSearch
           optionFilterProp="children"
-          style={{ width: "100%" }}
+          style={{ width: "100%", height: "37.7px" }}
         >
           {partNumbers.map((p) => (
             <Option key={p.partNumber} value={p.partNumber}>
@@ -116,12 +177,15 @@ const CreeDemande = () => {
         </Select>
       ),
     },
+
     {
-      title: "Pattern Number",
-      dataIndex: "patternNumb",
-      key: "patternNumb",
+      title: "Pattern",
+      dataIndex: "pattern",
+      key: "pattern",
       render: (text, record) => {
-        const partObj = partNumbers.find((p) => p.partNumber === record.part);
+        const partObj = partNumbers.find(
+          (p) => p.partNumber === record.partNumber
+        );
         const partMaterials = partObj?.materials || [];
         let availablePatterns = [];
         partMaterials.forEach((mat) => {
@@ -134,10 +198,10 @@ const CreeDemande = () => {
             value={record.pattern || undefined}
             placeholder="Select Pattern"
             onChange={(val) => handleChange(record.key, "pattern", val)}
-            disabled={!record.part}
+            disabled={!record.partNumber}
             showSearch
             optionFilterProp="children"
-            style={{ width: "100%" }}
+            style={{ width: "100%", height: "37.7px" }}
           >
             {availablePatterns.map((pat, i) => (
               <Option key={i} value={pat}>
@@ -152,94 +216,282 @@ const CreeDemande = () => {
       title: "Material",
       dataIndex: "material",
       key: "material",
-      render: (text, record) => <Input value={record.material} readOnly />,
+      render: (text, record) => (
+        <Input style={{ padding: "7px" }} value={record.material} readOnly />
+      ),
+    },
+    {
+      title: "Defaut",
+      dataIndex: "defaut",
+      key: "defaut",
+      render: (text, record) => (
+        <Select
+          value={record.code_defaut || undefined}
+          placeholder="Select defaut"
+          onChange={(val, option) =>
+            handleChange(record.key, "defaut", {
+              code_defaut: val,
+              typeDefaut: option.typeDefaut,
+            })
+          }
+          showSearch
+          optionFilterProp="children"
+          style={{ width: "100%", height: "37.7px" }}
+        >
+          {data.DefautCMS.map((def) => (
+            <Option
+              key={def.code_defaut}
+              value={def.code_defaut}
+              typeDefaut={def.typeDefaut}
+            >
+              {`${def.code_defaut} (${def.typeDefaut})`}
+            </Option>
+          ))}
+        </Select>
+      ),
+    },
+    {
+      title: "Quantité",
+      dataIndex: "quantite",
+      key: "quantite",
+      render: (text, record) => (
+        <Input
+          style={{ padding: "7px" }}
+          // onChange=
+
+          value={record.quantite}
+        />
+      ),
     },
     {
       title: "Action",
       dataIndex: "action",
       key: "action",
+      width: 80,
+      align: "center",
       render: (_, record, index) => {
         const onlyOneRow = subDemandes.length === 1;
         return (
-          <Popconfirm
-            title="Supprimer sub Demande?"
-            onConfirm={() => handleDelete(record.key)}
-            disabled={onlyOneRow} // disables popconfirm if only one row
-          >
-            <Button danger disabled={onlyOneRow}>
-              Delete
-            </Button>
-          </Popconfirm>
+          <Tooltip title="Supprimer sub demande">
+            <MdDelete
+              style={{
+                cursor: "pointer",
+              }}
+              color={COLORS.LearRed}
+              size={ICONSIZE.SMALL}
+              onClick={() => handleDelete(record.key)}
+              disabled={onlyOneRow}
+            />
+          </Tooltip>
+          // </Button>
         );
       },
     },
   ];
 
-  const handleSubmit = () => {
+  const handleSelectChange = (field, value) => {
+    setDemande((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const onSubmit = async () => {
     if (!sequenceValid) {
-      openNotification(api, "Sequance incorrect!");
+      // openNotification(api, "Sequance incorrect!");
       return;
     }
-    if (subDemandes.some((row) => !row.part || !row.pattern || !row.material)) {
-      message.error("All rows must have valid Part, Pattern, Material");
+
+    if (
+      subDemandes.some(
+        (row) =>
+          !row.partNumber || !row.pattern || !row.material || !row.code_defaut
+      )
+    ) {
+      openNotification(api, "Veillez saisie Part number, pattern, defaut");
       return;
     }
-    openNotificationSuccess(api, "Message from backend!!!!!!!");
-    console.log({ sequence, subDemandes });
-    setSequence("");
-    setSequenceValid(false);
-    setSubDemandes([]);
+    const cleanSubDemandes = subDemandes.map(({ key, ...rest }) => rest);
+    const demandeToSubmit = {
+      id_userMUS: id_userMUS,
+      id_site: demande.id_site,
+      id_projet: demande.id_projet,
+      id_lieuDetection: demande.id_lieuDetection,
+      sequence: sequence,
+      subDemandes: cleanSubDemandes,
+    };
+
+    console.log(subDemandes);
+    console.log(demandeToSubmit);
+
+    if (token) {
+      console.log(token);
+      const resDemande = await create_demande_api(demandeToSubmit, token);
+
+      console.log(resDemande);
+      if (resDemande.resData) {
+        if (resDemande.resData.data.statusDemande) {
+          openNotification(api, resDemande.resData.message);
+        } else {
+          openNotificationSuccess(api, resDemande.resData.message);
+        }
+      } else {
+        openNotification(api, resDemande.resError.message);
+      }
+      setSequence("");
+      setSequenceValid(false);
+      setSubDemandes([]);
+    }
   };
 
   return (
-    <div style={{ maxWidth: 800, margin: "50px auto" }}>
+    <div className="dashboard">
       {contextHolder}
-      <Card title="Créer une Demande">
-        <Form layout="vertical">
-          <Form.Item
-            label="Sequence (12 digits)"
-            validateStatus={!sequenceValid && sequence ? "error" : ""}
-            help={
-              !sequenceValid && sequence ? "Invalid sequence or not in CMS" : ""
-            }
-          >
-            <Input
-              value={sequence}
-              onChange={(e) => handleSequenceChange(e.target.value)}
-              maxLength={12}
-            />
-          </Form.Item>
-
-          {sequenceValid && (
-            <>
-              <Table
-                dataSource={subDemandes}
-                columns={columns}
-                pagination={false}
-                rowKey="key"
-              />
-
-              <Button
-                type="dashed"
-                onClick={handleAddRow}
-                style={{ marginTop: 16 }}
-              >
-                Add Sub-Demande
-              </Button>
-            </>
-          )}
-
-          <Form.Item style={{ marginTop: 20 }}>
-            <Button
-              type="primary"
-              onClick={handleSubmit}
-              disabled={!sequenceValid || subDemandes.length === 0}
+      <div style={{ paddingBottom: "17px" }}>
+        <Breadcrumb items={breadcrumb} />
+      </div>
+      <Form layout="vertical" onFinish={onSubmit}>
+        {/* <CardComponent padding={"10px"} margin={"0 0 10px 0"}> */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 5,
+            width: "100%",
+          }}
+        >
+          <div style={{ width: "20%" }}>
+            <Form.Item
+              label="Sequence"
+              validateStatus={!sequenceValid && sequence ? "error" : ""}
+              help={
+                !sequenceValid && sequence
+                  ? "Invalid sequence or not in CMS"
+                  : ""
+              }
             >
-              Submit Demande
-            </Button>
+              <Input
+                style={{
+                  padding: "7px",
+                  margin: "0",
+                }}
+                value={sequence}
+                onChange={(e) => handleSequenceChange(e.target.value)}
+                maxLength={12}
+              />
+            </Form.Item>
+
+            <Form.Item label="Site">
+              <Select
+                value={demande.id_site}
+                placeholder="Select site"
+                onChange={(val) => handleSelectChange("id_site", val)}
+                showSearch
+                optionFilterProp="children"
+                style={{ width: "100%", height: "37.7px" }}
+              >
+                {sites.map((rec) => (
+                  <Option key={rec.nom} value={rec.id}>
+                    {rec.nom}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
+          <div style={{ width: "20%" }}>
+            <Form.Item label="Projet">
+              <Select
+                placeholder="Select projet"
+                value={demande.id_projet}
+                onChange={(val) => handleSelectChange("id_projet", val)}
+                showSearch
+                optionFilterProp="children"
+                style={{ width: "100%", height: "37.7px" }}
+              >
+                {projects.map((rec) => (
+                  <Option key={rec.nom} value={rec.id}>
+                    {rec.nom}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item label="Lieu detection">
+              <Select
+                placeholder="Lieu detection"
+                value={demande.id_lieuDetection}
+                onChange={(val) => handleSelectChange("id_lieuDetection", val)}
+                showSearch
+                optionFilterProp="children"
+                style={{ width: "100%", height: "37.7px" }}
+              >
+                {lieuDetection.map((rec) => (
+                  <Option key={rec.nom} value={rec.id}>
+                    {rec.nom}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
+        </div>
+        {/* </CardComponent> */}
+
+        {/* {sequenceValid && ( */}
+        <div
+          style={{
+            paddingTop: "17px",
+          }}
+        >
+          <CardComponent>
+            <Table
+              rowClassName={() => "ant-row-no-hover"}
+              bordered
+              dataSource={subDemandes}
+              columns={columns}
+              pagination={false}
+              rowKey="key"
+              locale={{
+                emptyText: <Empty description="Aucune donnée trouvée" />,
+              }}
+            />
+          </CardComponent>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            paddingTop: "17px",
+            paddingBottom: "17px",
+          }}
+        >
+          <div style={{ paddingRight: "10px" }}>
+            <Form.Item>
+              <CardComponent>
+                <SharedButton
+                  padding={"11px"}
+                  colorText={COLORS.BLACK}
+                  callBack={handleAddRow}
+                  name={"Ajout sub demande"}
+                  icon={<MdOutlineLibraryAdd />}
+                />
+              </CardComponent>
+            </Form.Item>
+          </div>
+          <Form.Item>
+            <CardComponent>
+              <SharedButton
+                icon={<PiStackPlusBold size={ICONSIZE.SMALL} />}
+                padding={"11px"}
+                type="primary"
+                // color={COLORS.LearRed}
+                name={"Enregistrer"}
+
+                color={subDemandes.length ===0 ? COLORS.Gray3 : COLORS.LearRed}
+                disabled={subDemandes.length === 0}
+              />
+            </CardComponent>
           </Form.Item>
-        </Form>
-      </Card>
+        </div>
+      </Form>
     </div>
   );
 };

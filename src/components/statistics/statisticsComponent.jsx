@@ -91,7 +91,7 @@ const StatisticsComponent = ({
             strokeWidth={8}
           />
         )}
-        {status === "Total" && (
+        {/* {status === "Total" && (
           <Tooltip title="Voir courbes">
             <IoStatsChart
               onClick={() => navigate("/admin/statistics")}
@@ -99,7 +99,7 @@ const StatisticsComponent = ({
               size={ICONSIZE.PRIMARY}
             />
           </Tooltip>
-        )}
+        )} */}
       </div>
     </CardComponent>
   );

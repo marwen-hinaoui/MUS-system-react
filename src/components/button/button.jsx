@@ -12,6 +12,7 @@ const SharedButton = ({
   padding,
   colorText,
   callBack,
+  disabled,
 }) => {
   const styles = {
     padding: !padding ? "20px" : padding,
@@ -20,6 +21,7 @@ const SharedButton = ({
     backgroundColor: color ? color : "none",
     color: !colorText ? COLORS.WHITE : colorText,
     border: "none",
+    borderRadius: "5px",
   };
   if (loading) {
     return (
@@ -29,10 +31,16 @@ const SharedButton = ({
         variant="solid"
         className={margins}
         onClick={callBack}
-
+        disabled={disabled}
       >
         <span className="d-flex align-items-center">
-          {icon && icon} {name && name}
+          {icon && icon}
+          <span
+            style={{
+              paddingLeft: "5px",
+            }}
+          ></span>
+          {name && name}
         </span>
       </Button>
     );
@@ -44,9 +52,16 @@ const SharedButton = ({
         variant="solid"
         className={margins}
         onClick={callBack}
+        disabled={disabled}
       >
         <p className="d-flex align-items-center">
-          {icon && icon} {name && name}
+          {icon && icon}
+          <span
+            style={{
+              paddingLeft: "5px",
+            }}
+          ></span>
+          {name && name}
         </p>
       </Button>
     );

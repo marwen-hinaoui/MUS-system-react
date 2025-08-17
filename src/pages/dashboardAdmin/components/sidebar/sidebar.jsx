@@ -10,6 +10,7 @@ import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 import { LuSettings } from "react-icons/lu";
 import { PiStackPlusBold } from "react-icons/pi";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
+import { RxBarChart } from "react-icons/rx";
 
 const { Sider } = Layout;
 
@@ -25,6 +26,12 @@ const navItems = [
     icon: <PiStackPlusBold size={ICONSIZE.SMALL} />,
     label: "Creation demande",
     route: "/admin/cree_demande",
+  },
+  {
+    key: "statistics",
+    icon: <RxBarChart size={ICONSIZE.SMALL} />,
+    label: "Statistics",
+    route: "/admin/statistics",
   },
   {
     key: "gestion_user",

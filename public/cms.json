@@ -30,5 +30,28 @@
       "L003200689AK6AA": [10, 11, 12],
       "L003572394NCPAA": [28, 27]
     }
+  ],
+
+  "DefautCMS": [
+    {
+      "code_defaut":"A007",
+      "typeDefaut":"Surpiquage  sample irrégulière"
+    },
+    {
+      "code_defaut":"A063",
+      "typeDefaut":"Trous d''aiguille"
+    },
+    {
+      "code_defaut":"A002",
+      "typeDefaut":"Manque point d''arrêt"
+    },
+    {
+      "code_defaut":"A038",
+      "typeDefaut":"Lace bonde longue"
+    },
+    {
+      "code_defaut":"C0000",
+      "typeDefaut":"Fil tiré"
+    }
   ]
 }
