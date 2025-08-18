@@ -257,7 +257,6 @@ const CreeDemande = () => {
       render: (text, record) => (
         <Input
           style={{ padding: "7px" }}
-          // onChange=
 
           value={record.quantite}
         />
@@ -347,7 +346,7 @@ const CreeDemande = () => {
   return (
     <div className="dashboard">
       {contextHolder}
-      <div style={{ paddingBottom: "17px" }}>
+      <div style={{ paddingBottom: "13px" }}>
         <Breadcrumb items={breadcrumb} />
       </div>
       <Form layout="vertical" onFinish={onSubmit}>
@@ -484,8 +483,7 @@ const CreeDemande = () => {
                 type="primary"
                 // color={COLORS.LearRed}
                 name={"Enregistrer"}
-
-                color={subDemandes.length ===0 ? COLORS.Gray3 : COLORS.LearRed}
+                color={subDemandes.length === 0 ? COLORS.Gray3 : COLORS.LearRed}
                 disabled={subDemandes.length === 0}
               />
             </CardComponent>
