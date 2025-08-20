@@ -24,6 +24,7 @@ import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
 import { TbLockPassword } from "react-icons/tb";
 import { MdOutlinePassword } from "react-icons/md";
+import LoadingComponent from "../../components/loadingComponent/loadingComponent";
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -35,10 +36,9 @@ const Login = () => {
   const [response, setResponse] = useState();
   const [api, contextHolder] = notification.useNotification();
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
-
   //DISPATCH
   const dispatch = useDispatch();
-
+  const isLoading = useSelector((state) => state.app.isLoading);
   //SUBSCRIBE TO STORE
 
   const redirection = useSelector((state) => state.app.redirection);
@@ -78,7 +78,9 @@ const Login = () => {
     }
     dispatch(set_loading(false));
   };
-
+  if (isLoading) {
+    return <LoadingComponent />;
+  }
   return isAuthenticated === false ? (
     <Flex align="center" justify="center" className={styles.container}>
       {contextHolder}
@@ -97,8 +99,6 @@ const Login = () => {
         <Flex style={{ width: "350px" }} align="center" justify="center">
           <Form
             name="basic"
-            variant="filled"
-            initialValues={{ variant: "filled" }}
             onFinish={onFinish}
             autoComplete="off"
             className={styles.formStyle}
@@ -114,7 +114,11 @@ const Login = () => {
               ]}
             >
               <Input
-                style={{ fontSize: FONTSIZE.PRIMARY, borderRadius: "5px" }}
+                style={{
+                  fontSize: FONTSIZE.PRIMARY,
+                  borderRadius: "5px",
+                  height: "34px",
+                }}
                 className="input p-2"
                 prefix={
                   <AiOutlineUser style={{ fontSize: FONTSIZE.PRIMARY }} />
@@ -129,7 +133,11 @@ const Login = () => {
               rules={[{ required: true, message: inputErrorMsg.password }]}
             >
               <Input.Password
-                style={{ fontSize: FONTSIZE.PRIMARY, borderRadius: "5px" }}
+                style={{
+                  fontSize: FONTSIZE.PRIMARY,
+                  borderRadius: "5px",
+                  height: "34px",
+                }}
                 className="p-2"
                 placeholder="Mot de passe"
                 name="password"

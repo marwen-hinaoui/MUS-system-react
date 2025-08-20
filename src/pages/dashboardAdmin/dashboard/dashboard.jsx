@@ -16,7 +16,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   set_data_searching,
   set_demande_data_table,
+  set_loading,
 } from "../../../redux/slices";
+import LoadingComponent from "../../../components/loadingComponent/loadingComponent";
 
 const breadcrumb = [
   {
@@ -32,13 +34,26 @@ const DashboardAdmin = () => {
   const [total, setTotal] = useState(0);
   const token = useSelector((state) => state.app.tokenValue);
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.app.isLoading);
 
-
+  const get_all_demande = async () => {
+    dispatch(set_loading(true));
+    const resDemandes = await get_all_demande_api(token);
+    setDemande(resDemandes.resData.data);
+    setTotal(resDemandes.resData.data.length);
+    dispatch(set_loading(false));
+  };
 
   useEffect(() => {
     dispatch(set_demande_data_table(demandes));
     dispatch(set_data_searching(demandes));
+    get_all_demande();
   }, [dispatch]);
+
+  if (isLoading) {
+    return <LoadingComponent />;
+  }
+
   return (
     demandes && (
       <div className="dashboard">

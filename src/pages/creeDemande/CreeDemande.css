@@ -1,0 +1,131 @@
+.cree-demande-container {
+  padding: 20px;
+  background-color: #f5f7f9;
+  min-height: 100vh;
+}
+
+.breadcrumb-container {
+  padding-bottom: 20px;
+}
+
+.main-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 24px;
+}
+
+.card-header h2 {
+  margin: 0;
+  color: #262626;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.card-header p {
+  margin: 8px 0 0;
+  color: #8c8c8c;
+}
+
+.form-steps {
+  margin: 0 0 32px 0;
+}
+
+.step-content {
+  padding: 16px 0;
+}
+
+.info-alert {
+  margin-bottom: 24px;
+}
+
+.sequence-input {
+  padding: 8px 12px;
+}
+
+.custom-select, .custom-input, .custom-input-number {
+  width: 100%;
+}
+
+.custom-input-number {
+  padding: 4px 11px;
+}
+
+.delete-icon {
+  color: #ff4d4f;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.delete-icon.disabled {
+  color: #d9d9d9;
+  cursor: not-allowed;
+}
+
+.step-actions {
+  margin-top: 24px;
+  text-align: right;
+}
+
+.sequence-info {
+  margin-bottom: 16px;
+}
+
+.sequence-info .ant-tag {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.table-card {
+  margin-bottom: 24px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.table-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.summary-card {
+  margin-bottom: 24px;
+}
+
+.summary-row {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.item-card {
+  margin-bottom: 12px;
+}
+
+.item-card:last-child {
+  margin-bottom: 0;
+}
+
+.editable-row:hover {
+  background-color: #fafafa;
+}
+
+@media (max-width: 768px) {
+  .cree-demande-container {
+    padding: 12px;
+  }
+  
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

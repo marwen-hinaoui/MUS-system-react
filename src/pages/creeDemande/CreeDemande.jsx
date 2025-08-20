@@ -5,11 +5,12 @@ import {
   Form,
   Table,
   notification,
-  Spin,
   Breadcrumb,
   Tooltip,
   Empty,
   InputNumber,
+  Col,
+  Row,
 } from "antd";
 import CardComponent from "../../components/card/cardComponent";
 import {
@@ -18,16 +19,21 @@ import {
 } from "../../components/notificationComponent/openNotification";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { MdAdd, MdDelete, MdOutlineLibraryAdd } from "react-icons/md";
+import {
+  MdDelete,
+  MdOutlineLibraryAdd,
+  MdOutlineNumbers,
+} from "react-icons/md";
 import { COLORS } from "../../constant/colors";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import SharedButton from "../../components/button/button";
-import { PiStackPlusBold } from "react-icons/pi";
 import { get_project } from "../../api/get_project";
 import { get_sites } from "../../api/get_sites";
 import { get_lieuDetection } from "../../api/get_lieuDetection";
 import { create_demande_api } from "../../api/create_demande_api";
 import { useDispatch, useSelector } from "react-redux";
+import { IoIosCheckmarkCircle } from "react-icons/io";
+import LaodingComponent from "../../components/loadingComponent/loadingComponent";
 
 const { Option } = Select;
 const breadcrumb = [
@@ -75,7 +81,8 @@ const CreeDemande = () => {
     setLieuDetection(resLieu.resData.data);
   };
 
-  if (!data || !projects || !sites || !lieuDetection) return <Spin />;
+  if (!data || !projects || !sites || !lieuDetection)
+    return <LaodingComponent />;
 
   // validate sequence
   const handleSequenceChange = (val) => {
@@ -169,7 +176,7 @@ const CreeDemande = () => {
           onChange={(val) => handleChange(record.key, "partNumber", val)}
           showSearch
           optionFilterProp="children"
-          style={{ width: "100%", height: "37.7px" }}
+          style={{ width: "100%", height: "34px" }}
         >
           {partNumbers.map((p) => (
             <Option key={p.partNumber} value={p.partNumber}>
@@ -203,7 +210,7 @@ const CreeDemande = () => {
             disabled={!record.partNumber}
             showSearch
             optionFilterProp="children"
-            style={{ width: "100%", height: "37.7px" }}
+            style={{ width: "100%", height: "34px" }}
           >
             {availablePatterns.map((pat, i) => (
               <Option key={i} value={pat}>
@@ -219,7 +226,11 @@ const CreeDemande = () => {
       dataIndex: "material",
       key: "material",
       render: (text, record) => (
-        <Input style={{ padding: "7px" }} value={record.material} readOnly />
+        <Input
+          style={{ width: "100%", height: "34px" }}
+          value={record.material}
+          readOnly
+        />
       ),
     },
     {
@@ -238,7 +249,7 @@ const CreeDemande = () => {
           }
           showSearch
           optionFilterProp="children"
-          style={{ width: "100%", height: "37.7px" }}
+          style={{ width: "100%", height: "34px" }}
         >
           {data.DefautCMS.map((def) => (
             <Option
@@ -260,7 +271,8 @@ const CreeDemande = () => {
         <InputNumber
           min={0}
           max={999}
-          // style={{ padding: "7px" }}
+          // style={{ padding: "3px" }}
+          style={{ width: "100%", height: "34px" }}
           onChange={(val) => handleChange(record.key, "quantite", val)}
           value={record.quantite}
         />
@@ -362,87 +374,90 @@ const CreeDemande = () => {
       </div>
       <Form layout="vertical" onFinish={onSubmit}>
         {/* <CardComponent padding={"10px"} margin={"0 0 10px 0"}> */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 5,
-            width: "100%",
-          }}
-        >
-          <div style={{ width: "20%" }}>
-            <Form.Item
-              label="Sequence"
-              validateStatus={!sequenceValid && sequence ? "error" : ""}
-              help={
-                !sequenceValid && sequence
-                  ? "Invalid sequence or not in CMS"
-                  : ""
-              }
-            >
-              <Input
-                style={{
-                  padding: "7px",
-                  margin: "0",
-                }}
-                value={sequence}
-                onChange={(e) => handleSequenceChange(e.target.value)}
-                maxLength={12}
-              />
-            </Form.Item>
-
-            <Form.Item label="Site">
-              <Select
-                value={demande.id_site}
-                placeholder="Select site"
-                onChange={(val) => handleSelectChange("id_site", val)}
-                showSearch
-                optionFilterProp="children"
-                style={{ width: "100%", height: "37.7px" }}
+        <CardComponent padding={"7px"}>
+          <Row gutter={24}>
+            <Col xs={24} sm={12} md={6}>
+              <Form.Item
+                label="Sequence"
+                validateStatus={!sequenceValid && sequence ? "error" : ""}
+                help={
+                  !sequenceValid && sequence
+                    ? "Invalid sequence or not in CMS"
+                    : ""
+                }
               >
-                {sites.map((rec) => (
-                  <Option key={rec.nom} value={rec.id}>
-                    {rec.nom}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </div>
-          <div style={{ width: "20%" }}>
-            <Form.Item label="Projet">
-              <Select
-                placeholder="Select projet"
-                value={demande.id_projet}
-                onChange={(val) => handleSelectChange("id_projet", val)}
-                showSearch
-                optionFilterProp="children"
-                style={{ width: "100%", height: "37.7px" }}
-              >
-                {projects.map((rec) => (
-                  <Option key={rec.nom} value={rec.id}>
-                    {rec.nom}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item label="Lieu detection">
-              <Select
-                placeholder="Lieu detection"
-                value={demande.id_lieuDetection}
-                onChange={(val) => handleSelectChange("id_lieuDetection", val)}
-                showSearch
-                optionFilterProp="children"
-                style={{ width: "100%", height: "37.7px" }}
-              >
-                {lieuDetection.map((rec) => (
-                  <Option key={rec.nom} value={rec.id}>
-                    {rec.nom}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </div>
-        </div>
+                <Input
+                  style={{ height: "34px" }}
+                  value={sequence}
+                  onChange={(e) => handleSequenceChange(e.target.value)}
+                  maxLength={12}
+                  prefix={<MdOutlineNumbers />}
+                  suffix={
+                    sequenceValid && (
+                      <IoIosCheckmarkCircle style={{ color: "green" }} />
+                    )
+                  }
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Form.Item label="Site" required>
+                <Select
+                  style={{ height: "34px" }}
+                  value={demande.id_site}
+                  placeholder="Select site"
+                  onChange={(val) => handleSelectChange("id_site", val)}
+                  showSearch
+                  optionFilterProp="children"
+                >
+                  {sites.map((rec) => (
+                    <Option key={rec.id} value={rec.id}>
+                      {rec.nom}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Form.Item label="Projet" required>
+                <Select
+                  style={{ height: "34px" }}
+                  placeholder="Select projet"
+                  value={demande.id_projet}
+                  onChange={(val) => handleSelectChange("id_projet", val)}
+                  showSearch
+                  optionFilterProp="children"
+                >
+                  {projects.map((rec) => (
+                    <Option key={rec.id} value={rec.id}>
+                      {rec.nom}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Form.Item label="Lieu detection" required>
+                <Select
+                  style={{ height: "34px" }}
+                  placeholder="Lieu detection"
+                  value={demande.id_lieuDetection}
+                  onChange={(val) =>
+                    handleSelectChange("id_lieuDetection", val)
+                  }
+                  showSearch
+                  optionFilterProp="children"
+                >
+                  {lieuDetection.map((rec) => (
+                    <Option key={rec.id} value={rec.id}>
+                      {rec.nom}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        </CardComponent>
         {/* </CardComponent> */}
 
         {/* {sequenceValid && ( */}
@@ -478,11 +493,11 @@ const CreeDemande = () => {
             <Form.Item>
               <CardComponent>
                 <SharedButton
-                  padding={"11px"}
+                  padding={"17px 11px"}
                   colorText={COLORS.BLACK}
                   callBack={handleAddRow}
                   name={"Ajout sub demande"}
-                  icon={<MdOutlineLibraryAdd />}
+                  // icon={<MdOutlineLibraryAdd />}
                 />
               </CardComponent>
             </Form.Item>
@@ -490,13 +505,13 @@ const CreeDemande = () => {
           <Form.Item>
             <CardComponent>
               <SharedButton
-                icon={<PiStackPlusBold size={ICONSIZE.SMALL} />}
-                padding={"11px"}
+                icon={<MdOutlineLibraryAdd size={ICONSIZE.SMALL} />}
+                padding={"17px 11px"}
                 type="primary"
                 // color={COLORS.LearRed}
                 name={"Enregistrer"}
-                color={subDemandes.length === 0 ? COLORS.Gray3 : COLORS.LearRed}
-                disabled={subDemandes.length === 0}
+                color={COLORS.LearRed}
+                disabled={!sequenceValid || subDemandes.length === 0}
               />
             </CardComponent>
           </Form.Item>

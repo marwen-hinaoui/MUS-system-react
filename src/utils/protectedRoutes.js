@@ -13,6 +13,7 @@ import { COLORS } from "../constant/colors";
 const bgStyles = {
   backgroundColor: COLORS.BG,
 };
+
 export const ProtectedRoutes = ({ children, allowedRoles }) => {
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
   const token = useSelector((state) => state.app.tokenValue);

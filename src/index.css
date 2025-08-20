@@ -62,7 +62,7 @@ p {
 
 .dashboard {
   max-width: 100%;
-  padding: 13px 13px 0 13px;
+  padding: 10px 10px 0 10px;
 }
 
 .ant-row-no-hover:hover > td {

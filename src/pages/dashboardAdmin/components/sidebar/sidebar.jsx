@@ -11,6 +11,7 @@ import { LuSettings } from "react-icons/lu";
 import { PiStackPlusBold } from "react-icons/pi";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { RxBarChart } from "react-icons/rx";
+import { MdOutlineLibraryAdd } from "react-icons/md";
 
 const { Sider } = Layout;
 
@@ -23,21 +24,21 @@ const navItems = [
   },
   {
     key: "cree_demande",
-    icon: <PiStackPlusBold size={ICONSIZE.SMALL} />,
+    icon: <MdOutlineLibraryAdd size={ICONSIZE.SMALL} />,
     label: "Creation demande",
     route: "/admin/cree_demande",
-  },
-  {
-    key: "statistics",
-    icon: <RxBarChart size={ICONSIZE.SMALL} />,
-    label: "Statistics",
-    route: "/admin/statistics",
   },
   {
     key: "gestion_user",
     icon: <LuSettings size={ICONSIZE.SMALL} />,
     label: "Gestion utilisateurs",
     route: "/admin/users",
+  },
+  {
+    key: "statistics",
+    icon: <RxBarChart size={ICONSIZE.SMALL} />,
+    label: "Statistics",
+    route: "/admin/statistics",
   },
 ];
 
