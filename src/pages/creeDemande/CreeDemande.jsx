@@ -9,6 +9,7 @@ import {
   Breadcrumb,
   Tooltip,
   Empty,
+  InputNumber,
 } from "antd";
 import CardComponent from "../../components/card/cardComponent";
 import {
@@ -19,7 +20,7 @@ import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { MdAdd, MdDelete, MdOutlineLibraryAdd } from "react-icons/md";
 import { COLORS } from "../../constant/colors";
-import { ICONSIZE } from "../../constant/FontSizes";
+import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import SharedButton from "../../components/button/button";
 import { PiStackPlusBold } from "react-icons/pi";
 import { get_project } from "../../api/get_project";
@@ -89,6 +90,7 @@ const CreeDemande = () => {
             partNumber: "",
             pattern: "",
             material: "",
+            quantite: "",
           },
         ]);
       } else if (val.length === 12) {
@@ -112,7 +114,7 @@ const CreeDemande = () => {
         key: Date.now(),
         partNumber: "",
         pattern: "",
-        material: "",
+        quantite: "",
       },
     ]);
   };
@@ -255,9 +257,11 @@ const CreeDemande = () => {
       dataIndex: "quantite",
       key: "quantite",
       render: (text, record) => (
-        <Input
-          style={{ padding: "7px" }}
-
+        <InputNumber
+          min={0}
+          max={999}
+          // style={{ padding: "7px" }}
+          onChange={(val) => handleChange(record.key, "quantite", val)}
           value={record.quantite}
         />
       ),
@@ -304,10 +308,17 @@ const CreeDemande = () => {
     if (
       subDemandes.some(
         (row) =>
-          !row.partNumber || !row.pattern || !row.material || !row.code_defaut
+          !row.partNumber ||
+          !row.pattern ||
+          !row.material ||
+          !row.code_defaut ||
+          !row.quantite
       )
     ) {
-      openNotification(api, "Veillez saisie Part number, pattern, defaut");
+      openNotification(
+        api,
+        "Veillez saisie Part number, pattern, defaut, quantite"
+      );
       return;
     }
     const cleanSubDemandes = subDemandes.map(({ key, ...rest }) => rest);
@@ -347,7 +358,7 @@ const CreeDemande = () => {
     <div className="dashboard">
       {contextHolder}
       <div style={{ paddingBottom: "13px" }}>
-        <Breadcrumb items={breadcrumb} />
+        <Breadcrumb style={{ fontSize: FONTSIZE.PRIMARY }} items={breadcrumb} />
       </div>
       <Form layout="vertical" onFinish={onSubmit}>
         {/* <CardComponent padding={"10px"} margin={"0 0 10px 0"}> */}
@@ -448,6 +459,7 @@ const CreeDemande = () => {
               columns={columns}
               pagination={false}
               rowKey="key"
+              size="small"
               locale={{
                 emptyText: <Empty description="Aucune donnée trouvée" />,
               }}

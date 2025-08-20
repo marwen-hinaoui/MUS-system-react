@@ -135,7 +135,7 @@ const DashboardDemandeur = () => {
 
         <>
           <div className="py-2"></div>
-          <TableDashboardReadOnly data={responseDataDemande} />
+          {/* <TableDashboardReadOnly data={responseDataDemande} /> */}
         </>
       </div>
     )

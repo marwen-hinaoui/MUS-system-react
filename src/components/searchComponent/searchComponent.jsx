@@ -13,8 +13,8 @@ const SearchComponent = () => {
     if (demandeData) {
       const term = searchTerm.toLowerCase();
       const filtered = demandeData.filter((item) =>
-        Object.values(item.numDemandeMUS).some((val) =>
-          String(item.numDemandeMUS).toLowerCase().includes(term)
+        Object.values(item.numDemande).some((val) =>
+          String(item.numDemande).toLowerCase().includes(term)
         )
       );
       dispatch(set_data_searching(filtered));

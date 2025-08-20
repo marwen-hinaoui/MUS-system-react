@@ -137,7 +137,7 @@ const DashboardAgentStock = () => {
       {responseDataDemande ? (
         <>
           <div className="py-2"></div>
-          <TableDemandeReadWrite data={responseDataDemande} />
+          {/* <TableDemandeReadWrite data={responseDataDemande} /> */}
         </>
       ) : (
         <Empty />

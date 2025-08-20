@@ -14,11 +14,11 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
         open={open}
       >
         <p>{row.id}</p>
-        <p>{row.site}</p>
-        <p>{row.projet}</p>
-        <p>{row.sequance}</p>
+        <p>{row.siteNom}</p>
+        <p>{row.projetNom}</p>
+        <p>{row.Sequance}</p>
         <p>{row.date_creation}</p>
-        <p>{row.status}</p>
+        <p>{row.statusDemande}</p>
 
         <div className="d-flex justify-content-end">
           <div className="pe-1">
@@ -42,7 +42,7 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
             )}
           </div>
 
-          {row.status === "En cours" &&
+          {row.statusDemande === "En cours" &&
             (role === "Admin" || role === "AGENT_MUS") && (
               /* Backend Check status before change in db */
               <Popconfirm

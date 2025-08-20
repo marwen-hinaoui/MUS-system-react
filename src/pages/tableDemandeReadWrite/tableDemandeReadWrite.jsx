@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tooltip, Empty, Tag } from "antd";
+import { Table, Empty } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   set_data_searching,
@@ -23,7 +23,7 @@ const TableDemandeReadWrite = ({ data }) => {
   const openDrawer = useSelector((state) => state.app.openDrawer);
   const role = useSelector((state) => state.app.role);
 
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedRow, setSelectedRow] = useState();
   // const isLoading = useSelector((state) => state.app.isLoading);
 
   useEffect(() => {
@@ -59,26 +59,31 @@ const TableDemandeReadWrite = ({ data }) => {
           </div>
         );
       },
-      dataIndex: "numDemandeMUS",
-      sorter: (a, b) => a.numDemandeMUS.localeCompare(b.numDemandeMUS),
+      dataIndex: "numDemande",
+      sorter: (a, b) => a.numDemande.localeCompare(b.numDemande),
+    },
+
+    {
+      title: "Séquence",
+      dataIndex: "Sequence",
     },
     {
       title: "Site",
-      dataIndex: "site",
-      filters: [...new Set(data.map((d) => d.site))].map((site) => ({
+      dataIndex: "siteNom",
+      filters: [...new Set(data.map((d) => d.siteNom))].map((site) => ({
         text: site,
         value: site,
       })),
-      onFilter: (value, record) => record.site === value,
+      onFilter: (value, record) => record.siteNom === value,
     },
     {
       title: "Projet",
-      dataIndex: "projet",
-      filters: [...new Set(data.map((d) => d.projet))].map((projet) => ({
+      dataIndex: "projetNom",
+      filters: [...new Set(data.map((d) => d.projetNom))].map((projet) => ({
         text: projet,
         value: projet,
       })),
-      onFilter: (value, record) => record.projet === value,
+      onFilter: (value, record) => record.projetNom === value,
     },
 
     {
@@ -88,13 +93,13 @@ const TableDemandeReadWrite = ({ data }) => {
     },
     {
       title: "Statut",
-      dataIndex: "status",
+      dataIndex: "statusDemande",
 
-      filters: [...new Set(data.map((d) => d.status))].map((status) => ({
+      filters: [...new Set(data.map((d) => d.statusDemande))].map((status) => ({
         text: status,
         value: status,
       })),
-      onFilter: (value, record) => record.status === value,
+      onFilter: (value, record) => record.statusDemande === value,
       render: (status) => {
         const tagProps = {
           Cloturé: {

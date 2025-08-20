@@ -5,11 +5,9 @@ const baseApiUrl = process.env.BASE_URL_API || "http://127.0.0.1:3000/api";
 const apiInstance = axios.create({
   baseURL: baseApiUrl,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
-  withCredentials: true
+  withCredentials: true,
 });
 
-
-
-export default apiInstance
+export default apiInstance;

@@ -9,149 +9,15 @@ import { CloseCircleOutlined } from "@ant-design/icons";
 import { SiDatabricks } from "react-icons/si";
 import { Breadcrumb } from "antd/lib";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
+import { FONTSIZE } from "../../../constant/FontSizes";
+import { useEffect, useState } from "react";
+import { get_all_demande_api } from "../../../api/get_all_demande_api";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  set_data_searching,
+  set_demande_data_table,
+} from "../../../redux/slices";
 
-const responseDataDemande = [
-  {
-    id: 1,
-    numDemandeMUS: "MUS1234567",
-    site: "Brown field",
-    projet: "AYGO",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "En cours",
-    date_creation: "28-12-2025",
-  },
-
-  {
-    id: 2,
-    numDemandeMUS: "MUS1234567",
-
-    site: "Brown field",
-    projet: "AYGO",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "Cloturé",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 3,
-    numDemandeMUS: "MUS1234567",
-
-    site: "Brown field",
-    projet: "AYGO",
-    part_number: "L162425111GABC",
-    Qte_demande: 1,
-    status: "Hors stock",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 4,
-    numDemandeMUS: "MUS1234567",
-
-    site: "Green field",
-    projet: "MBEAM",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "Cloturé",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 5,
-    numDemandeMUS: "MUS1234567",
-
-    site: "Brown field",
-    projet: "AYGO",
-    part_number: "L162425111GABC",
-    Qte_demande: 8,
-    status: "Cloturé",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 6,
-    numDemandeMUS: "MUS1234567",
-
-    site: "Green field",
-    projet: "MBEAM",
-    part_number: "L162425111GABC",
-    Qte_demande: 5,
-    status: "Cloturé",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 7,
-    numDemandeMUS: "MUS1234567",
-
-    site: "Green field",
-    projet: "MBEAM",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "Hors stock",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 8,
-    numDemandeMUS: "MUS1234567",
-
-    site: "Green field",
-    projet: "MBEAM",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "Cloturé",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 9,
-    numDemandeMUS: "MUS1234567",
-
-    site: "Green field",
-    projet: "MBEAM",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "Cloturé",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 10,
-    numDemandeMUS: "MUS1234567",
-    site: "Green field",
-    projet: "MBEAM",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "En cours",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 11,
-    numDemandeMUS: "MUS1234567",
-    site: "Green field",
-    projet: "MBEAM",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "En cours",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 12,
-    numDemandeMUS: "MUS1234567",
-    site: "Green field",
-    projet: "MBEAM",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "En cours",
-    date_creation: "28-12-2025",
-  },
-  {
-    id: 13,
-    numDemandeMUS: "MUS1234567",
-    site: "Green field",
-    projet: "MBEAM",
-    part_number: "L162425111GABC",
-    Qte_demande: 3,
-    status: "En cours",
-    date_creation: "28-12-2025",
-  },
-];
-const total = responseDataDemande.length;
 const breadcrumb = [
   {
     title: <RiDashboardHorizontalLine />,
@@ -162,11 +28,25 @@ const breadcrumb = [
   },
 ];
 const DashboardAdmin = () => {
+  const [demandes, setDemande] = useState([]);
+  const [total, setTotal] = useState(0);
+  const token = useSelector((state) => state.app.tokenValue);
+  const dispatch = useDispatch();
+
+
+
+  useEffect(() => {
+    dispatch(set_demande_data_table(demandes));
+    dispatch(set_data_searching(demandes));
+  }, [dispatch]);
   return (
-    responseDataDemande && (
+    demandes && (
       <div className="dashboard">
         <div style={{ paddingBottom: "13px" }}>
-          <Breadcrumb items={breadcrumb} />
+          <Breadcrumb
+            style={{ fontSize: FONTSIZE.PRIMARY }}
+            items={breadcrumb}
+          />
         </div>
 
         <div className="flex-container">
@@ -201,7 +81,7 @@ const DashboardAdmin = () => {
 
         <div style={{ padding: "17px 0 0 0" }}>
           <CardComponent>
-            <TableDemandeReadWrite data={responseDataDemande} />
+            <TableDemandeReadWrite data={demandes} />
           </CardComponent>
         </div>
       </div>
