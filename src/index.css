@@ -86,3 +86,12 @@ p {
 /* .ant-row-no-hover:hover {
   cursor: default !important;
 } */
+/* .ant-modal {
+  width: 70% !important; 
+}
+.ant-modal .ant-modal-content {
+  border-radius: 5px !important;
+} */
+.ant-btn{
+  border-radius: 5px;
+}

@@ -13,17 +13,18 @@ const SharedButton = ({
   colorText,
   callBack,
   disabled,
+  fontSize,
 }) => {
   const styles = {
-    padding: !padding ? "20px" : padding,
+    padding: padding && padding,
     width: width,
-    fontSize: FONTSIZE.PRIMARY,
+    fontSize: fontSize && fontSize,
     backgroundColor: color ? color : "none",
     color: !colorText ? COLORS.WHITE : colorText,
     border: "none",
     borderRadius: "5px",
   };
-  if (loading) {
+  // if (loading) {
     return (
       <Button
         htmlType="submit"
@@ -32,40 +33,43 @@ const SharedButton = ({
         className={margins}
         onClick={callBack}
         disabled={disabled}
+        loading={loading}
       >
         <span className="d-flex align-items-center">
           {icon && icon}
-          <span
+          {/* <span
             style={{
               paddingLeft: "5px",
             }}
-          ></span>
+          ></span>*/}
           {name && name}
         </span>
       </Button>
     );
-  } else {
-    return (
-      <Button
-        htmlType="submit"
-        style={styles}
-        variant="solid"
-        className={margins}
-        onClick={callBack}
-        disabled={disabled}
-      >
-        <p className="d-flex align-items-center">
-          {icon && icon}
-          <span
-            style={{
-              paddingLeft: "5px",
-            }}
-          ></span>
-          {name && name}
-        </p>
-      </Button>
-    );
-  }
+  // }
+  // else {
+  //   return (
+  //     <Button
+  //       htmlType="submit"
+  //       style={styles}
+  //       variant="solid"
+  //       className={margins}
+  //       onClick={callBack}
+  //       disabled={disabled}
+  //       loading={loading}
+  //     >
+  //       <p className="d-flex align-items-center">
+  //         {icon && icon}
+  //         {/* <span
+  //           style={{
+  //             paddingLeft: "5px",
+  //           }}
+  //         ></span> */}
+  //         {name && name}
+  //       </p>
+  //     </Button>
+  //   );
+  // }
 };
 
 export default SharedButton;

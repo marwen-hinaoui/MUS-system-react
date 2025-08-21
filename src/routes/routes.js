@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-
 import { LoginProvider } from "../utils/loginProvider";
 import Login from "../pages/login/login";
 import { ProtectedRoutes } from "../utils/protectedRoutes";
@@ -9,18 +8,21 @@ import DashboardAgentStock from "../pages/dashboardAgentStock/dashboard/dashboar
 import DashboardAdmin from "../pages/dashboardAdmin/dashboard/dashboard";
 import ChartPage from "../pages/dashboardAdmin/charts/chartPage";
 import CreeDemande from "../pages/creeDemande/CreeDemande";
+import DetailsDemande from "../pages/detailsDemande/detailsDemandes";
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <LoginProvider>
         <Routes>
-          {/*Login Route*/}
+          {/* Public Routes */}
           <Route path="/" element={<Login />} />
           <Route path="*" element={<>404</>} />
           <Route path="/unauthorized" element={<>unauthorized</>} />
 
-          {/*Dashboard Demandeur Route*/}
+          {/* Shared routes */}
+
+          {/* Demandeur dashboard */}
           <Route path="/demandeur">
             <Route
               index
@@ -31,10 +33,20 @@ const AppRoutes = () => {
               }
             />
             <Route
+              path="details/:id"
+              element={
+                <ProtectedRoutes
+                  allowedRoles={["DEMANDEUR"]}
+                >
+                  <DetailsDemande />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
               path="cree_demande"
               element={
                 <ProtectedRoutes allowedRoles={["DEMANDEUR"]}>
-                  <>cree_demande demandeur</>
+                  <CreeDemande />
                 </ProtectedRoutes>
               }
             />
@@ -48,13 +60,23 @@ const AppRoutes = () => {
             />
           </Route>
 
-          {/*Dashboard Demandeur agent*/}
+          {/* Agent dashboard */}
           <Route path="/agent">
             <Route
               index
               element={
                 <ProtectedRoutes allowedRoles={["AGENT_MUS"]}>
                   <DashboardAgentStock />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="details/:id"
+              element={
+                <ProtectedRoutes
+                  allowedRoles={["AGENT_MUS"]}
+                >
+                  <DetailsDemande />
                 </ProtectedRoutes>
               }
             />
@@ -76,8 +98,8 @@ const AppRoutes = () => {
             />
           </Route>
 
-          {/*Dashboard Demandeur admin*/}
-          <Route path="/admin">
+          {/* Admin dashboard */}
+          <Route path="/Admin">
             <Route
               index
               element={
@@ -86,11 +108,13 @@ const AppRoutes = () => {
                 </ProtectedRoutes>
               }
             />
-            <Route
-              path="users"
+             <Route
+              path="details/:id"
               element={
-                <ProtectedRoutes allowedRoles={["Admin"]}>
-                  <>Gestion user</>
+                <ProtectedRoutes
+                  allowedRoles={["Admin"]}
+                >
+                  <DetailsDemande />
                 </ProtectedRoutes>
               }
             />
@@ -99,6 +123,14 @@ const AppRoutes = () => {
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <CreeDemande />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="users"
+              element={
+                <ProtectedRoutes allowedRoles={["Admin"]}>
+                  <>Gestion user</>
                 </ProtectedRoutes>
               }
             />

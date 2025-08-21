@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Empty } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  set_data_searching,
-  set_demande_data_table,
-  set_drawer,
-} from "../../redux/slices";
-
-import DrawerComponent from "../../components/drawer/drawerComponent";
+import { set_data_searching, set_demande_data_table } from "../../redux/slices";
 
 import { COLORS } from "../../constant/colors";
 import { ICONSIZE } from "../../constant/FontSizes";
@@ -16,29 +10,18 @@ import "./tableDemandeReadWrite.css";
 import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import SearchComponent from "../../components/searchComponent/searchComponent";
+import {  useNavigate } from "react-router-dom";
 
 const TableDemandeReadWrite = ({ data }) => {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const searchingData = useSelector((state) => state.app.searchingData);
-  const openDrawer = useSelector((state) => state.app.openDrawer);
-  const role = useSelector((state) => state.app.role);
-
-  const [selectedRow, setSelectedRow] = useState();
-  // const isLoading = useSelector((state) => state.app.isLoading);
 
   useEffect(() => {
     dispatch(set_demande_data_table(data));
     dispatch(set_data_searching(data));
   }, [dispatch, data]);
-
-  const handleDetails = (row) => {
-    setSelectedRow(row);
-    dispatch(set_drawer(true));
-  };
-
-  const handleCloseDrawer = () => {
-    dispatch(set_drawer(false));
-  };
 
   const columns = [
     {
@@ -144,7 +127,7 @@ const TableDemandeReadWrite = ({ data }) => {
           <div>
             <div
               style={{ cursor: "pointer", fontWeight: 500 }}
-              onClick={() => handleDetails(row)}
+              onClick={() => navigate(`details/${row.id}`, { state: { id: row.id } })}
             >
               Voir
             </div>
@@ -169,16 +152,14 @@ const TableDemandeReadWrite = ({ data }) => {
           showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
         }}
         locale={{
-          emptyText: <Empty description="Aucune donnée trouvée" />,
+          emptyText: (
+            <Empty
+              description="Aucune donnée trouvée"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ),
         }}
         size="small"
-      />
-
-      <DrawerComponent
-        role={role}
-        open={openDrawer}
-        handleCloseDrawer={handleCloseDrawer}
-        row={selectedRow}
       />
     </>
   );

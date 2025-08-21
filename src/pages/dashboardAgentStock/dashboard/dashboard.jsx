@@ -140,7 +140,10 @@ const DashboardAgentStock = () => {
           {/* <TableDemandeReadWrite data={responseDataDemande} /> */}
         </>
       ) : (
-        <Empty />
+        <Empty
+          description="Aucune donnée trouvée"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
       )}
     </div>
   );

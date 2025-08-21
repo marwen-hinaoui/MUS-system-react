@@ -11,6 +11,7 @@ import {
   InputNumber,
   Col,
   Row,
+  Button,
 } from "antd";
 import CardComponent from "../../components/card/cardComponent";
 import {
@@ -18,7 +19,7 @@ import {
   openNotificationSuccess,
 } from "../../components/notificationComponent/openNotification";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   MdDelete,
   MdOutlineLibraryAdd,
@@ -32,8 +33,8 @@ import { get_sites } from "../../api/get_sites";
 import { get_lieuDetection } from "../../api/get_lieuDetection";
 import { create_demande_api } from "../../api/create_demande_api";
 import { useDispatch, useSelector } from "react-redux";
-import { IoIosCheckmarkCircle } from "react-icons/io";
 import LaodingComponent from "../../components/loadingComponent/loadingComponent";
+import { set_loading } from "../../redux/slices";
 
 const { Option } = Select;
 const breadcrumb = [
@@ -57,11 +58,12 @@ const CreeDemande = () => {
   const [sequenceValid, setSequenceValid] = useState(false);
   const [subDemandes, setSubDemandes] = useState([]);
   const [api, contextHolder] = notification.useNotification();
-
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [demande, setDemande] = useState({});
   const token = useSelector((state) => state.app.tokenValue);
   const id_userMUS = useSelector((state) => state.app.userId);
-
+  const isLoading = useSelector((state) => state.app.isLoading);
   useEffect(() => {
     fetch("/cms.json")
       .then((res) => res.json())
@@ -347,9 +349,8 @@ const CreeDemande = () => {
     console.log(demandeToSubmit);
 
     if (token) {
-      console.log(token);
+      dispatch(set_loading(true));
       const resDemande = await create_demande_api(demandeToSubmit, token);
-
       console.log(resDemande);
       if (resDemande.resData) {
         if (resDemande.resData.data.statusDemande) {
@@ -360,6 +361,7 @@ const CreeDemande = () => {
       } else {
         openNotification(api, resDemande.resError.message);
       }
+      dispatch(set_loading(false));
       setSequence("");
       setSequenceValid(false);
       setSubDemandes([]);
@@ -392,11 +394,6 @@ const CreeDemande = () => {
                   onChange={(e) => handleSequenceChange(e.target.value)}
                   maxLength={12}
                   prefix={<MdOutlineNumbers />}
-                  suffix={
-                    sequenceValid && (
-                      <IoIosCheckmarkCircle style={{ color: "green" }} />
-                    )
-                  }
                 />
               </Form.Item>
             </Col>
@@ -476,7 +473,12 @@ const CreeDemande = () => {
               rowKey="key"
               size="small"
               locale={{
-                emptyText: <Empty description="Aucune donnée trouvée" />,
+                emptyText: (
+                  <Empty
+                    description="Aucune donnée trouvée"
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  />
+                ),
               }}
             />
           </CardComponent>
@@ -491,29 +493,21 @@ const CreeDemande = () => {
         >
           <div style={{ paddingRight: "10px" }}>
             <Form.Item>
-              <CardComponent>
-                <SharedButton
-                  padding={"17px 11px"}
-                  colorText={COLORS.BLACK}
-                  callBack={handleAddRow}
-                  name={"Ajout sub demande"}
-                  // icon={<MdOutlineLibraryAdd />}
-                />
-              </CardComponent>
+              <Button onClick={handleAddRow} danger>
+                Ajout sub demande
+              </Button>
             </Form.Item>
           </div>
           <Form.Item>
-            <CardComponent>
-              <SharedButton
-                icon={<MdOutlineLibraryAdd size={ICONSIZE.SMALL} />}
-                padding={"17px 11px"}
-                type="primary"
-                // color={COLORS.LearRed}
-                name={"Enregistrer"}
-                color={COLORS.LearRed}
-                disabled={!sequenceValid || subDemandes.length === 0}
-              />
-            </CardComponent>
+            <SharedButton
+              loading={isLoading}
+              // padding={"17px 11px"}
+              type="primary"
+              // color={COLORS.LearRed}
+              name={"Enregistrer"}
+              color={COLORS.LearRed}
+              disabled={!sequenceValid || subDemandes.length === 0}
+            />
           </Form.Item>
         </div>
       </Form>

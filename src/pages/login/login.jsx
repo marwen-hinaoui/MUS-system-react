@@ -78,9 +78,14 @@ const Login = () => {
     }
     dispatch(set_loading(false));
   };
-  if (isLoading) {
-    return <LoadingComponent />;
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div>
+  //       {contextHolder}
+  //       <LoadingComponent />
+  //     </div>
+  //   );
+  // }
   return isAuthenticated === false ? (
     <Flex align="center" justify="center" className={styles.container}>
       {contextHolder}
@@ -91,7 +96,6 @@ const Login = () => {
           width: "200px",
         }}
       >
-        {/* <p className="text-center fw-5">Make Up Area System</p> */}
         <Divider />
       </div>
 
@@ -152,9 +156,11 @@ const Login = () => {
 
             <SharedButton
               color={COLORS.LearRed}
+              fontSize={FONTSIZE.PRIMARY}
               margins={"mt-1"}
               width={"100%"}
               name={"Connexion"}
+                padding={'17px 0'}
               // loading={loading}
             />
             {/* <div className="w-100 text-end mt-2">
