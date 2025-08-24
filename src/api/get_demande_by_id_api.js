@@ -1,8 +1,8 @@
 import apiInstance from "./axios";
 
-export const get_demande_by_id_api = async (id) => {
+export const get_demande_by_id_api = async (id, token) => {
   try {
-    const res = await apiInstance.get(`details/${id}`, {
+    const res = await apiInstance.get(`demande/details/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

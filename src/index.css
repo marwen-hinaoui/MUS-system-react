@@ -92,6 +92,26 @@ p {
 .ant-modal .ant-modal-content {
   border-radius: 5px !important;
 } */
-.ant-btn{
+.ant-btn {
   border-radius: 5px;
 }
+.ant-input {
+  border-radius: 4px !important;
+}
+
+.ant-btn-color-dangerous{
+  box-shadow:none
+}
+
+/* .ant-input:hover,
+.ant-input-affix-wrapper:hover {
+  border-color: #EE3124 !important;
+}
+
+
+.ant-input:focus,
+.ant-input-focused,
+.ant-input-affix-wrapper-focused {
+  border-color: #EE3124 !important; 
+  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2) !important;
+} */

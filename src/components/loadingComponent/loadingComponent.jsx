@@ -1,11 +1,11 @@
 import { Spin } from "antd/lib";
 
-const LoadingComponent = () => {
+const LoadingComponent = ({header}) => {
   return (
     <div
       style={{
         width: "100%",
-        height: "100vh",
+        height: header ? 'calc( 100vh - 63px )' : "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

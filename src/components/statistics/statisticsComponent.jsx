@@ -1,9 +1,13 @@
+import { useState, useEffect } from "react";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 import { Progress, Tooltip } from "antd";
 import CardComponent from "../card/cardComponent";
 import { IoStatsChart } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import './statisticsComponent.css'
+import { RxBarChart } from "react-icons/rx";
+
 
 const StatisticsComponent = ({
   icon,
@@ -13,6 +17,30 @@ const StatisticsComponent = ({
   valuePercent,
 }) => {
   const navigate = useNavigate();
+  const [animatedPercent, setAnimatedPercent] = useState(0);
+
+  // Animate percent value when it changes
+  useEffect(() => {
+    let start = 0;
+    const end = valuePercent;
+    const duration = 800; // ms
+    const stepTime = 15; // ms per frame
+    const steps = Math.ceil(duration / stepTime);
+    let currentStep = 0;
+
+    const interval = setInterval(() => {
+      currentStep++;
+      const progress = Math.min(
+        start + (end - start) * (currentStep / steps),
+        end
+      );
+      setAnimatedPercent(Math.round(progress));
+      if (currentStep >= steps) clearInterval(interval);
+    }, stepTime);
+
+    return () => clearInterval(interval);
+  }, [valuePercent]);
+
   const getProgressColor = () => {
     if (status === "Cloturé") {
       if (valuePercent >= 80) return COLORS.GREEN;
@@ -27,8 +55,19 @@ const StatisticsComponent = ({
   };
 
   return (
-    <CardComponent width={"25%"} padding={"16px"} hoverable>
-      <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+    <CardComponent height={"90px"} padding={'12px'} width={"25%"} hoverable>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 15,
+          height: "100%",
+          // position: "absolute",
+          // top: "50%",
+          // left: "50%",
+          // transform: "translate(-50%, -50%)",
+        }}
+      >
         {/* Icon */}
         <div
           style={{
@@ -37,8 +76,8 @@ const StatisticsComponent = ({
             justifyContent: "center",
             background: `rgba(238, 49, 36, 0.082)`,
             borderRadius: "50%",
-            width: 55,
-            height: 55,
+            width: 50,
+            height: 50,
             color: COLORS.LearRed,
             fontSize: ICONSIZE.PRIMARY,
           }}
@@ -51,7 +90,7 @@ const StatisticsComponent = ({
           <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
             <span
               style={{
-                fontSize: FONTSIZE.XTITLE,
+                fontSize: FONTSIZE.TITLE,
                 fontWeight: 700,
                 color: COLORS.BLACK,
               }}
@@ -61,7 +100,6 @@ const StatisticsComponent = ({
             {status !== "Total" && (
               <span
                 style={{
-                  color: COLORS.GRAY,
                   fontSize: FONTSIZE.XPRIMARY,
                   fontWeight: 500,
                 }}
@@ -85,21 +123,21 @@ const StatisticsComponent = ({
         {status !== "Total" && (
           <Progress
             type="circle"
-            percent={valuePercent}
-            size={65}
+            percent={animatedPercent}
+            size={70}
             strokeColor={getProgressColor()}
-            strokeWidth={8}
+            strokeWidth={7}
           />
         )}
-        {/* {status === "Total" && (
+        {status === "Total" && (
           <Tooltip title="Voir courbes">
-            <IoStatsChart
+            <RxBarChart
               onClick={() => navigate("/admin/statistics")}
               style={{ cursor: "pointer" }}
               size={ICONSIZE.PRIMARY}
             />
           </Tooltip>
-        )} */}
+        )}
       </div>
     </CardComponent>
   );

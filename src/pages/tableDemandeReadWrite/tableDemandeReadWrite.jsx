@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Empty } from "antd";
+import { Table, Empty, DatePicker, Button, Space } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { set_data_searching, set_demande_data_table } from "../../redux/slices";
 
@@ -10,17 +10,21 @@ import "./tableDemandeReadWrite.css";
 import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import SearchComponent from "../../components/searchComponent/searchComponent";
-import {  useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 const TableDemandeReadWrite = ({ data }) => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
   const searchingData = useSelector((state) => state.app.searchingData);
+  const { RangePicker } = DatePicker;
 
   useEffect(() => {
-    dispatch(set_demande_data_table(data));
-    dispatch(set_data_searching(data));
+    const sortedData = [...data].sort(
+      (a, b) => new Date(b.date_creation) - new Date(a.date_creation)
+    );
+    dispatch(set_demande_data_table(sortedData));
+    dispatch(set_data_searching(sortedData));
   }, [dispatch, data]);
 
   const columns = [
@@ -68,12 +72,64 @@ const TableDemandeReadWrite = ({ data }) => {
       })),
       onFilter: (value, record) => record.projetNom === value,
     },
-
     {
       title: "Date création",
       dataIndex: "date_creation",
-      sorter: (a, b) => new Date(a.date_creation) - new Date(b.date_creation),
+
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }) => (
+        <div style={{ padding: 8 }}>
+          <RangePicker
+            format="YYYY-MM-DD"
+            value={selectedKeys[0] || []}
+            onChange={(dates) => {
+              setSelectedKeys(dates ? [dates] : []);
+            }}
+            style={{ marginBottom: 8, display: "flex" }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => confirm()}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Filtrer
+            </Button>
+            <Button
+              onClick={() => {
+                clearFilters();
+                confirm();
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Réinitialiser
+            </Button>
+          </Space>
+        </div>
+      ),
+      onFilter: (value, record) => {
+        if (!value || value.length === 0) return true;
+        const recordDate = dayjs(record.date_creation, "YYYY-MM-DD");
+        return (
+          recordDate.isSame(value[0], "day") ||
+          recordDate.isSame(value[1], "day") ||
+          (recordDate.isAfter(value[0], "day") &&
+            recordDate.isBefore(value[1], "day"))
+        );
+      },
     },
+    // {
+    //   title: "Date création",
+    //   dataIndex: "date_creation",
+    //   sorter: (a, b) => new Date(a.date_creation) - new Date(b.date_creation),
+    //   defaultSortOrder: "descend",
+    // },
     {
       title: "Statut",
       dataIndex: "statusDemande",
@@ -95,14 +151,14 @@ const TableDemandeReadWrite = ({ data }) => {
           },
           "En cours": {
             icon: (
-              <AiOutlineHistory color={COLORS.Blue} size={ICONSIZE.PRIMARY} />
+              <AiOutlineHistory color={COLORS.Blue} size={ICONSIZE.SMALL} />
             ),
           },
           "Hors stock": {
             icon: (
               <IoCloseCircleOutline
                 color={COLORS.LearRed}
-                size={ICONSIZE.PRIMARY}
+                size={ICONSIZE.SMALL}
               />
             ),
           },
@@ -127,7 +183,9 @@ const TableDemandeReadWrite = ({ data }) => {
           <div>
             <div
               style={{ cursor: "pointer", fontWeight: 500 }}
-              onClick={() => navigate(`details/${row.id}`, { state: { id: row.id } })}
+              onClick={() =>
+                navigate(`details/${row.id}`, { state: { id: row.id } })
+              }
             >
               Voir
             </div>

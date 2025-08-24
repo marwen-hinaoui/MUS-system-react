@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Input,
   Select,
@@ -19,12 +19,8 @@ import {
   openNotificationSuccess,
 } from "../../components/notificationComponent/openNotification";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  MdDelete,
-  MdOutlineLibraryAdd,
-  MdOutlineNumbers,
-} from "react-icons/md";
+import { Link } from "react-router-dom";
+import { MdDelete, MdOutlineNumbers } from "react-icons/md";
 import { COLORS } from "../../constant/colors";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import SharedButton from "../../components/button/button";
@@ -33,8 +29,8 @@ import { get_sites } from "../../api/get_sites";
 import { get_lieuDetection } from "../../api/get_lieuDetection";
 import { create_demande_api } from "../../api/create_demande_api";
 import { useDispatch, useSelector } from "react-redux";
-import LaodingComponent from "../../components/loadingComponent/loadingComponent";
 import { set_loading } from "../../redux/slices";
+import LoadingComponent from "../../components/loadingComponent/loadingComponent";
 
 const { Option } = Select;
 const breadcrumb = [
@@ -58,7 +54,6 @@ const CreeDemande = () => {
   const [sequenceValid, setSequenceValid] = useState(false);
   const [subDemandes, setSubDemandes] = useState([]);
   const [api, contextHolder] = notification.useNotification();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [demande, setDemande] = useState({});
   const token = useSelector((state) => state.app.tokenValue);
@@ -84,8 +79,7 @@ const CreeDemande = () => {
   };
 
   if (!data || !projects || !sites || !lieuDetection)
-    return <LaodingComponent />;
-
+    return <LoadingComponent header={true} />;
   // validate sequence
   const handleSequenceChange = (val) => {
     setSequence(val);
@@ -97,8 +91,8 @@ const CreeDemande = () => {
           {
             key: Date.now(),
             partNumber: "",
-            pattern: "",
-            material: "",
+            patternNumb: "",
+            materialPartNumber: "",
             quantite: "",
           },
         ]);
@@ -122,7 +116,7 @@ const CreeDemande = () => {
       {
         key: Date.now(),
         partNumber: "",
-        pattern: "",
+        patternNumb: "",
         quantite: "",
       },
     ]);
@@ -143,7 +137,7 @@ const CreeDemande = () => {
           updatedRow[field] = value;
         }
 
-        if (field === "pattern") {
+        if (field === "patternNumb") {
           const partObj = partNumbers.find(
             (p) => p.partNumber === updatedRow.partNumber
           );
@@ -152,7 +146,7 @@ const CreeDemande = () => {
             partMaterials.find((mat) =>
               materialsMap[mat]?.includes(Number(value))
             ) || "";
-          updatedRow.material = matchedMaterial;
+          updatedRow.materialPartNumber = matchedMaterial;
         }
 
         return updatedRow;
@@ -168,13 +162,14 @@ const CreeDemande = () => {
 
   const columns = [
     {
-      title: "Part Number",
+      title: "Part number",
+
       dataIndex: "partNumber",
       key: "partNumber",
       render: (text, record) => (
         <Select
           value={record.partNumber || undefined}
-          placeholder="Select Part Number"
+          placeholder="Select Part number"
           onChange={(val) => handleChange(record.key, "partNumber", val)}
           showSearch
           optionFilterProp="children"
@@ -191,8 +186,8 @@ const CreeDemande = () => {
 
     {
       title: "Pattern",
-      dataIndex: "pattern",
-      key: "pattern",
+      dataIndex: "patternNumb",
+      key: "patternNumb",
       render: (text, record) => {
         const partObj = partNumbers.find(
           (p) => p.partNumber === record.partNumber
@@ -206,9 +201,9 @@ const CreeDemande = () => {
 
         return (
           <Select
-            value={record.pattern || undefined}
+            value={record.patternNumb || undefined}
             placeholder="Select Pattern"
-            onChange={(val) => handleChange(record.key, "pattern", val)}
+            onChange={(val) => handleChange(record.key, "patternNumb", val)}
             disabled={!record.partNumber}
             showSearch
             optionFilterProp="children"
@@ -225,12 +220,12 @@ const CreeDemande = () => {
     },
     {
       title: "Material",
-      dataIndex: "material",
-      key: "material",
+      dataIndex: "materialPartNumber",
+      key: "materialPartNumber",
       render: (text, record) => (
         <Input
           style={{ width: "100%", height: "34px" }}
-          value={record.material}
+          value={record.materialPartNumber}
           readOnly
         />
       ),
@@ -323,8 +318,8 @@ const CreeDemande = () => {
       subDemandes.some(
         (row) =>
           !row.partNumber ||
-          !row.pattern ||
-          !row.material ||
+          !row.patternNumb ||
+          !row.materialPartNumber ||
           !row.code_defaut ||
           !row.quantite
       )
@@ -372,7 +367,10 @@ const CreeDemande = () => {
     <div className="dashboard">
       {contextHolder}
       <div style={{ paddingBottom: "13px" }}>
-        <Breadcrumb style={{ fontSize: FONTSIZE.PRIMARY }} items={breadcrumb} />
+        <Breadcrumb
+          style={{ fontSize: FONTSIZE.XPRIMARY }}
+          items={breadcrumb}
+        />
       </div>
       <Form layout="vertical" onFinish={onSubmit}>
         {/* <CardComponent padding={"10px"} margin={"0 0 10px 0"}> */}
@@ -393,7 +391,6 @@ const CreeDemande = () => {
                   value={sequence}
                   onChange={(e) => handleSequenceChange(e.target.value)}
                   maxLength={12}
-                  prefix={<MdOutlineNumbers />}
                 />
               </Form.Item>
             </Col>

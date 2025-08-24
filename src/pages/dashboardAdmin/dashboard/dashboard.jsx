@@ -9,7 +9,7 @@ import { CloseCircleOutlined } from "@ant-design/icons";
 import { SiDatabricks } from "react-icons/si";
 import { Breadcrumb } from "antd/lib";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
-import { FONTSIZE } from "../../../constant/FontSizes";
+import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { useEffect, useState } from "react";
 import { get_all_demande_api } from "../../../api/get_all_demande_api";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,12 +35,17 @@ const DashboardAdmin = () => {
   const token = useSelector((state) => state.app.tokenValue);
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.app.isLoading);
-
+  const [enCours, setEnCours] = useState(0);
+  const [horsStock, setHorsStock] = useState(0);
+  const [cloture, setCloture] = useState(0);
   const get_all_demande = async () => {
     dispatch(set_loading(true));
     const resDemandes = await get_all_demande_api(token);
     setDemande(resDemandes.resData.data);
     setTotal(resDemandes.resData.data.length);
+    setEnCours(resDemandes.resData.data.filter((d) => d.statusDemande === "En cours").length);
+    setHorsStock(resDemandes.resData.data.filter((d) => d.statusDemande === "Hors stock").length);
+    setCloture(resDemandes.resData.data.filter((d) => d.statusDemande === "Cloturé").length);
     dispatch(set_loading(false));
   };
 
@@ -51,7 +56,7 @@ const DashboardAdmin = () => {
   }, [dispatch]);
 
   if (isLoading) {
-    return <LoadingComponent />;
+    return <LoadingComponent header={true} />;
   }
 
   return (
@@ -59,31 +64,31 @@ const DashboardAdmin = () => {
       <div className="dashboard">
         <div style={{ paddingBottom: "13px" }}>
           <Breadcrumb
-            style={{ fontSize: FONTSIZE.PRIMARY }}
+            style={{ fontSize: FONTSIZE.XPRIMARY }}
             items={breadcrumb}
           />
         </div>
 
         <div className="flex-container">
           <StatisticsComponent
-            icon={<AiOutlineHistory />}
+            icon={<AiOutlineHistory  size={ICONSIZE.XLARGE}  />}
             status="En cours"
-            valuePercent={(6 / total) * 100}
-            chiffre={6}
+            valuePercent={((enCours / total) * 100).toFixed(0)}
+            chiffre={enCours}
             total={total}
           />
           <StatisticsComponent
-            icon={<CloseCircleOutlined />}
+            icon={<CloseCircleOutlined  size={ICONSIZE.XLARGE}  />}
             status="Hors stock"
-            valuePercent={(2 / total) * 100}
-            chiffre={2}
+            valuePercent={((horsStock / total) * 100).toFixed(0)}
+            chiffre={horsStock}
             total={total}
           />
           <StatisticsComponent
-            icon={<AiOutlineCheckCircle />}
+            icon={<AiOutlineCheckCircle size={ICONSIZE.XLARGE} />}
             status="Cloturé"
-            valuePercent={(3 / total) * 100}
-            chiffre={3}
+            valuePercent={((cloture / total) * 100).toFixed(0)}
+            chiffre={cloture}
             total={total}
           />
           <StatisticsComponent

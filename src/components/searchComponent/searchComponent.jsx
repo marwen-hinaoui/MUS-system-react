@@ -25,7 +25,7 @@ const SearchComponent = () => {
     }
   }, [searchTerm, demandeData, dispatch]);
   if (isLoading) {
-    return <LoadingComponent />;
+    return <LoadingComponent header={true} />;
   }
   return (
     <div>
