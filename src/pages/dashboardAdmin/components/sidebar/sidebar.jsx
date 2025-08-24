@@ -70,16 +70,25 @@ const DashboardSidebarAdmin = () => {
           box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
           border-right: 1px solid rgba(0, 0, 0, 0.05);
         }
+          .ant-menu-item{
+              border-radius: 5px !important;
+          
+          }
         .ant-menu-light .ant-menu-item-selected {
           background-color: ${COLORS.LearRed} !important;
           color: ${COLORS.WHITE} !important;
+              border-radius: 5px !important;
         }
         .ant-menu-light .ant-menu-item:hover {
           background-color: ${COLORS.LearRed} !important;
           color: ${COLORS.WHITE} !important;
+              border-radius: 5px !important;
+
         }
         .ant-menu-light .ant-menu-item:hover .anticon {
           color: ${COLORS.WHITE} !important;
+              border-radius: 5px !important;
+
         }
       `}</style>
 

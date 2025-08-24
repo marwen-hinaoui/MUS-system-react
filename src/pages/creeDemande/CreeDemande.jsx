@@ -452,13 +452,33 @@ const CreeDemande = () => {
             </Col>
           </Row>
         </CardComponent>
-        {/* </CardComponent> */}
-
-        {/* {sequenceValid && ( */}
+        {/* <Button onClick={handleAddRow} danger> */}
         <div
           style={{
-            paddingTop: "17px",
+            padding: "17px 0",
+            display: "flex",
+            justifyContent: "end",
           }}
+        >
+          <CardComponent>
+            <SharedButton
+              loading={isLoading}
+              type="primary"
+              // color={COLORS.LearRed}
+              colorText={COLORS.BLACK}
+              callBack={handleAddRow}
+              name={"Ajout sub demande"}
+              color={COLORS.WHITE}
+            />
+          </CardComponent>
+        </div>
+
+        {/* {sequenceValid && ( */}
+
+        <div
+        // style={{
+        //   paddingTop: "17px",
+        // }}
         >
           <CardComponent>
             <Table
@@ -488,13 +508,7 @@ const CreeDemande = () => {
             paddingBottom: "17px",
           }}
         >
-          <div style={{ paddingRight: "10px" }}>
-            <Form.Item>
-              <Button onClick={handleAddRow} danger>
-                Ajout sub demande
-              </Button>
-            </Form.Item>
-          </div>
+          <div style={{ paddingRight: "10px" }}></div>
           <Form.Item>
             <SharedButton
               loading={isLoading}
