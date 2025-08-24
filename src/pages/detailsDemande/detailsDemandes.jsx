@@ -264,6 +264,7 @@ const DetailsDemande = () => {
                     title="Confirmation"
                     description="Voulez-vous confirmer les modifications?"
                     onConfirm={() => alert("deleted")}
+                    icon={null}
                   >
                     <Button
                       style={{
@@ -281,6 +282,7 @@ const DetailsDemande = () => {
                   title="Supprimer"
                   description="Voulez-vous supprimer cette demande?"
                   onConfirm={() => alert("deleted")}
+                  icon={null}
                 >
                   <Button
                     style={{
@@ -304,6 +306,7 @@ const DetailsDemande = () => {
                 title="Confirmation"
                 description="Voulez-vous cloturer cette demande?"
                 onConfirm={() => alert("confirmed")}
+                icon={null}
               >
                 <Button
                   style={{

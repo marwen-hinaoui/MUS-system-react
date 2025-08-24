@@ -27,6 +27,7 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
                 title="Supprimer"
                 description="Voulez-vous supprimer cette demande?"
                 onConfirm={() => alert("deleted")}
+                icon={null}
               >
                 <Button
                   style={{
@@ -49,6 +50,7 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
                 title="Confirmation"
                 description="Voulez-vous cloturer cette demande?"
                 onConfirm={() => alert("confirmed")}
+                icon={null}
               >
                 <Button
                   style={{

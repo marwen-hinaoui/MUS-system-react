@@ -99,8 +99,8 @@ p {
   border-radius: 4px !important;
 }
 
-.ant-btn-color-dangerous{
-  box-shadow:none
+.ant-btn-color-dangerous {
+  box-shadow: none;
 }
 
 /* .ant-input:hover,
@@ -115,3 +115,7 @@ p {
   border-color: #EE3124 !important; 
   box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2) !important;
 } */
+
+.ant-popover-inner {
+  border-radius: 4px !important ;
+}
