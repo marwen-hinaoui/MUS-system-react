@@ -9,9 +9,10 @@
 // } from "../../redux/slices";
 // import { ICONSIZE } from "../../constant/FontSizes";
 // import DrawerComponent from "../../components/drawer/drawerComponent";
+// import { RxCheckCircled } from "react-icons/rx";
 
 // import { IoCloseCircleOutline, IoDocumentText } from "react-icons/io5";
-// import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
+// import { TbHistory } from "react-icons/tb";
 // import SearchComponent from "../../components/searchComponent/searchComponent";
 
 // const TableDashboardReadOnly = ({ data }) => {
@@ -97,7 +98,7 @@
 //         const tagProps = {
 //           Cloturé: {
 //             icon: (
-//               <AiOutlineCheckCircle
+//               <RxCheckCircled
 //                 color={COLORS.GREEN}
 //                 size={ICONSIZE.PRIMARY}
 //               />
@@ -105,7 +106,8 @@
 //           },
 //           "En cours": {
 //             icon: (
-//               <AiOutlineHistory color={COLORS.Blue} size={ICONSIZE.PRIMARY} />
+            //                 <TbHistory color={COLORS.Blue} strokeWidth={1.7} size={ICONSIZE.XLARGE}  />
+            
 //             ),
 //           },
 //           "Hors stock": {

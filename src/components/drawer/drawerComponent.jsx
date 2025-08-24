@@ -1,7 +1,7 @@
 import { Button, Drawer, Popconfirm } from "antd";
 import { COLORS } from "../../constant/colors";
 import { MdDelete } from "react-icons/md";
-import { AiOutlineCheckCircle } from "react-icons/ai";
+import { RxCheckCircled } from "react-icons/rx";
 
 const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
   return (
@@ -58,7 +58,7 @@ const DrawerComponent = ({ open, row, handleCloseDrawer, role }) => {
                     color: COLORS.WHITE,
                   }}
                 >
-                  <AiOutlineCheckCircle />
+                  <RxCheckCircled />
                 </Button>
               </Popconfirm>
             )}

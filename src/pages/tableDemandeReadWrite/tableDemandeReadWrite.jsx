@@ -7,11 +7,12 @@ import { COLORS } from "../../constant/colors";
 import { ICONSIZE } from "../../constant/FontSizes";
 import "./tableDemandeReadWrite.css";
 
-import { AiOutlineCheckCircle, AiOutlineHistory } from "react-icons/ai";
+import { TbHistory } from "react-icons/tb";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import SearchComponent from "../../components/searchComponent/searchComponent";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import { RxCheckCircled } from "react-icons/rx";
 const TableDemandeReadWrite = ({ data }) => {
   const navigate = useNavigate();
 
@@ -143,15 +144,16 @@ const TableDemandeReadWrite = ({ data }) => {
         const tagProps = {
           Cloturé: {
             icon: (
-              <AiOutlineCheckCircle
-                color={COLORS.GREEN}
-                size={ICONSIZE.PRIMARY}
-              />
+              <RxCheckCircled color={COLORS.GREEN} size={ICONSIZE.PRIMARY} />
             ),
           },
           "En cours": {
             icon: (
-              <AiOutlineHistory color={COLORS.Blue} size={ICONSIZE.SMALL} />
+              <TbHistory
+                color={COLORS.Blue}
+                strokeWidth={1.7}
+                size={ICONSIZE.SMALL}
+              />
             ),
           },
           "Hors stock": {

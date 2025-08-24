@@ -11,6 +11,6 @@ export const ICONSIZE = {
   SMALL: 18,
   PRIMARY: 23,
   LARGE: 24,
-  XLARGE: 27,
+  XLARGE: 26,
   BACKGROUND: 120,
 };

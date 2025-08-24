@@ -13,7 +13,6 @@ import {
 } from "antd";
 import { COLORS } from "../../constant/colors";
 import { MdDelete } from "react-icons/md";
-import { AiOutlineCheckCircle } from "react-icons/ai";
 import CardComponent from "../../components/card/cardComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
@@ -24,7 +23,8 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 import { get_demande_by_id_api } from "../../api/get_demande_by_id_api";
 import { set_loading } from "../../redux/slices";
 import LoadingComponent from "../../components/loadingComponent/loadingComponent";
-const { Option } = Select;
+import { RxCheckCircled } from "react-icons/rx";
+import { FiEdit } from "react-icons/fi";
 
 const DetailsDemande = () => {
   const [subDemandes, setSubDemandes] = useState([]);
@@ -149,10 +149,7 @@ const DetailsDemande = () => {
         <div>
           {record.disponible ? (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <AiOutlineCheckCircle
-                color={COLORS.GREEN}
-                size={ICONSIZE.SMALL}
-              />
+              <RxCheckCircled color={COLORS.GREEN} size={ICONSIZE.SMALL} />
               <p> En stock</p>
             </div>
           ) : (
@@ -261,22 +258,42 @@ const DetailsDemande = () => {
         >
           <div className="pe-1">
             {role === "Admin" && (
-              <Popconfirm
-                title="Supprimer"
-                description="Voulez-vous supprimer cette demande?"
-                onConfirm={() => alert("deleted")}
-              >
-                <Button
-                  style={{
-                    padding: "10px",
-                    border: "none",
-                    background: COLORS.LearRed,
-                    color: COLORS.WHITE,
-                  }}
+              <div className="d-flex">
+                <div className="pe-1">
+                  <Popconfirm
+                    title="Confirmation"
+                    description="Voulez-vous confirmer les modifications?"
+                    onConfirm={() => alert("deleted")}
+                  >
+                    <Button
+                      style={{
+                        padding: "10px",
+                        border: "none",
+                        background: COLORS.Blue,
+                        color: COLORS.WHITE,
+                      }}
+                    >
+                      <FiEdit />
+                    </Button>
+                  </Popconfirm>
+                </div>
+                <Popconfirm
+                  title="Supprimer"
+                  description="Voulez-vous supprimer cette demande?"
+                  onConfirm={() => alert("deleted")}
                 >
-                  <MdDelete />
-                </Button>
-              </Popconfirm>
+                  <Button
+                    style={{
+                      padding: "10px",
+                      border: "none",
+                      background: COLORS.LearRed,
+                      color: COLORS.WHITE,
+                    }}
+                  >
+                    <MdDelete />
+                  </Button>
+                </Popconfirm>
+              </div>
             )}
           </div>
 
@@ -296,7 +313,7 @@ const DetailsDemande = () => {
                     color: COLORS.WHITE,
                   }}
                 >
-                  <AiOutlineCheckCircle />
+                  <RxCheckCircled />
                 </Button>
               </Popconfirm>
             )}
