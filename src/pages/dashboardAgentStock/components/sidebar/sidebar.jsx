@@ -10,6 +10,7 @@ import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { BsPerson } from "react-icons/bs";
 import { SiDatabricks } from "react-icons/si";
 import { PiGridNine } from "react-icons/pi";
+import { LuLayers } from "react-icons/lu";
 
 const { Sider } = Layout;
 
@@ -23,7 +24,7 @@ const navItems = [
 
   {
     key: "stock",
-    icon: <SiDatabricks size={ICONSIZE.SMALL} />,
+    icon: <LuLayers size={ICONSIZE.SMALL} />,
     label: "Gestion stock",
     route: "/agent/stock",
   },

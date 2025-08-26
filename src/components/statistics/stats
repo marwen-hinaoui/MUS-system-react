@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
-import { Progress } from "antd";
+import { Progress, Tooltip } from "antd";
 import CardComponent from "../card/cardComponent";
+import { IoStatsChartOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import "./statisticsComponent.css";
 
@@ -16,6 +17,7 @@ const StatisticsComponent = ({
   const navigate = useNavigate();
   const [animatedPercent, setAnimatedPercent] = useState(0);
 
+  // Animate percent value when it changes
   useEffect(() => {
     let start = 0;
     const end = valuePercent;
@@ -51,7 +53,7 @@ const StatisticsComponent = ({
   };
 
   return (
-    <CardComponent height={"100px"} padding={"0 19px"} width={"25%"} hoverable>
+    <CardComponent height={"90px"} padding={"12px"} width={"25%"} hoverable>
       <div
         style={{
           display: "flex",
@@ -72,8 +74,8 @@ const StatisticsComponent = ({
             justifyContent: "center",
             background: `rgba(238, 49, 36, 0.082)`,
             borderRadius: "50%",
-            width: 47,
-            height: 47,
+            width: 50,
+            height: 50,
             color: COLORS.LearRed,
             fontSize: ICONSIZE.PRIMARY,
           }}
@@ -106,8 +108,8 @@ const StatisticsComponent = ({
           </div>
           <div
             style={{
-              fontSize: FONTSIZE.XPRIMARY + 1,
-              color: COLORS.BLACK,
+              fontSize: FONTSIZE.XPRIMARY,
+              color: COLORS.Gray3,
               marginTop: 4,
             }}
           >
@@ -120,9 +122,9 @@ const StatisticsComponent = ({
           <Progress
             type="circle"
             percent={animatedPercent}
-            size={85}
+            size={70}
             strokeColor={getProgressColor()}
-            strokeWidth={6}
+            strokeWidth={7}
           />
         )}
         {/* {status === "Total" && (

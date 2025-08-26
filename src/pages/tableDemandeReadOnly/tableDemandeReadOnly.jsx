@@ -16,7 +16,7 @@
 // import SearchComponent from "../../components/searchComponent/searchComponent";
 
 // const TableDashboardReadOnly = ({ data }) => {
-//   const [selectedRow, setSelectedRow] = useState(null);
+//   const [selectedRow, setSelectedRow] = useState([]);
 //   const dispatch = useDispatch();
 //   const searchingData = useSelector((state) => state.app.searchingData);
 

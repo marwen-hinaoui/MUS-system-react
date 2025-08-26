@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
+import CardComponent from "../card/cardComponent";
 
 const SharedButton = ({
   name,
@@ -25,7 +26,8 @@ const SharedButton = ({
     borderRadius: "5px",
   };
   // if (loading) {
-    return (
+  return (
+    <CardComponent>
       <Button
         htmlType="submit"
         style={styles}
@@ -45,7 +47,8 @@ const SharedButton = ({
           {name && name}
         </span>
       </Button>
-    );
+    </CardComponent>
+  );
   // }
   // else {
   //   return (

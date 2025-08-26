@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { Layout, Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
-import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-// import { MdOutlineAddToPhotos } from "react-icons/md";
-import { LuSettings } from "react-icons/lu";
-import { PiStackPlusBold } from "react-icons/pi";
-import { RiDashboardHorizontalLine } from "react-icons/ri";
-import { RxBarChart } from "react-icons/rx";
+import { LuLayers, LuSettings } from "react-icons/lu";
 import { MdOutlineLibraryAdd } from "react-icons/md";
+import { RiDashboardHorizontalLine } from "react-icons/ri";
 
 const { Sider } = Layout;
 
@@ -25,8 +22,14 @@ const navItems = [
   {
     key: "cree_demande",
     icon: <MdOutlineLibraryAdd size={ICONSIZE.SMALL} />,
-    label: "Creation demande",
+    label: "Création demande",
     route: "/admin/cree_demande",
+  },
+  {
+    key: "stock",
+    icon: <LuLayers size={ICONSIZE.SMALL} />,
+    label: "Gestion stock",
+    route: "/admin/stock",
   },
   {
     key: "gestion_user",
@@ -34,20 +37,11 @@ const navItems = [
     label: "Gestion utilisateurs",
     route: "/admin/users",
   },
-  {
-    key: "statistics",
-    icon: <RxBarChart size={ICONSIZE.SMALL} />,
-    label: "Statistics",
-    route: "/admin/statistics",
-  },
 ];
 
 const DashboardSidebarAdmin = () => {
-  const [collapsed, setCollapsed] = useState(true);
   const collapsedSidebar = useSelector((state) => state.app.collapsedSidebar);
   const location = useLocation();
-
-  const [activePage, setActivePage] = useState("demande");
   const navigate = useNavigate();
 
   const selectedKey = navItems.find(
@@ -58,82 +52,63 @@ const DashboardSidebarAdmin = () => {
     const item = navItems.find((item) => item.key === key);
     if (item && item.route) {
       navigate(item.route);
-      setActivePage(key);
     }
   };
 
   return (
-    <Layout style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif" }}>
+    <Sider
+      collapsible
+      collapsed={collapsedSidebar}
+      width={200}
+      collapsedWidth={60}
+      trigger={null}
+      style={{
+        height: "100vh",
+        position: "sticky",
+        top: 0,
+        left: 0,
+        overflow: "auto",
+        zIndex: 999,
+        backgroundColor: COLORS.WHITE,
+        boxShadow: "2px 0 8px rgba(0,0,0,0.1)",
+        borderRight: "1px solid rgba(0,0,0,0.05)",
+      }}
+    >
+      <div
+        style={{
+          height: "64px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: collapsedSidebar ? "center" : "flex-start",
+          paddingLeft: collapsedSidebar ? 0 : 16,
+          borderBottom: "1px solid rgba(0,0,0,0.05)",
+        }}
+      >
+        <img src={LearLogo} alt="Logo" style={{ width: 40 }} />
+      </div>
+
+      <Menu
+        theme="light"
+        selectedKeys={[selectedKey]}
+        onClick={handleMenuClick}
+        items={navItems}
+        style={{ borderRight: 0, fontSize: FONTSIZE.PRIMARY }}
+      />
+
       <style>{`
-        .ant-layout-sider {
-          background-color: ${COLORS.WHITE} !important;
-          box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-          border-right: 1px solid rgba(0, 0, 0, 0.05);
+        .ant-menu-item {
+          border-radius: 5px !important;
         }
-          .ant-menu-item{
-              border-radius: 5px !important;
-          
-          }
-        .ant-menu-light .ant-menu-item-selected {
-          background-color: ${COLORS.LearRed} !important;
-          color: ${COLORS.WHITE} !important;
-              border-radius: 5px !important;
-        }
+        .ant-menu-light .ant-menu-item-selected,
         .ant-menu-light .ant-menu-item:hover {
           background-color: ${COLORS.LearRed} !important;
           color: ${COLORS.WHITE} !important;
-              border-radius: 5px !important;
-
         }
         .ant-menu-light .ant-menu-item:hover .anticon {
           color: ${COLORS.WHITE} !important;
-              border-radius: 5px !important;
-
         }
       `}</style>
-
-      <Sider
-        collapsible
-        collapsed={collapsedSidebar}
-        onCollapse={setCollapsed}
-        width={200}
-        collapsedWidth={60}
-        trigger={null}
-        style={{
-          overflow: "auto",
-          height: "100vh",
-          position: "sticky",
-          zIndex: 999,
-          left: 0,
-          top: 0,
-        }}
-      >
-        <div
-          className="logo"
-          style={{
-            height: "64px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: collapsed ? "center" : "flex-start",
-            paddingLeft: collapsed ? "0" : "16px",
-            borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
-            fontSize: "1.25rem",
-            fontWeight: "bold",
-          }}
-        >
-          <img src={LearLogo} style={{ width: "40px" }} />
-        </div>
-
-        <Menu
-          theme="light"
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          onClick={handleMenuClick}
-          items={navItems}
-          style={{ borderRight: 0, fontSize: FONTSIZE.PRIMARY }}
-        />
-      </Sider>
-    </Layout>
+    </Sider>
   );
 };
 

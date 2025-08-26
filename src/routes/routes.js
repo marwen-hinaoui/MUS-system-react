@@ -9,6 +9,7 @@ import DashboardAdmin from "../pages/dashboardAdmin/dashboard/dashboard";
 import ChartPage from "../pages/dashboardAdmin/charts/chartPage";
 import CreeDemande from "../pages/creeDemande/CreeDemande";
 import DetailsDemande from "../pages/detailsDemande/detailsDemandes";
+import GestionStock from "../pages/gestionStock/gestionStock";
 
 const AppRoutes = () => {
   return (
@@ -35,9 +36,7 @@ const AppRoutes = () => {
             <Route
               path="details/:id"
               element={
-                <ProtectedRoutes
-                  allowedRoles={["DEMANDEUR"]}
-                >
+                <ProtectedRoutes allowedRoles={["DEMANDEUR"]}>
                   <DetailsDemande />
                 </ProtectedRoutes>
               }
@@ -73,9 +72,7 @@ const AppRoutes = () => {
             <Route
               path="details/:id"
               element={
-                <ProtectedRoutes
-                  allowedRoles={["AGENT_MUS"]}
-                >
+                <ProtectedRoutes allowedRoles={["AGENT_MUS"]}>
                   <DetailsDemande />
                 </ProtectedRoutes>
               }
@@ -84,7 +81,7 @@ const AppRoutes = () => {
               path="stock"
               element={
                 <ProtectedRoutes allowedRoles={["AGENT_MUS"]}>
-                  <>stock</>
+                  <GestionStock />
                 </ProtectedRoutes>
               }
             />
@@ -108,12 +105,10 @@ const AppRoutes = () => {
                 </ProtectedRoutes>
               }
             />
-             <Route
+            <Route
               path="details/:id"
               element={
-                <ProtectedRoutes
-                  allowedRoles={["Admin"]}
-                >
+                <ProtectedRoutes allowedRoles={["Admin"]}>
                   <DetailsDemande />
                 </ProtectedRoutes>
               }
@@ -123,6 +118,14 @@ const AppRoutes = () => {
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <CreeDemande />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="stock"
+              element={
+                <ProtectedRoutes allowedRoles={["Admin"]}>
+                  <GestionStock />
                 </ProtectedRoutes>
               }
             />

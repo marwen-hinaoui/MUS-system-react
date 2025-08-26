@@ -4,24 +4,24 @@ const appSlices = createSlice({
   name: "app",
   initialState: {
     tokenValue: null,
-    userId: null,
-    role: null,
-    fullname: null,
+    userId: "",
+    role: "",
+    fullname: "",
     isLoading: false,
-    errorMsg: null,
+    errorMsg: "",
     isAuthenticated: null,
-    redirection: null,
+    redirection: "",
     collapsedSidebar: true,
     openDrawer: false,
     searchingData: [],
-    demandeData: null,
+    demandeData: [],
   },
   reducers: {
     set_token: (state, action) => {
       state.tokenValue = action.payload;
       state.isLoading = false;
       state.isAuthenticated = true;
-      state.errorMsg = null;
+      state.errorMsg = "";
     },
     set_role: (state, action) => {
       state.role = action.payload;

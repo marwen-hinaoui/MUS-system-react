@@ -4,8 +4,6 @@ import TableDemandeReadWrite from "../../tableDemandeReadWrite/tableDemandeReadW
 
 import CardComponent from "../../../components/card/cardComponent";
 import StatisticsComponent from "../../../components/statistics/statisticsComponent";
-import { AiOutlineHistory } from "react-icons/ai";
-import { SiDatabricks } from "react-icons/si";
 import { Breadcrumb } from "antd/lib";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
@@ -67,7 +65,7 @@ const DashboardAdmin = () => {
     get_all_demande();
   }, [dispatch]);
 
-  if (isLoading) {
+  if (demandes.length === 0) {
     return <LoadingComponent header={true} />;
   }
 
@@ -82,38 +80,34 @@ const DashboardAdmin = () => {
         </div>
 
         <div className="flex-container">
+           <StatisticsComponent
+            icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.XLARGE + 2} />}
+            status="Total"
+            chiffre={total}
+            total={total}
+          />
           <StatisticsComponent
-            icon={
-              <TbHistory
-                strokeWidth={1.7}
-                size={ICONSIZE.XLARGE}
-              />
-            }
+            icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE + 2} />}
             status="En cours"
             valuePercent={((enCours / total) * 100).toFixed(0)}
             chiffre={enCours}
             total={total}
           />
           <StatisticsComponent
-            icon={<IoCloseCircleOutline size={ICONSIZE.XLARGE} />}
+            icon={<IoCloseCircleOutline size={ICONSIZE.XLARGE + 2} />}
             status="Hors stock"
             valuePercent={((horsStock / total) * 100).toFixed(0)}
             chiffre={horsStock}
             total={total}
           />
           <StatisticsComponent
-            icon={<RxCheckCircled size={ICONSIZE.XLARGE}  />}
-            status="Cloturé"
+            icon={<RxCheckCircled size={ICONSIZE.XLARGE + 2} />}
+            status="Livré"
             valuePercent={((cloture / total) * 100).toFixed(0)}
             chiffre={cloture}
             total={total}
           />
-          <StatisticsComponent
-            icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
-            status="Total"
-            chiffre={total}
-            total={total}
-          />
+         
         </div>
 
         <div style={{ padding: "17px 0 0 0" }}>

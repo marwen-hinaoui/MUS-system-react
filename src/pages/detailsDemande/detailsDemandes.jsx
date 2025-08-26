@@ -10,6 +10,7 @@ import {
   Row,
   Select,
   Table,
+  Tooltip,
 } from "antd";
 import { COLORS } from "../../constant/colors";
 import { MdDelete } from "react-icons/md";
@@ -28,7 +29,7 @@ import { FiEdit } from "react-icons/fi";
 
 const DetailsDemande = () => {
   const [subDemandes, setSubDemandes] = useState([]);
-  const [demandeMUS, setDemandeMUS] = useState();
+  const [demandeMUS, setDemandeMUS] = useState([]);
   const role = useSelector((state) => state.app.role);
   const token = useSelector((state) => state.app.tokenValue);
   const isLoading = useSelector((state) => state.app.isLoading);
@@ -165,7 +166,7 @@ const DetailsDemande = () => {
       ),
     },
   ];
-  if (isLoading) {
+  if (demandeMUS.length === 0 || subDemandes.length === 0) {
     return <LoadingComponent header={true} />;
   }
   return (
@@ -202,7 +203,7 @@ const DetailsDemande = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={6}>
-                <Form.Item label="Projet" required>
+                <Form.Item label="Projet" >
                   <Input
                     style={{ width: "100%", height: "34px" }}
                     value={demandeMUS.projetNom}
@@ -211,7 +212,7 @@ const DetailsDemande = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={6}>
-                <Form.Item label="Lieu detection" required>
+                <Form.Item label="Lieu detection" >
                   <Input
                     style={{ width: "100%", height: "34px" }}
                     // value={record.lei}
@@ -260,30 +261,27 @@ const DetailsDemande = () => {
             {role === "Admin" && (
               <div className="d-flex">
                 <div className="pe-1">
-                  <Popconfirm
-                    title="Confirmation"
-                    description="Voulez-vous confirmer les modifications?"
-                    onConfirm={() => alert("deleted")}
-                    icon={null}
+                  {/* <Tooltip title="Modification"> */}
+                  <Button
+                    style={{
+                      padding: "10px",
+                      border: "none",
+                      background: COLORS.Blue,
+                      color: COLORS.WHITE,
+                    }}
                   >
-                    <Button
-                      style={{
-                        padding: "10px",
-                        border: "none",
-                        background: COLORS.Blue,
-                        color: COLORS.WHITE,
-                      }}
-                    >
-                      <FiEdit />
-                    </Button>
-                  </Popconfirm>
+                    <FiEdit />
+                  </Button>
+                  {/* </Tooltip> */}
                 </div>
+
                 <Popconfirm
                   title="Supprimer"
                   description="Voulez-vous supprimer cette demande?"
                   onConfirm={() => alert("deleted")}
                   icon={null}
                 >
+                  {/* <Tooltip title="Supprimer"> */}
                   <Button
                     style={{
                       padding: "10px",
@@ -294,6 +292,7 @@ const DetailsDemande = () => {
                   >
                     <MdDelete />
                   </Button>
+                  {/* </Tooltip> */}
                 </Popconfirm>
               </div>
             )}
@@ -308,6 +307,7 @@ const DetailsDemande = () => {
                 onConfirm={() => alert("confirmed")}
                 icon={null}
               >
+                {/* <Tooltip title="Accepter"> */}
                 <Button
                   style={{
                     padding: "10px",
@@ -318,6 +318,7 @@ const DetailsDemande = () => {
                 >
                   <RxCheckCircled />
                 </Button>
+                {/* </Tooltip> */}
               </Popconfirm>
             )}
         </div>

@@ -23,6 +23,7 @@ code {
 
 .ant-notification-notice .ant-notification-notice-closable {
   display: flex !important;
+  border-radius: 4px !important;
 }
 /* .ant-notification-notice-wrapper {
   background: #ffcdd2 !important;
@@ -93,7 +94,7 @@ p {
   border-radius: 5px !important;
 } */
 .ant-btn {
-  border-radius: 5px;
+  border-radius: 4px;
 }
 .ant-input {
   border-radius: 4px !important;
@@ -118,4 +119,20 @@ p {
 
 .ant-popover-inner {
   border-radius: 4px !important ;
+}
+
+.ant-select-selector {
+  border-radius: 4px !important;
+}
+
+.ant-select-dropdown {
+  border-radius: 4px !important;
+}
+
+.ant-select-item {
+  border-radius: 4px !important; /* applies rounded corners to each option */
+}
+
+.ant-input-number {
+  border-radius: 4px !important;
 }
