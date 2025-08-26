@@ -73,65 +73,37 @@ const DashboardAdmin = () => {
     demandes && (
       <div className="dashboard">
         <div style={{ paddingBottom: "13px" }}>
-<<<<<<< HEAD
-          <Breadcrumb
-            style={{ fontSize: FONTSIZE.XPRIMARY }}
-            items={breadcrumb}
-          />
-        </div>
-
-        <div className="flex-container">
-           <StatisticsComponent
-            icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.XLARGE + 2} />}
-=======
           <h4>Dashboard</h4>
         </div>
 
         <div className="flex-container">
           <StatisticsComponent
-            icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.PRIMARY} />}
->>>>>>> c31ebc7 (aa)
+            icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.XLARGE + 2} />}
             status="Total"
             chiffre={total}
             total={total}
           />
           <StatisticsComponent
-<<<<<<< HEAD
             icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE + 2} />}
-=======
-            icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.PRIMARY} />}
->>>>>>> c31ebc7 (aa)
             status="En cours"
             valuePercent={((enCours / total) * 100).toFixed(0)}
             chiffre={enCours}
             total={total}
           />
           <StatisticsComponent
-<<<<<<< HEAD
             icon={<IoCloseCircleOutline size={ICONSIZE.XLARGE + 2} />}
-=======
-            icon={<IoCloseCircleOutline size={ICONSIZE.PRIMARY} />}
->>>>>>> c31ebc7 (aa)
             status="Hors stock"
             valuePercent={((horsStock / total) * 100).toFixed(0)}
             chiffre={horsStock}
             total={total}
           />
           <StatisticsComponent
-<<<<<<< HEAD
             icon={<RxCheckCircled size={ICONSIZE.XLARGE + 2} />}
-=======
-            icon={<RxCheckCircled size={ICONSIZE.PRIMARY} />}
->>>>>>> c31ebc7 (aa)
             status="Livré"
             valuePercent={((cloture / total) * 100).toFixed(0)}
             chiffre={cloture}
             total={total}
           />
-<<<<<<< HEAD
-         
-=======
->>>>>>> c31ebc7 (aa)
         </div>
 
         <div style={{ padding: "17px 0 0 0" }}>

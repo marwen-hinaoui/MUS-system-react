@@ -362,14 +362,7 @@ const CreeDemande = () => {
     <div className="dashboard">
       {contextHolder}
       <div style={{ paddingBottom: "13px" }}>
-<<<<<<< HEAD
-        <Breadcrumb
-          style={{ fontSize: FONTSIZE.XPRIMARY }}
-          items={breadcrumb}
-        />
-=======
-         <h4>Création de demande</h4>
->>>>>>> c31ebc7 (aa)
+        <h4>Création de demande</h4>
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSubmit}>
@@ -501,15 +494,11 @@ const CreeDemande = () => {
 
         <div
           style={{
-            padding: "17px 0",
+            paddingTop: "17px",
             display: "flex",
             justifyContent: "start",
           }}
-        >
-          <Button onClick={handleAddRow} color="danger" variant="outlined">
-            Ajouter une sous-demande
-          </Button>
-        </div>
+        ></div>
 
         <CardComponent>
           <Table
@@ -539,6 +528,11 @@ const CreeDemande = () => {
             paddingBottom: "17px",
           }}
         >
+          <div style={{ paddingRight: "7px" }}>
+            <Button onClick={handleAddRow} color="danger" variant="outlined">
+              Ajouter une sub-demande
+            </Button>
+          </div>
           <Form.Item>
             <SharedButton
               loading={isLoading}
@@ -547,6 +541,8 @@ const CreeDemande = () => {
               color={COLORS.LearRed}
             />
           </Form.Item>
+
+          {/* </div> */}
         </div>
       </Form>
     </div>
