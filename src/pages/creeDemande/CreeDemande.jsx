@@ -362,10 +362,14 @@ const CreeDemande = () => {
     <div className="dashboard">
       {contextHolder}
       <div style={{ paddingBottom: "13px" }}>
+<<<<<<< HEAD
         <Breadcrumb
           style={{ fontSize: FONTSIZE.XPRIMARY }}
           items={breadcrumb}
         />
+=======
+         <h4>Création de demande</h4>
+>>>>>>> c31ebc7 (aa)
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSubmit}>

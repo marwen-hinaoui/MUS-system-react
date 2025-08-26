@@ -174,7 +174,10 @@ const GestionStock = () => {
     { title: "Pattern", dataIndex: "patternNumb" },
     { title: "Quantite", dataIndex: "quantite" },
     { title: "Status", dataIndex: "status" },
+<<<<<<< HEAD
     
+=======
+>>>>>>> c31ebc7 (aa)
   ];
   if (allStock.length === 0) return <LoadingComponent header={true} />;
 
@@ -312,10 +315,14 @@ const GestionStock = () => {
 
         {/* Breadcrumb */}
         <div style={{ paddingBottom: "13px" }}>
+<<<<<<< HEAD
           <Breadcrumb
             style={{ fontSize: FONTSIZE.XPRIMARY }}
             items={breadcrumb}
           />
+=======
+          <h4>Gestion stock</h4>
+>>>>>>> c31ebc7 (aa)
         </div>
 
         <div style={{ paddingBottom: "13px" }}>
