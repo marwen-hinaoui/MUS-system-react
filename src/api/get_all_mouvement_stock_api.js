@@ -1,8 +1,8 @@
 import apiInstance from "./axios";
 
-export const get_all_stock_api = async (token) => {
+export const get_all_mouvement_stock_api = async (token) => {
   try {
-    const res = await apiInstance.get("stock/get", {
+    const res = await apiInstance.get("stock/mouvement/all", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

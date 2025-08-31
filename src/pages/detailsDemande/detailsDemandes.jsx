@@ -6,6 +6,7 @@ import {
   Form,
   Input,
   InputNumber,
+  notification,
   Popconfirm,
   Row,
   Select,
@@ -22,10 +23,17 @@ import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import { useEffect, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { get_demande_by_id_api } from "../../api/get_demande_by_id_api";
+import { status_change_api } from "../../api/status_change_api";
 import { set_loading } from "../../redux/slices";
 import LoadingComponent from "../../components/loadingComponent/loadingComponent";
+import {
+  openNotification,
+  openNotificationSuccess,
+} from "../../components/notificationComponent/openNotification";
 import { RxCheckCircled } from "react-icons/rx";
 import { FiEdit } from "react-icons/fi";
+import { annuler_demande_api } from "../../api/annuler_demande_api";
+import { update_subDemande_api } from "../../api/update_subDemande_api";
 
 const DetailsDemande = () => {
   const [subDemandes, setSubDemandes] = useState([]);
@@ -34,15 +42,22 @@ const DetailsDemande = () => {
   const token = useSelector((state) => state.app.tokenValue);
   const isLoading = useSelector((state) => state.app.isLoading);
   const dispatch = useDispatch();
-
+  const [api, contextHolder] = notification.useNotification();
+  const [editingRowKey, setEditingRowKey] = useState(null);
+  const [editedRow, setEditedRow] = useState({});
   const { id } = useParams();
 
   const getDemandeById = async () => {
     dispatch(set_loading(true));
     const res = await get_demande_by_id_api(id, token);
-    console.log(res.resData.data.subDemandeMUS);
-    setSubDemandes(res.resData.data.subDemandeMUS);
-    setDemandeMUS(res.resData.data);
+    if (res.resData) {
+      console.log(res.resData.data.subDemandeMUS);
+      setSubDemandes(res.resData.data.subDemandeMUS);
+      setDemandeMUS(res.resData.data);
+      console.log("=====Demande===============================");
+      console.log(res.resData.data);
+      console.log("====================================");
+    }
     dispatch(set_loading(false));
   };
   useEffect(() => {
@@ -50,6 +65,67 @@ const DetailsDemande = () => {
     console.log(role);
     console.log(id);
   }, []);
+
+  const handleInputChange = (key, field, value) => {
+    setEditedRow((prev) => ({
+      ...prev,
+      id,
+      [field]: value,
+    }));
+  };
+
+  const confirmEdit = async (record) => {
+    try {
+      dispatch(set_loading(true));
+      const { quantite } = editedRow;
+      if (record.quantite !== quantite) {
+        const resEdit = await update_subDemande_api(
+          record.id,
+          id,
+          quantite,
+          token
+        );
+        if (resEdit.resData) {
+          const updated = subDemandes.map((item) =>
+            item.id === record.id ? { ...item, quantite } : item
+          );
+          setSubDemandes(updated);
+          openNotificationSuccess(api, resEdit.resData.message);
+          setEditingRowKey(null);
+          setEditedRow({});
+          getDemandeById();
+        }
+      }
+
+      dispatch(set_loading(false));
+    } catch (error) {
+      console.error("Failed to update:", error);
+    }
+  };
+
+  const changeStatus = async () => {
+    const resStatus = await status_change_api(id, token);
+    if (resStatus.resData) {
+      openNotificationSuccess(api, resStatus.resData.message);
+      getDemandeById();
+    } else {
+      openNotification(api, resStatus.resError.response.data.message);
+      console.log(resStatus.resError);
+    }
+  };
+
+  const annulerDemamnde = async () => {
+    const resStatus = await annuler_demande_api(id, token);
+    if (resStatus.resData) {
+      openNotificationSuccess(api, resStatus.resData.message);
+      getDemandeById();
+    } else {
+      openNotification(api, resStatus.resError.response.data.message);
+
+      console.log(resStatus.resError);
+    }
+  };
+
   const breadcrumb = [
     {
       title: <RiDashboardHorizontalLine />,
@@ -128,51 +204,117 @@ const DetailsDemande = () => {
       ),
     },
     {
+      width: 150,
       title: "Quantité",
       dataIndex: "quantite",
       key: "quantite",
+      render: (text, record) =>
+        editingRowKey === record.id ? (
+          <InputNumber
+            min={1}
+            max={999}
+            style={{ width: "100%", height: "34px" }}
+            value={editedRow.quantite ?? record.quantite}
+            onChange={(val) => handleInputChange(record.key, "quantite", val)}
+          />
+        ) : (
+          <InputNumber
+            value={record.quantite}
+            readOnly
+            style={{ width: "100%", height: "34px" }}
+          />
+        ),
+    },
+    {
+      width: 150,
+      title: "Quantité disponible",
+      dataIndex: "quantiteDisponible",
+      key: "quantiteDisponible",
       render: (text, record) => (
         <InputNumber
           readOnly
-          min={0}
+          min={1}
           max={999}
-          // style={{ padding: "3px" }}
           style={{ width: "100%", height: "34px" }}
-          value={record.quantite}
+          value={record.quantiteDisponible}
         />
       ),
     },
     {
-      title: "Stock",
-      dataIndex: "disponible",
-      key: "disponible",
-      render: (text, record) => (
-        <div>
-          {record.disponible ? (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <RxCheckCircled color={COLORS.GREEN} size={ICONSIZE.SMALL} />
-              <p> En stock</p>
-            </div>
-          ) : (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <IoCloseCircleOutline
-                color={COLORS.LearRed}
-                size={ICONSIZE.SMALL}
-              />
-              <p> Hors stock</p>
-            </div>
-          )}
-        </div>
-      ),
+      title: "Status",
+      dataIndex: "statusSubDemande",
+      key: "statusSubDemande",
+      render: (text, record) => <div>{record.statusSubDemande}</div>,
     },
   ];
-  if (demandeMUS.length === 0 || subDemandes.length === 0) {
-    return <LoadingComponent header={true} />;
+  if (
+    demandeMUS?.statusDemande === "Demande initié" &&
+    (role === "Admin" || role === "DEMANDEUR")
+  ) {
+    columns.push({
+      align: "center",
+      title: "Action",
+      key: "action",
+      render: (text, record) =>
+        editingRowKey === record.id ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                paddingRight: "5px",
+              }}
+            >
+              <Button
+                style={{
+                  padding: "10px",
+                  border: "none",
+                  background: COLORS.LearRed,
+                  color: COLORS.WHITE,
+                }}
+                onClick={() => setEditingRowKey(null)}
+              >
+                <IoCloseCircleOutline size={ICONSIZE.SMALL} />
+              </Button>
+            </div>
+            <div>
+              <Button
+                style={{
+                  padding: "10px",
+                  border: "none",
+                  background: COLORS.GREEN,
+                  color: COLORS.WHITE,
+                }}
+                onClick={() => confirmEdit(record)}
+                loading={isLoading}
+              >
+                <RxCheckCircled size={ICONSIZE.SMALL} />
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <FiEdit
+            onClick={() => {
+              setEditingRowKey(record.id);
+              setEditedRow(record);
+            }}
+            style={{ cursor: "pointer" }}
+            size={ICONSIZE.SMALL}
+          />
+        ),
+    });
   }
+
   return (
     subDemandes &&
     demandeMUS && (
       <div className="dashboard">
+        {contextHolder}
+
         <div style={{ paddingBottom: "13px" }}>
           <Breadcrumb
             style={{ fontSize: FONTSIZE.XPRIMARY }}
@@ -181,13 +323,19 @@ const DetailsDemande = () => {
         </div>
         <Form layout="vertical">
           {/* <CardComponent padding={"10px"} margin={"0 0 10px 0"}> */}
+
+          <div style={{ paddingBottom: "13px" }}>
+            <p style={{ fontSize: FONTSIZE.PRIMARY }}>
+              {demandeMUS.statusDemande}
+            </p>
+          </div>
           <CardComponent padding={"7px"}>
             <Row gutter={24}>
               <Col xs={24} sm={12} md={6}>
-                <Form.Item label="Sequence">
+                <Form.Item label="sequence">
                   <Input
                     style={{ height: "34px" }}
-                    value={demandeMUS.Sequence}
+                    value={demandeMUS.sequence}
                     readOnly
                     maxLength={12}
                   />
@@ -203,7 +351,7 @@ const DetailsDemande = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={6}>
-                <Form.Item label="Projet" >
+                <Form.Item label="Projet">
                   <Input
                     style={{ width: "100%", height: "34px" }}
                     value={demandeMUS.projetNom}
@@ -212,7 +360,7 @@ const DetailsDemande = () => {
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={6}>
-                <Form.Item label="Lieu detection" >
+                <Form.Item label="Lieu detection">
                   <Input
                     style={{ width: "100%", height: "34px" }}
                     // value={record.lei}
@@ -237,7 +385,7 @@ const DetailsDemande = () => {
                 dataSource={subDemandes}
                 columns={columns}
                 pagination={false}
-                rowKey="key"
+                rowKey="id"
                 size="small"
                 locale={{
                   emptyText: (
@@ -258,56 +406,60 @@ const DetailsDemande = () => {
           className="d-flex justify-content-end"
         >
           <div className="pe-1">
-            {role === "Admin" && (
-              <div className="d-flex">
-                <div className="pe-1">
-                  {/* <Tooltip title="Modification"> */}
-                  <Button
-                    style={{
-                      padding: "10px",
-                      border: "none",
-                      background: COLORS.Blue,
-                      color: COLORS.WHITE,
-                    }}
+            {demandeMUS.statusDemande === "Demande initié" &&
+              (role === "Admin" || role === "DEMANDEUR") && (
+                <div className="d-flex">
+                  <Popconfirm
+                    title="Supprimer"
+                    description="Voulez-vous annuler cette demande?"
+                    onConfirm={annulerDemamnde}
+                    icon={null}
                   >
-                    <FiEdit />
-                  </Button>
-                  {/* </Tooltip> */}
+                    <Button
+                      style={{
+                        padding: "10px",
+                        border: "none",
+                        background: COLORS.LearRed,
+                        color: COLORS.WHITE,
+                      }}
+                    >
+                      <IoCloseCircleOutline size={ICONSIZE.SMALL} /> Annuler
+                    </Button>
+                  </Popconfirm>
                 </div>
-
-                <Popconfirm
-                  title="Supprimer"
-                  description="Voulez-vous supprimer cette demande?"
-                  onConfirm={() => alert("deleted")}
-                  icon={null}
-                >
-                  {/* <Tooltip title="Supprimer"> */}
-                  <Button
-                    style={{
-                      padding: "10px",
-                      border: "none",
-                      background: COLORS.LearRed,
-                      color: COLORS.WHITE,
-                    }}
-                  >
-                    <MdDelete />
-                  </Button>
-                  {/* </Tooltip> */}
-                </Popconfirm>
-              </div>
-            )}
+              )}
           </div>
 
-          {demandeMUS.statusDemande === "En cours" &&
+          {demandeMUS.statusDemande === "Demande initié" &&
             (role === "Admin" || role === "AGENT_MUS") && (
               /* Backend Check status before change in db */
               <Popconfirm
                 title="Confirmation"
-                description="Voulez-vous cloturer cette demande?"
-                onConfirm={() => alert("confirmed")}
+                description="Voulez-vous accepter cette demande?"
+                onConfirm={changeStatus}
                 icon={null}
               >
-                {/* <Tooltip title="Accepter"> */}
+                <Button
+                  style={{
+                    padding: "10px",
+                    border: "none",
+                    background: COLORS.Blue,
+                    color: COLORS.WHITE,
+                  }}
+                >
+                  <RxCheckCircled size={ICONSIZE.SMALL} /> Accepter
+                </Button>
+              </Popconfirm>
+            )}
+          {demandeMUS.statusDemande === "En cours de préparation" &&
+            (role === "Admin" || role === "AGENT_MUS") && (
+              /* Backend Check status before change in db */
+              <Popconfirm
+                title="Confirmation"
+                description="Demande livré?"
+                onConfirm={changeStatus}
+                icon={null}
+              >
                 <Button
                   style={{
                     padding: "10px",
@@ -316,9 +468,8 @@ const DetailsDemande = () => {
                     color: COLORS.WHITE,
                   }}
                 >
-                  <RxCheckCircled />
+                  <RxCheckCircled size={ICONSIZE.SMALL} /> Livrée
                 </Button>
-                {/* </Tooltip> */}
               </Popconfirm>
             )}
         </div>

@@ -4,7 +4,6 @@ import TableDemandeReadWrite from "../../tableDemandeReadWrite/tableDemandeReadW
 
 import CardComponent from "../../../components/card/cardComponent";
 import StatisticsComponent from "../../../components/statistics/statisticsComponent";
-import { Breadcrumb } from "antd/lib";
 import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { useEffect, useState } from "react";
@@ -21,41 +20,40 @@ import { RxCheckCircled } from "react-icons/rx";
 import { TbHistory } from "react-icons/tb";
 import { LuLayers } from "react-icons/lu";
 
-const breadcrumb = [
-  {
-    title: <RiDashboardHorizontalLine />,
-  },
-
-  {
-    title: "Dashboard",
-  },
-];
 const DashboardAdmin = () => {
   const [demandes, setDemande] = useState([]);
   const [total, setTotal] = useState(0);
   const token = useSelector((state) => state.app.tokenValue);
   const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.app.isLoading);
   const [enCours, setEnCours] = useState(0);
   const [horsStock, setHorsStock] = useState(0);
-  const [cloture, setCloture] = useState(0);
+  const [livree, setLivree] = useState(0);
   const get_all_demande = async () => {
     dispatch(set_loading(true));
     const resDemandes = await get_all_demande_api(token);
-    setDemande(resDemandes.resData.data);
-    setTotal(resDemandes.resData.data.length);
-    setEnCours(
-      resDemandes.resData.data.filter((d) => d.statusDemande === "En cours")
-        .length
-    );
-    setHorsStock(
-      resDemandes.resData.data.filter((d) => d.statusDemande === "Hors stock")
-        .length
-    );
-    setCloture(
-      resDemandes.resData.data.filter((d) => d.statusDemande === "Cloturé")
-        .length
-    );
+    if (resDemandes.resData) {
+      setDemande(resDemandes.resData.data);
+      setTotal(resDemandes.resData.data.length);
+      setEnCours(
+        resDemandes.resData.data.filter(
+          (d) => d.statusDemande === "En cours de préparation"
+        ).length
+      );
+      setHorsStock(
+        resDemandes.resData.data.filter((d) => d.statusDemande === "Hors stock")
+          .length
+      );
+      setLivree(
+        resDemandes.resData.data.filter(
+          (d) =>
+            d.statusDemande === "Demande livrée" ||
+            d.statusDemande === "Demande partiellement livrée"
+        ).length
+      );
+    } else {
+      console.log(resDemandes.resError);
+    }
+
     dispatch(set_loading(false));
   };
 
@@ -65,47 +63,42 @@ const DashboardAdmin = () => {
     get_all_demande();
   }, [dispatch]);
 
-  if (demandes.length === 0) {
-    return <LoadingComponent header={true} />;
-  }
-
   return (
     demandes && (
       <div className="dashboard">
-        <div style={{ paddingBottom: "13px" }}>
-          <h4>Dashboard</h4>
+        <div style={{ padding: "10px 5px" }}>
+          <h5>Historique demandes</h5>
         </div>
 
         <div className="flex-container">
           <StatisticsComponent
-            icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.XLARGE + 2} />}
+            icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
             status="Total"
             chiffre={total}
             total={total}
           />
           <StatisticsComponent
-            icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE + 2} />}
-            status="En cours"
+            icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
+            status="En cours de préparation"
             valuePercent={((enCours / total) * 100).toFixed(0)}
             chiffre={enCours}
             total={total}
           />
           <StatisticsComponent
-            icon={<IoCloseCircleOutline size={ICONSIZE.XLARGE + 2} />}
+            icon={<IoCloseCircleOutline size={ICONSIZE.XLARGE} />}
             status="Hors stock"
             valuePercent={((horsStock / total) * 100).toFixed(0)}
             chiffre={horsStock}
             total={total}
           />
           <StatisticsComponent
-            icon={<RxCheckCircled size={ICONSIZE.XLARGE + 2} />}
-            status="Livré"
-            valuePercent={((cloture / total) * 100).toFixed(0)}
-            chiffre={cloture}
+            icon={<RxCheckCircled size={ICONSIZE.XLARGE} />}
+            status="Demande livrée"
+            valuePercent={((livree / total) * 100).toFixed(0)}
+            chiffre={livree}
             total={total}
           />
         </div>
-
         <div style={{ padding: "17px 0 0 0" }}>
           <CardComponent>
             <TableDemandeReadWrite data={demandes} />

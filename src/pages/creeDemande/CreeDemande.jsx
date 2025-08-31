@@ -5,16 +5,18 @@ import {
   Form,
   Table,
   notification,
-  Breadcrumb,
   Empty,
   InputNumber,
   Col,
   Row,
   Button,
+  Modal,
 } from "antd";
 import CardComponent from "../../components/card/cardComponent";
-import { openNotification } from "../../components/notificationComponent/openNotification";
-import { RiDashboardHorizontalLine } from "react-icons/ri";
+import {
+  openNotification,
+  openNotificationSuccess,
+} from "../../components/notificationComponent/openNotification";
 import { Link } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { COLORS } from "../../constant/colors";
@@ -24,17 +26,11 @@ import { get_project } from "../../api/get_project";
 import { get_sites } from "../../api/get_sites";
 import { get_lieuDetection } from "../../api/get_lieuDetection";
 import { create_demande_api } from "../../api/create_demande_api";
+import { confirm_demande_api } from "../../api/confirm_demande_api";
 import { useDispatch, useSelector } from "react-redux";
 import { set_loading } from "../../redux/slices";
-import LoadingComponent from "../../components/loadingComponent/loadingComponent";
 
 const { Option } = Select;
-
-const breadcrumb = [
-  { title: <RiDashboardHorizontalLine /> },
-  { title: <Link to={"/admin"}>Dashboard</Link> },
-  { title: "Création de demande" },
-];
 
 const CreeDemande = () => {
   const [data, setData] = useState([]);
@@ -43,6 +39,7 @@ const CreeDemande = () => {
   const [lieuDetection, setLieuDetection] = useState([]);
   const [sequence, setSequence] = useState("");
   const [subDemandes, setSubDemandes] = useState([]);
+  const [subDemandesModal, setSubDemandesModal] = useState([]);
   const [api, contextHolder] = notification.useNotification();
   const [demande, setDemande] = useState({});
   const dispatch = useDispatch();
@@ -50,8 +47,10 @@ const CreeDemande = () => {
   const id_userMUS = useSelector((state) => state.app.userId);
   const isLoading = useSelector((state) => state.app.isLoading);
   const [form] = Form.useForm();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [horsStockMessage, setHorsStockMessage] = useState("");
+  const [horsStockData, setHorsStockData] = useState({});
 
-  // Récupération des données
   const fetchData = async () => {
     try {
       const res = await fetch("/cms.json");
@@ -59,13 +58,13 @@ const CreeDemande = () => {
       setData(json);
 
       const resProjet = await get_project();
-      setProjects(resProjet.resData.data);
+      setProjects(resProjet?.resData?.data);
 
       const resSites = await get_sites();
-      setSites(resSites.resData.data);
+      setSites(resSites?.resData?.data);
 
       const resLieu = await get_lieuDetection();
-      setLieuDetection(resLieu.resData.data);
+      setLieuDetection(resLieu?.resData?.data);
     } catch (err) {
       console.error("Erreur lors de la récupération des données :", err);
     }
@@ -75,19 +74,11 @@ const CreeDemande = () => {
     fetchData();
   }, []);
 
-  if (
-    data.length === 0 ||
-    projects.length === 0 ||
-    sites.length === 0 ||
-    lieuDetection.length === 0
-  )
-    return <LoadingComponent header={true} />;
-
   // Validation et changement de sequence
   const handleSequenceChange = (val) => {
     setSequence(val);
     if (/^\d{12}$/.test(val)) {
-      const exists = data?.CMS.some((c) => c.sequence === val);
+      const exists = data?.CMS?.some((c) => c?.sequence === val);
       if (exists) {
         setSubDemandes([
           {
@@ -108,14 +99,14 @@ const CreeDemande = () => {
   };
 
   const partNumbers =
-    data.CMS.find((c) => c.sequence === sequence)?.partNumbers || [];
-  const materialsMap = data?.Materials[0];
+    data.CMS?.find((c) => c.sequence === sequence)?.partNumbers || [];
+  const materialsMap = data?.Materials?.[0] || null;
 
   const handleAddRow = () => {
     setSubDemandes((prev) => [
       ...prev,
       {
-        key: Date.now(),
+        key: Date.now() + Math.random(),
         partNumber: "",
         patternNumb: "",
         materialPartNumber: "",
@@ -137,12 +128,13 @@ const CreeDemande = () => {
           updatedRow[field] = value;
         }
         if (field === "patternNumb") {
-          const partObj = partNumbers.find(
-            (p) => p.partNumber === updatedRow.partNumber
-          );
+          const partObj =
+            partNumbers?.find(
+              (p) => p?.partNumber === updatedRow?.partNumber
+            ) || null;
           const partMaterials = partObj?.materials || [];
           const matchedMaterial =
-            partMaterials.find((mat) =>
+            partMaterials?.find((mat) =>
               materialsMap[mat]?.includes(Number(value))
             ) || "";
           updatedRow.materialPartNumber = matchedMaterial;
@@ -183,9 +175,9 @@ const CreeDemande = () => {
       dataIndex: "patternNumb",
       key: "patternNumb",
       render: (text, record) => {
-        const partObj = partNumbers.find(
-          (p) => p.partNumber === record.partNumber
-        );
+        const partObj =
+          partNumbers?.find((p) => p?.partNumber === record?.partNumber) ||
+          null;
         const partMaterials = partObj?.materials || [];
         let availablePatterns = [];
         partMaterials.forEach((mat) => {
@@ -259,7 +251,7 @@ const CreeDemande = () => {
       key: "quantite",
       render: (text, record) => (
         <InputNumber
-          min={0}
+          min={1}
           max={999}
           style={{ width: "100%", height: "34px" }}
           onChange={(val) => handleChange(record.key, "quantite", val)}
@@ -312,7 +304,6 @@ const CreeDemande = () => {
     }
     return null;
   };
-
   const onSubmit = async () => {
     try {
       const subError = validateSubDemandes();
@@ -321,48 +312,81 @@ const CreeDemande = () => {
         return;
       }
 
-      const values = await form.validateFields();
+      await form.validateFields();
 
       const cleanSubDemandes = subDemandes.map(({ key, ...rest }) => rest);
+
       const demandeToSubmit = {
-        id_userMUS,
-        id_site: demande.id_site,
-        id_projet: demande.id_projet,
-        id_lieuDetection: demande.id_lieuDetection,
+        demandeData: {
+          id_userMUS,
+          id_site: demande.id_site,
+          id_projet: demande.id_projet,
+          id_lieuDetection: demande.id_lieuDetection,
+        },
         sequence,
         subDemandes: cleanSubDemandes,
       };
 
-      if (token) {
-        dispatch(set_loading(true));
-        const resDemande = await create_demande_api(demandeToSubmit, token);
-        dispatch(set_loading(false));
-        if (resDemande.resData) {
-          openNotification(
-            api,
-            resDemande.resData.message || "Demande créée avec succès !"
-          );
-          setSequence("");
-          setSubDemandes([]);
+      dispatch(set_loading(true));
+      const resDemande = await create_demande_api(demandeToSubmit, token);
+      if (resDemande.resData) {
+        if (resDemande.resData?.data?.demande?.statusDemande === "Hors stock") {
+          setHorsStockMessage(resDemande?.resData?.message || "");
+          setHorsStockData(resDemande?.resData?.data?.demande || null);
           form.resetFields();
+          setSubDemandes([]);
+          setSubDemandesModal(resDemande?.resData?.data?.subDemandes || []);
         } else {
-          openNotification(
-            api,
-            resDemande.resError.message ||
-              "Erreur lors de la création de la demande"
-          );
+          setSubDemandesModal(resDemande?.resData?.data || []);
+          setHorsStockMessage("");
         }
+        setModalVisible(true);
       }
     } catch (err) {
-      console.log("Erreur de validation :", err);
+      openNotification(api, "Erreur lors de la validation des champs");
+    }
+    dispatch(set_loading(false));
+  };
+
+  const handleConfirm = async (decision) => {
+    try {
+      dispatch(set_loading(true));
+      const res = await confirm_demande_api(
+        {
+          decision,
+          demandeData: {
+            id_userMUS,
+            id_site: demande.id_site,
+            id_projet: demande.id_projet,
+            id_lieuDetection: demande.id_lieuDetection,
+            sequence,
+          },
+          subDemandes: subDemandesModal,
+        },
+        token
+      );
+      dispatch(set_loading(false));
+      setModalVisible(false);
+      if (decision === "refuse") {
+        openNotification(api, res.resData.message);
+      } else {
+        openNotificationSuccess(api, res.resData.message);
+      }
+
+      // setSequence("");
+      form.resetFields();
+      setSubDemandes([]);
+    } catch (err) {
+      dispatch(set_loading(false));
+      openNotification(api, "Erreur lors de la confirmation");
     }
   };
 
   return (
     <div className="dashboard">
       {contextHolder}
-      <div style={{ paddingBottom: "13px" }}>
-        <h4>Création de demande</h4>
+      <div style={{ padding: "10px 5px" }}>
+        <h5>Création de demande</h5>
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSubmit}>
@@ -384,7 +408,7 @@ const CreeDemande = () => {
                   },
                   {
                     validator: (_, value) =>
-                      data?.CMS.some((c) => c.sequence === value)
+                      data?.CMS?.some((c) => c?.sequence === value)
                         ? Promise.resolve()
                         : Promise.reject(
                             "La sequence n'existe pas dans le CMS"
@@ -525,7 +549,7 @@ const CreeDemande = () => {
             display: "flex",
             justifyContent: "flex-end",
             paddingTop: "17px",
-            paddingBottom: "17px",
+            // paddingBottom: "17px",
           }}
         >
           <div style={{ paddingRight: "7px" }}>
@@ -541,10 +565,69 @@ const CreeDemande = () => {
               color={COLORS.LearRed}
             />
           </Form.Item>
-
-          {/* </div> */}
         </div>
       </Form>
+      <Modal
+        title="Détails de la demande"
+        open={modalVisible}
+        // closable={false}
+        onCancel={() => setModalVisible(false)}
+        width={800}
+        footer={
+          horsStockMessage === "" && [
+            <Button key="refuse" danger onClick={() => handleConfirm("refuse")}>
+              Refuser
+            </Button>,
+            <Button
+              key="accept"
+              type="primary"
+              onClick={() => handleConfirm("accept")}
+            >
+              Accepter
+            </Button>,
+          ]
+        }
+      >
+        <>
+          {horsStockMessage === "" ? (
+            <p
+              style={{
+                paddingBottom: "17px",
+              }}
+            >
+              Veuillez vérifier les pièces demandées ci-dessous :
+            </p>
+          ) : (
+            <p
+              style={{
+                paddingBottom: "17px",
+              }}
+            >
+              {horsStockMessage}{" "}
+              <span style={{ fontWeight: "600" }}>
+                {" "}
+                {horsStockData.numDemande}{" "}
+              </span>
+            </p>
+          )}
+          <Table
+            dataSource={subDemandesModal}
+            rowKey="key"
+            pagination={false}
+            columns={[
+              { title: "Part Number", dataIndex: "partNumber" },
+              { title: "Pattern", dataIndex: "patternNumb" },
+              { title: "Matière", dataIndex: "materialPartNumber" },
+              { title: "Qte demandé", dataIndex: "quantite" },
+              { title: "Qte disponible", dataIndex: "quantiteDisponible" },
+              {
+                title: "Status",
+                dataIndex: "statusSubDemande",
+              },
+            ]}
+          />
+        </>
+      </Modal>
     </div>
   );
 };

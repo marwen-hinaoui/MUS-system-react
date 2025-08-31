@@ -30,7 +30,7 @@ const TableDemandeReadWrite = ({ data }) => {
 
   const columns = [
     {
-      title: "id",
+      title: "Id",
       dataIndex: "id",
       width: 60,
     },
@@ -52,9 +52,15 @@ const TableDemandeReadWrite = ({ data }) => {
     },
 
     {
-      title: "Séquence",
-      dataIndex: "Sequence",
+      title: "Demandeur",
+      dataIndex: "userFullName",
     },
+  
+    {
+      title: "Séquence",
+      dataIndex: "sequence",
+    },
+  
     {
       title: "Site",
       dataIndex: "siteNom",

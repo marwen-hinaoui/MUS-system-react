@@ -2,20 +2,25 @@
   font-family: Roboto;
   src: url("./assets/font/Roboto-Regular.ttf");
 }
+* {
+  font-family: "Inter", sans-serif !important;
+}
 
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  font-family: "Inter", sans-serif;
+
+  /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; */
 }
 
-code {
+/* code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
-}
+} */
 
 .ant-spin-dot-item {
   background-color: #ee3124 !important;
@@ -33,18 +38,18 @@ code {
   color: #8b0000 !important;
 } */
 
-.ant-notification-notice-success {
-  background-color: #f6ffed !important; /* green */
+/* .ant-notification-notice-success {
+  background-color: #f6ffed !important; 
   color: #389e0d !important;
   border-radius: 8px;
-}
+} */
 
 /* Error notification */
-.ant-notification-notice-error {
-  background-color: #fff1f0 !important; /* red */
+/* .ant-notification-notice-error {
+  background-color: #fff1f0 !important; 
   color: #cf1322 !important;
   border-radius: 8px;
-}
+} */
 
 /* Make the description text white too */
 .ant-notification-notice-success .ant-notification-notice-description,
@@ -135,4 +140,8 @@ p {
 
 .ant-input-number {
   border-radius: 4px !important;
+}
+
+h4 {
+  margin: 0 !important;
 }

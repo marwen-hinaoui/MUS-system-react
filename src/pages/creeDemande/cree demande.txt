@@ -287,7 +287,7 @@ const CreeDemande = () => {
       key: "quantite",
       render: (text, record) => (
         <InputNumber
-          min={0}
+          min={1}
           max={999}
           // style={{ padding: "3px" }}
           style={{ width: "100%", height: "34px" }}

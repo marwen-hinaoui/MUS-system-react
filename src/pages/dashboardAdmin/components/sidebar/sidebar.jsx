@@ -55,6 +55,25 @@ const DashboardSidebarAdmin = () => {
     }
   };
 
+  const menuItems = navItems.map((item) => ({
+    key: item.key,
+    icon: item.icon,
+    label: (
+      <a
+        href={item.route}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => {
+          e.preventDefault();
+          navigate(item.route);
+        }}
+        style={{ color: COLORS.WHITE, textDecoration: "none" }}
+      >
+        {item.label}
+      </a>
+    ),
+  }));
+
   return (
     <Sider
       collapsible
@@ -91,13 +110,13 @@ const DashboardSidebarAdmin = () => {
         theme="light"
         selectedKeys={[selectedKey]}
         onClick={handleMenuClick}
-        items={navItems}
+        items={menuItems}
         style={{ borderRight: 0, fontSize: FONTSIZE.PRIMARY }}
       />
 
       <style>{`
         .ant-menu-item {
-          border-radius: 5px !important;
+          border-radius: 4px !important;
         }
         .ant-menu-light .ant-menu-item-selected,
         .ant-menu-light .ant-menu-item:hover {
