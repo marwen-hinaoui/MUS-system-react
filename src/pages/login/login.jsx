@@ -78,14 +78,7 @@ const Login = () => {
     }
     dispatch(set_loading(false));
   };
-  // if (isLoading) {
-  //   return (
-  //     <div>
-  //       {contextHolder}
-  //       <LoadingComponent />
-  //     </div>
-  //   );
-  // }
+
   return isAuthenticated === false ? (
     <Flex align="center" justify="center" className={styles.container}>
       {contextHolder}
@@ -161,7 +154,7 @@ const Login = () => {
               width={"100%"}
               name={"Connexion"}
                 padding={'17px 0'}
-              // loading={loading}
+              loading={isLoading}
             />
             {/* <div className="w-100 text-end mt-2">
                 <Link
