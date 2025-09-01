@@ -4,7 +4,6 @@ import TableDemandeReadWrite from "../../tableDemandeReadWrite/tableDemandeReadW
 
 import CardComponent from "../../../components/card/cardComponent";
 import StatisticsComponent from "../../../components/statistics/statisticsComponent";
-import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { useEffect, useState } from "react";
 import { get_all_demande_api } from "../../../api/get_all_demande_api";
@@ -14,11 +13,11 @@ import {
   set_demande_data_table,
   set_loading,
 } from "../../../redux/slices";
-import LoadingComponent from "../../../components/loadingComponent/loadingComponent";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { RxCheckCircled } from "react-icons/rx";
 import { TbHistory } from "react-icons/tb";
 import { LuLayers } from "react-icons/lu";
+import { COLORS } from "../../../constant/colors";
 
 const DashboardAdmin = () => {
   const [demandes, setDemande] = useState([]);
@@ -36,7 +35,7 @@ const DashboardAdmin = () => {
       setTotal(resDemandes.resData.data.length);
       setEnCours(
         resDemandes.resData.data.filter(
-          (d) => d.statusDemande === "En cours de préparation"
+          (d) => d.statusDemande === "Demande initié"
         ).length
       );
       setHorsStock(
@@ -66,10 +65,10 @@ const DashboardAdmin = () => {
   return (
     demandes && (
       <div className="dashboard">
-        <div style={{ padding: "10px 5px" }}>
-          <h5>Historique demandes</h5>
+        <div style={{ padding: "10px 0px 48px 0px" }}>
+          <h4 style={{ margin: "0px" }}>Liste Demandes</h4>
+          <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p>
         </div>
-
         <div className="flex-container">
           <StatisticsComponent
             icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
@@ -79,7 +78,7 @@ const DashboardAdmin = () => {
           />
           <StatisticsComponent
             icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
-            status="En cours de préparation"
+            status="Demande initié"
             valuePercent={((enCours / total) * 100).toFixed(0)}
             chiffre={enCours}
             total={total}

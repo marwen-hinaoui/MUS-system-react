@@ -14,7 +14,6 @@ import {
   Tooltip,
 } from "antd";
 import { COLORS } from "../../constant/colors";
-import { MdDelete } from "react-icons/md";
 import CardComponent from "../../components/card/cardComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
@@ -74,36 +73,37 @@ const DetailsDemande = () => {
     }));
   };
 
-  const confirmEdit = async (record) => {
-    try {
-      dispatch(set_loading(true));
-      const { quantite } = editedRow;
-      if (record.quantite !== quantite) {
-        const resEdit = await update_subDemande_api(
-          record.id,
-          id,
-          quantite,
-          token
-        );
-        if (resEdit.resData) {
-          const updated = subDemandes.map((item) =>
-            item.id === record.id ? { ...item, quantite } : item
-          );
-          setSubDemandes(updated);
-          openNotificationSuccess(api, resEdit.resData.message);
-          setEditingRowKey(null);
-          setEditedRow({});
-          getDemandeById();
-        }
-      }
+  // const confirmEdit = async (record) => {
+  //   try {
+  //     dispatch(set_loading(true));
+  //     const { quantite } = editedRow;
+  //     if (record.quantite !== quantite) {
+  //       const resEdit = await update_subDemande_api(
+  //         record.id,
+  //         id,
+  //         quantite,
+  //         token
+  //       );
+  //       if (resEdit.resData) {
+  //         const updated = subDemandes.map((item) =>
+  //           item.id === record.id ? { ...item, quantite } : item
+  //         );
+  //         setSubDemandes(updated);
+  //         openNotificationSuccess(api, resEdit.resData.message);
+  //         setEditingRowKey(null);
+  //         setEditedRow({});
+  //         getDemandeById();
+  //       }
+  //     }
 
-      dispatch(set_loading(false));
-    } catch (error) {
-      console.error("Failed to update:", error);
-    }
-  };
+  //     dispatch(set_loading(false));
+  //   } catch (error) {
+  //     console.error("Failed to update:", error);
+  //   }
+  // };
 
   const changeStatus = async () => {
+    dispatch(set_loading(true));
     const resStatus = await status_change_api(id, token);
     if (resStatus.resData) {
       openNotificationSuccess(api, resStatus.resData.message);
@@ -112,17 +112,16 @@ const DetailsDemande = () => {
       openNotification(api, resStatus.resError.response.data.message);
       console.log(resStatus.resError);
     }
+    dispatch(set_loading(false));
   };
 
   const annulerDemamnde = async () => {
     const resStatus = await annuler_demande_api(id, token);
-    if (resStatus.resData) {
-      openNotificationSuccess(api, resStatus.resData.message);
+    if (resStatus?.resData) {
+      openNotificationSuccess(api, resStatus?.resData?.message);
       getDemandeById();
     } else {
-      openNotification(api, resStatus.resError.response.data.message);
-
-      console.log(resStatus.resError);
+      console.log(resStatus?.resError);
     }
   };
 
@@ -180,7 +179,7 @@ const DetailsDemande = () => {
       },
     },
     {
-      title: "Material",
+      title: "Matière",
       dataIndex: "materialPartNumber",
       key: "materialPartNumber",
       render: (text, record) => (
@@ -247,67 +246,67 @@ const DetailsDemande = () => {
       render: (text, record) => <div>{record.statusSubDemande}</div>,
     },
   ];
-  if (
-    demandeMUS?.statusDemande === "Demande initié" &&
-    (role === "Admin" || role === "DEMANDEUR")
-  ) {
-    columns.push({
-      align: "center",
-      title: "Action",
-      key: "action",
-      render: (text, record) =>
-        editingRowKey === record.id ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                paddingRight: "5px",
-              }}
-            >
-              <Button
-                style={{
-                  padding: "10px",
-                  border: "none",
-                  background: COLORS.LearRed,
-                  color: COLORS.WHITE,
-                }}
-                onClick={() => setEditingRowKey(null)}
-              >
-                <IoCloseCircleOutline size={ICONSIZE.SMALL} />
-              </Button>
-            </div>
-            <div>
-              <Button
-                style={{
-                  padding: "10px",
-                  border: "none",
-                  background: COLORS.GREEN,
-                  color: COLORS.WHITE,
-                }}
-                onClick={() => confirmEdit(record)}
-                loading={isLoading}
-              >
-                <RxCheckCircled size={ICONSIZE.SMALL} />
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <FiEdit
-            onClick={() => {
-              setEditingRowKey(record.id);
-              setEditedRow(record);
-            }}
-            style={{ cursor: "pointer" }}
-            size={ICONSIZE.SMALL}
-          />
-        ),
-    });
-  }
+  // if (
+  //   demandeMUS?.statusDemande === "Demande initié" &&
+  //   (role === "Admin" || role === "DEMANDEUR")
+  // ) {
+  //   columns.push({
+  //     align: "center",
+  //     title: "Action",
+  //     key: "action",
+  //     render: (text, record) =>
+  //       editingRowKey === record.id ? (
+  //         <div
+  //           style={{
+  //             display: "flex",
+  //             alignItems: "center",
+  //             justifyContent: "center",
+  //           }}
+  //         >
+  //           <div
+  //             style={{
+  //               paddingRight: "5px",
+  //             }}
+  //           >
+  //             <Button
+  //               style={{
+  //                 padding: "10px",
+  //                 border: "none",
+  //                 background: COLORS.LearRed,
+  //                 color: COLORS.WHITE,
+  //               }}
+  //               onClick={() => setEditingRowKey(null)}
+  //             >
+  //               <IoCloseCircleOutline size={ICONSIZE.SMALL} />
+  //             </Button>
+  //           </div>
+  //           <div>
+  //             <Button
+  //               style={{
+  //                 padding: "10px",
+  //                 border: "none",
+  //                 background: COLORS.GREEN,
+  //                 color: COLORS.WHITE,
+  //               }}
+  //               onClick={() => confirmEdit(record)}
+  //               loading={isLoading}
+  //             >
+  //               <RxCheckCircled size={ICONSIZE.SMALL} />
+  //             </Button>
+  //           </div>
+  //         </div>
+  //       ) : (
+  //         <FiEdit
+  //           onClick={() => {
+  //             setEditingRowKey(record.id);
+  //             setEditedRow(record);
+  //           }}
+  //           style={{ cursor: "pointer" }}
+  //           size={ICONSIZE.SMALL}
+  //         />
+  //       ),
+  //   });
+  // }
 
   return (
     subDemandes &&
@@ -330,9 +329,12 @@ const DetailsDemande = () => {
             </p>
           </div>
           <CardComponent padding={"7px"}>
-            <Row gutter={24}>
-              <Col xs={24} sm={12} md={6}>
-                <Form.Item label="sequence">
+            <Row
+              // justify={"center"}
+              gutter={24}
+            >
+              <Col xs={24} sm={12} md={5}>
+                <Form.Item label="Séquence">
                   <Input
                     style={{ height: "34px" }}
                     value={demandeMUS.sequence}
@@ -341,7 +343,7 @@ const DetailsDemande = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col xs={24} sm={12} md={6}>
+              <Col xs={24} sm={12} md={4}>
                 <Form.Item label="Site">
                   <Input
                     style={{ width: "100%", height: "34px" }}
@@ -350,7 +352,7 @@ const DetailsDemande = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col xs={24} sm={12} md={6}>
+              <Col xs={24} sm={12} md={4}>
                 <Form.Item label="Projet">
                   <Input
                     style={{ width: "100%", height: "34px" }}
@@ -359,11 +361,20 @@ const DetailsDemande = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col xs={24} sm={12} md={6}>
+              <Col xs={24} sm={12} md={4}>
                 <Form.Item label="Lieu detection">
                   <Input
                     style={{ width: "100%", height: "34px" }}
-                    // value={record.lei}
+                    // value={demandeMUS.}
+                    readOnly
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12} md={4}>
+                <Form.Item label="Demandeur">
+                  <Input
+                    style={{ width: "100%", height: "34px" }}
+                    value={demandeMUS.firstName + " " + demandeMUS.lastName}
                     readOnly
                   />
                 </Form.Item>
@@ -409,30 +420,24 @@ const DetailsDemande = () => {
             {demandeMUS.statusDemande === "Demande initié" &&
               (role === "Admin" || role === "DEMANDEUR") && (
                 <div className="d-flex">
-                  <Popconfirm
-                    title="Supprimer"
-                    description="Voulez-vous annuler cette demande?"
-                    onConfirm={annulerDemamnde}
-                    icon={null}
+                  <Button
+                    style={{
+                      padding: "10px",
+                      border: "none",
+                      background: COLORS.LearRed,
+                      color: COLORS.WHITE,
+                    }}
+                    onClick={annulerDemamnde}
                   >
-                    <Button
-                      style={{
-                        padding: "10px",
-                        border: "none",
-                        background: COLORS.LearRed,
-                        color: COLORS.WHITE,
-                      }}
-                    >
-                      <IoCloseCircleOutline size={ICONSIZE.SMALL} /> Annuler
-                    </Button>
-                  </Popconfirm>
+                    <IoCloseCircleOutline size={ICONSIZE.SMALL} /> Annuler
+                  </Button>
                 </div>
               )}
           </div>
 
-          {demandeMUS.statusDemande === "Demande initié" &&
+          {/* {demandeMUS.statusDemande === "Demande initié" &&
             (role === "Admin" || role === "AGENT_MUS") && (
-              /* Backend Check status before change in db */
+              //  Backend Check status before change in db
               <Popconfirm
                 title="Confirmation"
                 description="Voulez-vous accepter cette demande?"
@@ -450,27 +455,23 @@ const DetailsDemande = () => {
                   <RxCheckCircled size={ICONSIZE.SMALL} /> Accepter
                 </Button>
               </Popconfirm>
-            )}
-          {demandeMUS.statusDemande === "En cours de préparation" &&
+            )} */}
+          {demandeMUS.statusDemande === "Demande initié" &&
             (role === "Admin" || role === "AGENT_MUS") && (
               /* Backend Check status before change in db */
-              <Popconfirm
-                title="Confirmation"
-                description="Demande livré?"
-                onConfirm={changeStatus}
-                icon={null}
+
+              <Button
+                style={{
+                  padding: "10px",
+                  border: "none",
+                  background: COLORS.GREEN,
+                  color: COLORS.WHITE,
+                }}
+                onClick={changeStatus}
+                loading={isLoading}
               >
-                <Button
-                  style={{
-                    padding: "10px",
-                    border: "none",
-                    background: COLORS.GREEN,
-                    color: COLORS.WHITE,
-                  }}
-                >
-                  <RxCheckCircled size={ICONSIZE.SMALL} /> Livrée
-                </Button>
-              </Popconfirm>
+                <RxCheckCircled size={ICONSIZE.SMALL} /> Livrée
+              </Button>
             )}
         </div>
       </div>

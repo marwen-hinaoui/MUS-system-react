@@ -8,6 +8,7 @@ import {
   InputNumber,
   Modal,
   notification,
+  Row,
   Select,
   Table,
   Tabs,
@@ -15,7 +16,6 @@ import {
 import { useEffect, useState } from "react";
 import SharedButton from "../../components/button/button";
 import { COLORS } from "../../constant/colors";
-import { get_project } from "../../api/get_project";
 import { get_sites } from "../../api/get_sites";
 import { get_all_mouvement_stock_api } from "../../api/get_all_mouvement_stock_api";
 import LoadingComponent from "../../components/loadingComponent/loadingComponent";
@@ -27,8 +27,13 @@ import {
   openNotificationSuccess,
 } from "../../components/notificationComponent/openNotification";
 import CardComponent from "../../components/card/cardComponent";
-import { FaArrowRightToBracket } from "react-icons/fa6";
 
+import apiInstance from "../../api/axios";
+import { check_stock_api } from "../../api/check_stock_api";
+import { get_patterns_api } from "../../api/get_patterns_api";
+import { IoExitOutline, IoEnterOutline } from "react-icons/io5";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 const { Option } = Select;
 const items = [
   {
@@ -46,11 +51,11 @@ const items = [
 const GestionStock = () => {
   const [form] = Form.useForm();
   const [formAdmin] = Form.useForm();
+  const [formCheck] = Form.useForm();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [data, setData] = useState([]);
   const [allStockMouvement, setAllStockMouvement] = useState([]);
-  const [projects, setProjetcs] = useState([]);
   const [sites, setSites] = useState([]);
   const [api, contextHolder] = notification.useNotification();
 
@@ -62,6 +67,9 @@ const GestionStock = () => {
   const token = useSelector((state) => state.app.tokenValue);
   const isLoading = useSelector((state) => state.app.isLoading);
   const role = useSelector((state) => state.app.role);
+  const [projetNom, setProjet] = useState("");
+  const [stock, setStock] = useState("");
+  const [patterns, setPatterns] = useState([]);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -85,28 +93,75 @@ const GestionStock = () => {
       const json = await res.json();
       setData(json);
 
-      const resProjet = await get_project();
-      setProjetcs(resProjet?.resData?.data);
-
       const resSites = await get_sites();
       setSites(resSites?.resData?.data);
     } catch (err) {
       console.error("Failed to fetch:", err);
     }
   };
+  const exportToExcel = () => {
+    if (!allStockMouvement || allStockMouvement.length === 0) {
+      openNotification(api, "Aucune donnée à exporter !");
+      return;
+    }
 
+    const worksheet = XLSX.utils.json_to_sheet(allStockMouvement);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "MouvementStock");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const date = new Date();
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+
+    const fileName = `MouvementStock_${formattedDate}.xlsx`;
+
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, fileName);
+  };
+
+  const getPatterns = async (e) => {
+    setPatterns([]);
+    setStock("");
+
+    if (e.target.value.length >= 15) {
+      const resPatterns = await get_patterns_api(e.target.value, token);
+      if (resPatterns.resData) {
+        console.log("====================================");
+        console.log(resPatterns.resData.data);
+        console.log("====================================");
+        setPatterns(resPatterns.resData.data);
+      }
+    }
+  };
+  const checkStock = async (partNumber, patternNumb) => {
+    try {
+      const res = await check_stock_api(partNumber, patternNumb, token);
+      if (res.resData) {
+        setStock(res.resData.data);
+        console.log(res.resData);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
   const showModal = () => {
     fetchData();
     setIsModalOpen(true);
   };
 
   const handleSequenceChange = (val) => {
-    setSequence(val);
-
     if (/^\d{12}$/.test(val)) {
       if (!Array.isArray(data?.CMS)) return [];
       const cmsObj = data?.CMS.find((c) => c?.sequence === val);
       if (cmsObj) {
+        setSequence(val);
+        setProjet(cmsObj.projetNom);
         setSequenceValid(true);
         setPartNumbers(cmsObj?.partNumbers);
       } else {
@@ -152,7 +207,7 @@ const GestionStock = () => {
   const onSubmit = async (values) => {
     dispatch(set_loading(true));
     const piece = {
-      projetNom: values.projet,
+      projetNom: projetNom,
       sequence: values.sequence,
       partNumber: values.partNumber,
       patternNumb: values.patternNumb,
@@ -167,7 +222,6 @@ const GestionStock = () => {
       console.log("====================================");
       console.log(resAjout.resError.response.data.message);
       console.log("====================================");
-      openNotification(api, resAjout.resError.response.data.message);
     }
     dispatch(set_loading(false));
     form.resetFields();
@@ -187,8 +241,8 @@ const GestionStock = () => {
   const columns = [
     { title: "Id", dataIndex: "id", width: 60 },
     { title: "Date", dataIndex: "date_creation" },
-
     { title: "Séquence", dataIndex: "sequence" },
+    { title: "Projet", dataIndex: "projetNom" },
     { title: "Part Number", dataIndex: "partNumber" },
     { title: "Pattern", dataIndex: "patternNumb" },
     { title: "Matière", dataIndex: "partNumberMaterial" },
@@ -203,13 +257,12 @@ const GestionStock = () => {
             alignItems: "center",
           }}
         >
-          {
-            <FaArrowRightToBracket
-              size={ICONSIZE.XSMALL}
-              color={COLORS.GREEN}
-            />
-          }
-          <span style={{ paddingLeft: "10px" }}>{text}</span>
+          {record.statusMouvement === "Introduite" ? (
+            <IoExitOutline size={ICONSIZE.SMALL} color={COLORS.GREEN} />
+          ) : (
+            <IoEnterOutline size={ICONSIZE.SMALL} color={COLORS.LearRed} />
+          )}
+          <span style={{ paddingLeft: "5px" }}>{text}</span>
         </div>
       ),
     },
@@ -222,9 +275,7 @@ const GestionStock = () => {
       children: (
         <>
           <div style={{ width: "100%" }}>
-            {data.length === 0 ||
-            projects.length === 0 ||
-            sites.length === 0 ? (
+            {data.length === 0 || sites.length === 0 ? (
               <LoadingComponent height={true} header={true} />
             ) : (
               <Form layout="vertical" form={form} onFinish={onSubmit}>
@@ -249,22 +300,6 @@ const GestionStock = () => {
                     onChange={(e) => handleSequenceChange(e.target.value)}
                     maxLength={12}
                   />
-                </Form.Item>
-
-                {/* Projet */}
-                <Form.Item
-                  label="Projet"
-                  name="projet"
-                  required={false}
-                  rules={[{ required: true, message: "Choisir projet!" }]}
-                >
-                  <Select placeholder="Select projet">
-                    {projects.map((proj) => (
-                      <Option key={proj.id} value={proj.nom}>
-                        {proj.nom}
-                      </Option>
-                    ))}
-                  </Select>
                 </Form.Item>
 
                 {/* Part Number */}
@@ -348,9 +383,7 @@ const GestionStock = () => {
       children: (
         <>
           <div style={{ width: "100%" }}>
-            {data.length === 0 ||
-            projects.length === 0 ||
-            sites.length === 0 ? (
+            {data.length === 0 || sites.length === 0 ? (
               <LoadingComponent height={true} header={true} />
             ) : (
               <Form layout="vertical" form={formAdmin} onFinish={onSubmitAdmin}>
@@ -400,21 +433,6 @@ const GestionStock = () => {
                 <Form.Item label="Matière" name="materialPartNumber">
                   <Input value={materialPartNumber} readOnly />
                 </Form.Item>
-                {/* Projet */}
-                <Form.Item
-                  label="Projet"
-                  name="projet"
-                  required={false}
-                  rules={[{ required: true, message: "Choisir projet!" }]}
-                >
-                  <Select placeholder="Select Projet">
-                    {projects.map((proj) => (
-                      <Option key={proj.id} value={proj.nom}>
-                        {proj.nom}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
 
                 {/* Quantité */}
                 <Form.Item
@@ -462,9 +480,7 @@ const GestionStock = () => {
         ) : (
           <>
             <div style={{ width: "100%" }}>
-              {data.length === 0 ||
-              projects.length === 0 ||
-              sites.length === 0 ? (
+              {data.length === 0 || sites.length === 0 ? (
                 <LoadingComponent height={true} header={true} />
               ) : (
                 <Form layout="vertical" form={form} onFinish={onSubmit}>
@@ -489,22 +505,6 @@ const GestionStock = () => {
                       onChange={(e) => handleSequenceChange(e.target.value)}
                       maxLength={12}
                     />
-                  </Form.Item>
-
-                  {/* Projet */}
-                  <Form.Item
-                    label="Projet"
-                    name="projet"
-                    required={false}
-                    rules={[{ required: true, message: "Choisir projet!" }]}
-                  >
-                    <Select placeholder="Select projet">
-                      {projects.map((proj) => (
-                        <Option key={proj.id} value={proj.nom}>
-                          {proj.nom}
-                        </Option>
-                      ))}
-                    </Select>
                   </Form.Item>
 
                   {/* Part Number */}
@@ -585,7 +585,6 @@ const GestionStock = () => {
         )}
       </Modal>
 
-      {/* Breadcrumb */}
       <div style={{ padding: "10px 0px 48px 0px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
         <p style={{ margin: "0px", color: COLORS.Gray4 }}>
@@ -596,51 +595,89 @@ const GestionStock = () => {
         <h6 style={{ margin: "0px" }}>Check Stock:</h6>
         <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p>
       </div>
-      <CardComponent padding={"7px"}>
-        <Form
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-          layout="vertical"
-          form={formAdmin}
-          onFinish={onSubmitAdmin}
-        >
+      <Form
+        style={{
+          display: "flex",
+          alignItems: "center",
+        }}
+        layout="vertical"
+        form={formCheck}
+      >
+        <CardComponent width={"100%"} padding={"7px"}>
           {/* Part Number */}
-          <Col xs={24} sm={12} md={6}>
-            <Form.Item
-              name="partNumber"
-              required={false}
-              // rules={[
-              //   { required: true, message: "Saisie part number!" },
-              //   {
-              //     validator: (_, value) => {
-              //       if (!value || sequenceValid) return Promise.resolve();
-              //       return Promise.reject(new Error("Part number invalid"));
-              //     },
-              //   },
-              // ]}
-            >
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <span style={{ paddingRight: "5px" }}>PN: </span>
-                <Input
-                  style={{ height: "34px" }}
-                  // value={sequence}
-                  // onChange={(e) => handleSequenceChange(e.target.value)}
-                  maxLength={12}
-                />
-              </div>
-            </Form.Item>
-          </Col>
-        </Form>
-      </CardComponent>
+          <Row gutter={24} justify={"space-around"}>
+            <Col xs={24} sm={12} md={4}>
+              <Form.Item
+                name="partNumber"
+                rules={[
+                  { required: true, message: "Saisie part number!" },
+                  {
+                    max: 17,
+                    message: "Part number incorrect",
+                  },
+                ]}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ paddingRight: "5px" }}>PN: </span>
+                  <Input
+                    onChange={getPatterns}
+                    style={{ height: "34px" }}
+                    maxLength={17}
+                  />
+                </div>
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={4}>
+              <Form.Item
+                name="patternNumb"
+                rules={[{ required: true, message: "Saisie Pattern!" }]}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ paddingRight: "5px" }}>Pattern: </span>
+                  <Select
+                    style={{ height: "34px", width: "100%" }}
+                    onChange={(value) => {
+                      const partNumber = formCheck.getFieldValue("partNumber");
+                      checkStock(partNumber, value);
+                    }}
+                    allowClear
+                  >
+                    {patterns?.map((pat, i) => (
+                      <Option key={i} value={patterns ? pat.patternNumb : ""}>
+                        {pat.patternNumb}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={4}>
+              <Form.Item name="stock">
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ paddingRight: "5px" }}>Stock: </span>
+                  <Input style={{ height: "34px" }} value={stock} readOnly />
+                </div>
+              </Form.Item>
+            </Col>
+          </Row>
+        </CardComponent>
+      </Form>
       <div style={{ paddingTop: "35px" }}>
         <h6 style={{ margin: "0px" }}>Mouvement Stock:</h6>
         <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p>
       </div>
-      <div style={{ padding: "13px 0" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          padding: "13px 0",
+        }}
+      >
         <Button onClick={showModal} color="danger" variant="outlined">
           Ajouter Pattern
+        </Button>
+        <Button type="primary" onClick={exportToExcel}>
+          Export Excel
         </Button>
       </div>
 

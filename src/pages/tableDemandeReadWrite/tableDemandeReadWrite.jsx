@@ -24,8 +24,8 @@ const TableDemandeReadWrite = ({ data }) => {
     const sortedData = [...data].sort(
       (a, b) => new Date(b.date_creation) - new Date(a.date_creation)
     );
-    dispatch(set_demande_data_table(sortedData));
-    dispatch(set_data_searching(sortedData));
+    dispatch(set_demande_data_table(data));
+    dispatch(set_data_searching(data));
   }, [dispatch, data]);
 
   const columns = [
@@ -54,13 +54,20 @@ const TableDemandeReadWrite = ({ data }) => {
     {
       title: "Demandeur",
       dataIndex: "userFullName",
+      render: (value, record) => {
+        return(
+          <p>
+            {`${record.firstName} ${record.lastName}`}
+          </p>
+        )
+      },
     },
-  
+
     {
       title: "Séquence",
       dataIndex: "sequence",
     },
-  
+
     {
       title: "Site",
       dataIndex: "siteNom",

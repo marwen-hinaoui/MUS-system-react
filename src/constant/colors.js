@@ -10,6 +10,12 @@ export const COLORS = {
   Gray4: "#535353ff",
   Blue: "#307FE2",
   REDWHITE: "#FFCDD2",
+  RED_ALERT: "#FFCDD2",
+  GREEN_ALERT: "#F6FFED",
+  WARNIGN_ALERT: "#FFFBE6",
+  RED_ALERT_TABLE_COLUMN: "#ab1c1eff",
+  GREEN_ALERT_TABLE_COLUMN: "#307d0aff",
+  WARNIGN_ALERT_TABLE_COLUMN: "rgba(224, 153, 12, 1)ff",
   GREEN: "#4caf50",
-  Warning: "#efb70eff",
+  Warning: "rgba(224, 153, 12, 1)ff",
 };

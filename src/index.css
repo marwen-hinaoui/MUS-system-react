@@ -145,3 +145,10 @@ p {
 h4 {
   margin: 0 !important;
 }
+
+.ant-input-affix-wrapper {
+  border-radius: 4px !important;
+}
+.ant-modal-content {
+  border-radius: 4px !important;
+}

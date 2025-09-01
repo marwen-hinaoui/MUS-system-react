@@ -44,9 +44,9 @@ const DashboardSidebarAdmin = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const selectedKey = navItems.find(
-    (item) => location.pathname === item.route
-  )?.key;
+  const selectedKey = navItems
+    .filter((item) => location.pathname.startsWith(item.route))
+    .sort((a, b) => b.route.length - a.route.length)[0]?.key;
 
   const handleMenuClick = ({ key }) => {
     const item = navItems.find((item) => item.key === key);

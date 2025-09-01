@@ -10,6 +10,7 @@ import ChartPage from "../pages/dashboardAdmin/charts/chartPage";
 import CreeDemande from "../pages/creeDemande/CreeDemande";
 import DetailsDemande from "../pages/detailsDemande/detailsDemandes";
 import GestionStock from "../pages/gestionStock/gestionStock";
+import GestionUser from "../pages/dashboardAdmin/gestionUser/GestionUser";
 
 const AppRoutes = () => {
   return (
@@ -133,7 +134,7 @@ const AppRoutes = () => {
               path="users"
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
-                  <>Gestion user</>
+                  <GestionUser />
                 </ProtectedRoutes>
               }
             />
