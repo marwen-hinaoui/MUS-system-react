@@ -7,11 +7,8 @@ import {
   Input,
   InputNumber,
   notification,
-  Popconfirm,
   Row,
-  Select,
   Table,
-  Tooltip,
 } from "antd";
 import { COLORS } from "../../constant/colors";
 import CardComponent from "../../components/card/cardComponent";
@@ -24,7 +21,6 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 import { get_demande_by_id_api } from "../../api/get_demande_by_id_api";
 import { status_change_api } from "../../api/status_change_api";
 import { set_loading } from "../../redux/slices";
-import LoadingComponent from "../../components/loadingComponent/loadingComponent";
 import {
   openNotification,
   openNotificationSuccess,
@@ -389,25 +385,25 @@ const DetailsDemande = () => {
               paddingTop: "17px",
             }}
           >
-            <CardComponent>
-              <Table
-                rowClassName={() => "ant-row-no-hover"}
-                bordered
-                dataSource={subDemandes}
-                columns={columns}
-                pagination={false}
-                rowKey="id"
-                size="small"
-                locale={{
-                  emptyText: (
-                    <Empty
-                      description="Aucune donnée trouvée"
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    />
-                  ),
-                }}
-              />
-            </CardComponent>
+            {/* <CardComponent> */}
+            <Table
+              rowClassName={() => "ant-row-no-hover"}
+              bordered
+              dataSource={subDemandes}
+              columns={columns}
+              pagination={false}
+              rowKey="id"
+              size="small"
+              locale={{
+                emptyText: (
+                  <Empty
+                    description="Aucune donnée trouvée"
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  />
+                ),
+              }}
+            />
+            {/* </CardComponent> */}
           </div>
         </Form>
         <div
@@ -418,7 +414,7 @@ const DetailsDemande = () => {
         >
           <div className="pe-1">
             {demandeMUS.statusDemande === "Demande initié" &&
-              (role === "Admin" || role === "DEMANDEUR") && (
+              (role === "Admin" || role === "AGENT_MUS") && (
                 <div className="d-flex">
                   <Button
                     style={{

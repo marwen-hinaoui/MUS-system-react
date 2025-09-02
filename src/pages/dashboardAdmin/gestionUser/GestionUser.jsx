@@ -5,17 +5,18 @@ import {
   Form,
   Input,
   Select,
-  message,
   Table,
   Empty,
+  notification,
+  InputNumber,
 } from "antd";
 import { COLORS } from "../../../constant/colors";
 import { gestion_user_api } from "../../../api/gestion_user_api";
 import { get_all_users_api } from "../../../api/get_all_users_api";
 import { useSelector } from "react-redux";
 import { FiEdit } from "react-icons/fi";
-import SharedButton from "../../../components/button/button";
 import { ICONSIZE } from "../../../constant/FontSizes";
+import { openNotificationSuccess } from "../../../components/notificationComponent/openNotification";
 const { Option } = Select;
 
 const GestionUser = () => {
@@ -23,6 +24,8 @@ const GestionUser = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [users, setUsers] = useState([]);
+  const [api, contextHolder] = notification.useNotification();
+
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [passwordForm] = Form.useForm();
@@ -49,6 +52,11 @@ const GestionUser = () => {
     }
   };
   const columns = [
+    {
+      title: "Id",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "Nom",
       dataIndex: "lastName",
@@ -110,8 +118,14 @@ const GestionUser = () => {
       setLoading(true);
 
       const resUser = await gestion_user_api(values, token);
-
-      closeModal();
+      if (resUser.resData) {
+        closeModal();
+        openNotificationSuccess(api, "Utilisateur crée");
+        form.resetFields();
+        getAllUsers();
+      } else {
+        console.log(resUser.resError);
+      }
     } catch (error) {
       console.log("Error creation user");
     } finally {
@@ -121,9 +135,11 @@ const GestionUser = () => {
 
   return (
     <div className="dashboard">
-      <div style={{ padding: "10px 0px 48px 0px" }}>
+      {contextHolder}
+
+      <div style={{ padding: "13px 0px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Utilisateurs</h4>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p>
+        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
       </div>
       <Modal
         title={`Modifier mot de passe pour ${selectedUser?.username}`}
@@ -209,7 +225,7 @@ const GestionUser = () => {
             label="Matricule: "
             rules={[{ required: true, message: "Saisie matricule!" }]}
           >
-            <Input />
+            <InputNumber maxLength={7} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item

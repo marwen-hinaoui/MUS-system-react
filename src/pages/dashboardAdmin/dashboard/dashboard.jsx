@@ -19,7 +19,7 @@ import { TbHistory } from "react-icons/tb";
 import { LuLayers } from "react-icons/lu";
 import { COLORS } from "../../../constant/colors";
 
-const DashboardAdmin = () => {
+const Dashboard = () => {
   const [demandes, setDemande] = useState([]);
   const [total, setTotal] = useState(0);
   const token = useSelector((state) => state.app.tokenValue);
@@ -65,9 +65,9 @@ const DashboardAdmin = () => {
   return (
     demandes && (
       <div className="dashboard">
-        <div style={{ padding: "10px 0px 48px 0px" }}>
+        <div style={{ padding: "13px 0px" }}>
           <h4 style={{ margin: "0px" }}>Liste Demandes</h4>
-          <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p>
+          {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
         </div>
         <div className="flex-container">
           <StatisticsComponent
@@ -99,13 +99,11 @@ const DashboardAdmin = () => {
           />
         </div>
         <div style={{ padding: "17px 0 0 0" }}>
-          <CardComponent>
-            <TableDemandeReadWrite data={demandes} />
-          </CardComponent>
+          <TableDemandeReadWrite data={demandes} />
         </div>
       </div>
     )
   );
 };
 
-export default DashboardAdmin;
+export default Dashboard;

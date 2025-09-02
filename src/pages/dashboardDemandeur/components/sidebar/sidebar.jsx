@@ -8,40 +8,35 @@ import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 import { BsPerson } from "react-icons/bs";
 import { PiGridNine, PiStackPlus } from "react-icons/pi";
+import { RiDashboardHorizontalLine } from "react-icons/ri";
+import { MdOutlineLibraryAdd } from "react-icons/md";
 
 const { Sider } = Layout;
 
 const navItems = [
   {
     key: "cree_demande",
-    icon: <PiStackPlus size={ICONSIZE.SMALL} />,
-    label: "Creation demande",
+    icon: <MdOutlineLibraryAdd size={ICONSIZE.SMALL} />,
+    label: "Création demande",
     route: "/demandeur/cree_demande",
   },
   {
     key: "demande",
-    icon: <PiGridNine size={ICONSIZE.SMALL} />,
+    icon: <RiDashboardHorizontalLine size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/demandeur",
-  },
-  {
-    key: "profil",
-    icon: <BsPerson size={ICONSIZE.SMALL} />,
-    label: "Profil",
-    route: "/demandeur/profil",
   },
 ];
 
 const DashboardSidebarDemandeur = () => {
-  const [collapsed, setCollapsed] = useState(true);
   const collapsedSidebar = useSelector((state) => state.app.collapsedSidebar);
   const location = useLocation();
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState("cree_demande");
 
-  const selectedKey = navItems.find(
-    (item) => location.pathname === item.route
-  )?.key;
+  const selectedKey = navItems
+    .filter((item) => location.pathname.startsWith(item.route))
+    .sort((a, b) => b.route.length - a.route.length)[0]?.key;
 
   const handleMenuClick = ({ key }) => {
     const item = navItems.find((item) => item.key === key);
@@ -50,79 +45,78 @@ const DashboardSidebarDemandeur = () => {
       setActivePage(key);
     }
   };
-
+  const menuItems = navItems.map((item) => ({
+    key: item.key,
+    icon: item.icon,
+    label: (
+      <a
+        href={item.route}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => {
+          e.preventDefault();
+          navigate(item.route);
+        }}
+        style={{ color: COLORS.WHITE, textDecoration: "none" }}
+      >
+        {item.label}
+      </a>
+    ),
+  }));
   return (
-    <Layout style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif" }}>
-      <style>{`
-        .ant-layout-sider {
-          background-color: ${COLORS.WHITE} !important;
-          box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-          border-right: 1px solid rgba(0, 0, 0, 0.05);
-        }
-                    .ant-menu-item{
-              border-radius: 5px !important;
-          
-          }
-        .ant-menu-light .ant-menu-item-selected {
-          background-color: ${COLORS.LearRed} !important;
-          color: ${COLORS.WHITE} !important;
-              border-radius: 5px !important;
-
-        }
-
-        .ant-menu-light .ant-menu-item:hover {
-          background-color: ${COLORS.LearRed} !important;
-          color: ${COLORS.WHITE} !important;
-              border-radius: 5px !important;
-
-        }
-        .ant-menu-light .ant-menu-item:hover .anticon {
-          color: ${COLORS.WHITE} !important;
-        }
-      `}</style>
-
-      <Sider
-        collapsible
-        collapsed={collapsedSidebar}
-        onCollapse={setCollapsed}
-        width={200}
-        collapsedWidth={60}
-        trigger={null}
+    <Sider
+      collapsible
+      collapsed={collapsedSidebar}
+      width={200}
+      collapsedWidth={60}
+      trigger={null}
+      style={{
+        height: "100vh",
+        position: "sticky",
+        top: 0,
+        left: 0,
+        overflow: "auto",
+        zIndex: 999,
+        backgroundColor: COLORS.WHITE,
+        boxShadow: "2px 0 8px rgba(0,0,0,0.1)",
+        borderRight: "1px solid rgba(0,0,0,0.05)",
+      }}
+    >
+      <div
         style={{
-          overflow: "auto",
-          height: "100vh",
-          position: "sticky",
-          zIndex: 999,
-          left: 0,
-          top: 0,
+          height: "64px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: collapsedSidebar ? "center" : "flex-start",
+          paddingLeft: collapsedSidebar ? 0 : 16,
+          borderBottom: "1px solid rgba(0,0,0,0.05)",
         }}
       >
-        <div
-          className="logo"
-          style={{
-            height: "64px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: collapsed ? "center" : "flex-start",
-            paddingLeft: collapsed ? "0" : "16px",
-            borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
-            fontSize: "1.25rem",
-            fontWeight: "bold",
-          }}
-        >
-          <img src={LearLogo} style={{ width: "40px" }} />
-        </div>
+        <img src={LearLogo} alt="Logo" style={{ width: 40 }} />
+      </div>
 
-        <Menu
-          theme="light"
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          onClick={handleMenuClick}
-          items={navItems}
-          style={{ borderRight: 0, fontSize: FONTSIZE.PRIMARY }}
-        />
-      </Sider>
-    </Layout>
+      <Menu
+        theme="light"
+        selectedKeys={[selectedKey]}
+        onClick={handleMenuClick}
+        items={menuItems}
+        style={{ borderRight: 0, fontSize: FONTSIZE.PRIMARY }}
+      />
+
+      <style>{`
+              .ant-menu-item {
+                border-radius: 4px !important;
+              }
+              .ant-menu-light .ant-menu-item-selected,
+              .ant-menu-light .ant-menu-item:hover {
+                background-color: ${COLORS.LearRed} !important;
+                color: ${COLORS.WHITE} !important;
+              }
+              .ant-menu-light .ant-menu-item:hover .anticon {
+                color: ${COLORS.WHITE} !important;
+              }
+            `}</style>
+    </Sider>
   );
 };
 

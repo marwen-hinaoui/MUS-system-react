@@ -5,12 +5,12 @@ import { ProtectedRoutes } from "../utils/protectedRoutes";
 import Profil from "../pages/profil/profil";
 import DashboardDemandeur from "../pages/dashboardDemandeur/dashboard/dashboard";
 import DashboardAgentStock from "../pages/dashboardAgentStock/dashboard/dashboard";
-import DashboardAdmin from "../pages/dashboardAdmin/dashboard/dashboard";
 import ChartPage from "../pages/dashboardAdmin/charts/chartPage";
 import CreeDemande from "../pages/creeDemande/CreeDemande";
 import DetailsDemande from "../pages/detailsDemande/detailsDemandes";
 import GestionStock from "../pages/gestionStock/gestionStock";
 import GestionUser from "../pages/dashboardAdmin/gestionUser/GestionUser";
+import Dashboard from "../pages/dashboardAdmin/dashboard/dashboard";
 
 const AppRoutes = () => {
   return (
@@ -30,7 +30,7 @@ const AppRoutes = () => {
               index
               element={
                 <ProtectedRoutes allowedRoles={["DEMANDEUR"]}>
-                  <DashboardDemandeur />
+                  <Dashboard />
                 </ProtectedRoutes>
               }
             />
@@ -50,14 +50,14 @@ const AppRoutes = () => {
                 </ProtectedRoutes>
               }
             />
-            <Route
+            {/* <Route
               path="profil"
               element={
                 <ProtectedRoutes allowedRoles={["DEMANDEUR"]}>
                   <Profil />
                 </ProtectedRoutes>
               }
-            />
+            /> */}
           </Route>
 
           {/* Agent dashboard */}
@@ -66,7 +66,7 @@ const AppRoutes = () => {
               index
               element={
                 <ProtectedRoutes allowedRoles={["AGENT_MUS"]}>
-                  <DashboardAgentStock />
+                  <Dashboard />
                 </ProtectedRoutes>
               }
             />
@@ -86,14 +86,14 @@ const AppRoutes = () => {
                 </ProtectedRoutes>
               }
             />
-            <Route
+            {/* <Route
               path="profil"
               element={
                 <ProtectedRoutes allowedRoles={["AGENT_MUS"]}>
                   <Profil />
                 </ProtectedRoutes>
               }
-            />
+            /> */}
           </Route>
 
           {/* Admin dashboard */}
@@ -102,7 +102,7 @@ const AppRoutes = () => {
               index
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
-                  <DashboardAdmin />
+                  <Dashboard />
                 </ProtectedRoutes>
               }
             />
@@ -138,22 +138,22 @@ const AppRoutes = () => {
                 </ProtectedRoutes>
               }
             />
-            <Route
+            {/* <Route
               path="profil"
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <Profil />
                 </ProtectedRoutes>
               }
-            />
-            <Route
+            /> */}
+            {/* <Route
               path="statistics"
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <ChartPage />
                 </ProtectedRoutes>
               }
-            />
+            /> */}
           </Route>
         </Routes>
       </LoginProvider>

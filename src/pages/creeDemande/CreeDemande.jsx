@@ -424,9 +424,9 @@ const CreeDemande = () => {
   return (
     <div className="dashboard">
       {contextHolder}
-      <div style={{ padding: "10px 0px 48px 0px" }}>
+      <div style={{ padding: "13px 0px" }}>
         <h4 style={{ margin: "0px" }}>Création Demande</h4>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p>
+        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSubmit}>
@@ -543,7 +543,7 @@ const CreeDemande = () => {
           }}
         ></div>
 
-        <CardComponent>
+        <div>
           <Table
             rowClassName={() => "ant-row-no-hover"}
             bordered
@@ -555,13 +555,13 @@ const CreeDemande = () => {
             locale={{
               emptyText: (
                 <Empty
-                  description="Aucune donnée trouvée"
+                  description="Ajouter sub demande"
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                 />
               ),
             }}
           />
-        </CardComponent>
+        </div>
 
         <div
           style={{

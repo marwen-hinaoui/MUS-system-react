@@ -593,7 +593,7 @@ const GestionStock = () => {
       </div>
       <div style={{ paddingBottom: "8px" }}>
         <h6 style={{ margin: "0px" }}>Check Stock:</h6>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p>
+        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
       </div>
       <Form
         style={{
@@ -664,7 +664,7 @@ const GestionStock = () => {
       </Form>
       <div style={{ paddingTop: "35px" }}>
         <h6 style={{ margin: "0px" }}>Mouvement Stock:</h6>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p>
+        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
       </div>
       <div
         style={{
@@ -682,29 +682,27 @@ const GestionStock = () => {
       </div>
 
       {/* Table */}
-      <CardComponent>
-        <Table
-          rowClassName={() => "ant-row-no-hover"}
-          className="custom-table"
-          bordered
-          dataSource={allStockMouvement}
-          columns={columns}
-          pagination={{
-            position: ["bottomCenter"],
-            showSizeChanger: true,
-            pageSizeOptions: ["5", "10", "25", "50", "100"],
-          }}
-          locale={{
-            emptyText: (
-              <Empty
-                description="Aucune donnée trouvée"
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
-            ),
-          }}
-          size="small"
-        />
-      </CardComponent>
+      <Table
+        rowClassName={() => "ant-row-no-hover"}
+        className="custom-table"
+        bordered
+        dataSource={allStockMouvement}
+        columns={columns}
+        pagination={{
+          position: ["bottomCenter"],
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "25", "50", "100"],
+        }}
+        locale={{
+          emptyText: (
+            <Empty
+              description="Aucune donnée trouvée"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ),
+        }}
+        size="small"
+      />
     </div>
   );
 };
