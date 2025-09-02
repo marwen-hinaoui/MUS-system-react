@@ -414,7 +414,7 @@ const DetailsDemande = () => {
         >
           <div className="pe-1">
             {demandeMUS.statusDemande === "Demande initié" &&
-              (role === "Admin" || role === "AGENT_MUS") && (
+              (role === "Admin" || role === "DEMANDEUR") && (
                 <div className="d-flex">
                   <Button
                     style={{

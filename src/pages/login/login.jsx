@@ -84,15 +84,11 @@ const Login = () => {
       {contextHolder}
       <img src={LearLogo} className={`${styles.logo} m-0`} alt="Lear Logo" />
 
-      <div
-        style={{
-          width: "200px",
-        }}
-      >
-        <Divider />
-      </div>
+      
 
-      <Flex>
+      <Flex style={{
+        padding:"30px"
+      }}>
         <Flex style={{ width: "350px" }} align="center" justify="center">
           <Form
             name="basic"
@@ -153,9 +149,34 @@ const Login = () => {
               margins={"mt-1"}
               width={"100%"}
               name={"Connexion"}
-                padding={'17px 0'}
+              padding={"17px 0"}
               loading={isLoading}
             />
+            <div
+              style={{
+                position: "absolute",
+                bottom: "20px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                fontSize: "14px",
+                color: COLORS.BLACK,
+              }}
+            >
+              Make up area system
+            </div>
+
+            {/* Bottom-right version */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "20px",
+                right: "20px",
+                fontSize: "14px",
+                color: COLORS.GRAY,
+              }}
+            >
+              v1.0
+            </div>
             {/* <div className="w-100 text-end mt-2">
                 <Link
                   style={{
