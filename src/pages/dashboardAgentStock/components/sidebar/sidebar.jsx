@@ -6,16 +6,15 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { BsPerson } from "react-icons/bs";
 import { LuLayers } from "react-icons/lu";
-import { RiDashboardHorizontalLine } from "react-icons/ri";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
 
 const { Sider } = Layout;
 
 const navItems = [
   {
     key: "demande",
-    icon: <RiDashboardHorizontalLine size={ICONSIZE.SMALL} />,
+    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/agent",
   },
@@ -35,9 +34,9 @@ const DashboardSidebarAgent = () => {
   const [activePage, setActivePage] = useState("demande");
   const navigate = useNavigate();
 
-  const selectedKey = navItems.find(
-    (item) => location.pathname === item.route
-  )?.key;
+  const selectedKey = navItems
+    .filter((item) => location.pathname.startsWith(item.route))
+    .sort((a, b) => b.route.length - a.route.length)[0]?.key;
 
   const handleMenuClick = ({ key }) => {
     const item = navItems.find((item) => item.key === key);

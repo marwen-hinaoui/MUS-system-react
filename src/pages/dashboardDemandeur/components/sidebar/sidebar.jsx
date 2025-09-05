@@ -6,10 +6,7 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { BsPerson } from "react-icons/bs";
-import { PiGridNine, PiStackPlus } from "react-icons/pi";
-import { RiDashboardHorizontalLine } from "react-icons/ri";
-import { MdOutlineLibraryAdd } from "react-icons/md";
+import { MdOutlineLibraryAdd, MdOutlineSpaceDashboard } from "react-icons/md";
 
 const { Sider } = Layout;
 
@@ -22,7 +19,7 @@ const navItems = [
   },
   {
     key: "demande",
-    icon: <RiDashboardHorizontalLine size={ICONSIZE.SMALL} />,
+    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/demandeur",
   },

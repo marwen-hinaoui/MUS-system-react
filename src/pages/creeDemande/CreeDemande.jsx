@@ -52,7 +52,7 @@ const CreeDemande = () => {
   const [messageDetails, setMessageDetails] = useState("");
   const [demandeStatus, setDemandeStatus] = useState("");
   const [modalStyle, setModalStyle] = useState({});
-
+  const [open, setOpen] = useState(false);
   const [projetNom, setProjet] = useState("");
   const fetchData = async () => {
     try {
@@ -92,9 +92,6 @@ const CreeDemande = () => {
             quantite: "",
           },
         ]);
-        console.log("====================================");
-        console.log(cmsObj);
-        console.log("====================================");
       } else if (val?.length === 12) {
         setSubDemandes([]);
       }
@@ -179,6 +176,7 @@ const CreeDemande = () => {
       title: "Pattern",
       dataIndex: "patternNumb",
       key: "patternNumb",
+      width: 350,
       render: (text, record) => {
         const partObj =
           partNumbers?.find((p) => p?.partNumber === record?.partNumber) ||
@@ -224,33 +222,59 @@ const CreeDemande = () => {
       title: "Défaut",
       dataIndex: "defaut",
       key: "defaut",
+      width: 400,
       render: (text, record) => (
         <Select
-          value={record.code_defaut || undefined}
-          placeholder="Sélectionnez un défaut"
-          onChange={(val, option) =>
-            handleChange(record.key, "defaut", {
-              code_defaut: val,
-              typeDefaut: option.typeDefaut,
-            })
+          mode="tags"
+          placeholder="Sélectionnez ou Saisir un défaut"
+          style={{ width: "100%" }}
+          value={
+            record.code_defaut
+              ? [record.code_defaut]
+              : record.typeDefaut
+              ? [record.typeDefaut]
+              : []
           }
-          showSearch
-          optionFilterProp="children"
-          style={{ width: "100%", height: "34px" }}
+          open={!!open[record.key]}
+          onDropdownVisibleChange={(isOpen) => {
+            setOpen((prev) => ({ ...prev, [record.key]: isOpen }));
+          }}
+          onChange={(values) => {
+            const val = values[values.length - 1];
+
+            const cmsMatch = data.DefautCMS.find(
+              (d) => `${d.code_defaut} ${d.typeDefaut}` === val
+            );
+
+            if (cmsMatch) {
+              handleChange(record.key, "defaut", {
+                code_defaut: cmsMatch.code_defaut,
+                typeDefaut: cmsMatch.typeDefaut,
+              });
+            } else {
+              handleChange(record.key, "defaut", {
+                code_defaut: "",
+                typeDefaut: val,
+              });
+            }
+            setOpen((prev) => ({ ...prev, [record.key]: false }));
+          }}
         >
           {data.DefautCMS.map((def) => (
-            <Option
-              key={def.code_defaut}
-              value={def.code_defaut}
-              typeDefaut={def.typeDefaut}
+            <Select.Option
+              key={`${def.code_defaut} ${def.typeDefaut}`}
+              value={`${def.code_defaut} ${def.typeDefaut}`}
             >
-              {`${def.code_defaut} (${def.typeDefaut})`}
-            </Option>
+              {def.code_defaut === ""
+                ? `${def.code_defaut} (${def.typeDefaut})`
+                : def.typeDefaut}
+            </Select.Option>
           ))}
         </Select>
       ),
     },
     {
+      width: 250,
       title: "Quantité",
       dataIndex: "quantite",
       key: "quantite",
@@ -302,7 +326,7 @@ const CreeDemande = () => {
         return `Sub demande ${i + 1} : le Pattern est obligatoire`;
       if (!row.materialPartNumber)
         return `Sub demande ${i + 1} : le Material est obligatoire`;
-      if (!row.code_defaut)
+      if (!row.code_defaut && !row.typeDefaut)
         return `Sub demande ${i + 1} : le Défaut est obligatoire`;
       if (!row.quantite)
         return `Sub demande ${i + 1} : la Quantité est obligatoire`;
@@ -320,7 +344,7 @@ const CreeDemande = () => {
       await form.validateFields();
 
       const cleanSubDemandes = subDemandes.map(({ key, ...rest }) => rest);
-
+      console.log(cleanSubDemandes);
       const demandeToSubmit = {
         demandeData: {
           id_userMUS,
@@ -699,11 +723,11 @@ const CreeDemande = () => {
 
           <p style={{ paddingBottom: "17px" }}>{messageDetails}</p>
           <Table
-            rowClassName={() => "ant-row-no-hover"}
-            className="custom-table"
             style={{
-              borderRadius: "0px",
+              background: "#000",
+              borderRadius: "0",
             }}
+            rowClassName={() => "ant-row-no-hover"}
             bordered
             size="small"
             dataSource={

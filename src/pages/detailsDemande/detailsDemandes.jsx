@@ -35,6 +35,7 @@ const DetailsDemande = () => {
   const [demandeMUS, setDemandeMUS] = useState([]);
   const role = useSelector((state) => state.app.role);
   const token = useSelector((state) => state.app.tokenValue);
+  const userId = useSelector((state) => state.app.userId);
   const isLoading = useSelector((state) => state.app.isLoading);
   const dispatch = useDispatch();
   const [api, contextHolder] = notification.useNotification();
@@ -122,10 +123,6 @@ const DetailsDemande = () => {
   };
 
   const breadcrumb = [
-    {
-      title: <RiDashboardHorizontalLine />,
-    },
-
     {
       title: <Link to={"/admin"}>Dashboard</Link>,
     },
@@ -361,7 +358,7 @@ const DetailsDemande = () => {
                 <Form.Item label="Lieu detection">
                   <Input
                     style={{ width: "100%", height: "34px" }}
-                    // value={demandeMUS.}
+                    value={demandeMUS.nomDetection}
                     readOnly
                   />
                 </Form.Item>
@@ -414,7 +411,8 @@ const DetailsDemande = () => {
         >
           <div className="pe-1">
             {demandeMUS.statusDemande === "Demande initié" &&
-              (role === "Admin" || role === "DEMANDEUR") && (
+              (role === "Admin" ||
+                (role === "DEMANDEUR" && demandeMUS.id_userMUS === userId)) && (
                 <div className="d-flex">
                   <Button
                     style={{
@@ -431,28 +429,23 @@ const DetailsDemande = () => {
               )}
           </div>
 
-          {/* {demandeMUS.statusDemande === "Demande initié" &&
+          {demandeMUS.statusDemande === "Demande initié" &&
             (role === "Admin" || role === "AGENT_MUS") && (
               //  Backend Check status before change in db
-              <Popconfirm
-                title="Confirmation"
-                description="Voulez-vous accepter cette demande?"
-                onConfirm={changeStatus}
-                icon={null}
+
+              <Button
+                style={{
+                  padding: "10px",
+                  border: "none",
+                  background: COLORS.Blue,
+                  color: COLORS.WHITE,
+                }}
+                onClick={changeStatus}
               >
-                <Button
-                  style={{
-                    padding: "10px",
-                    border: "none",
-                    background: COLORS.Blue,
-                    color: COLORS.WHITE,
-                  }}
-                >
-                  <RxCheckCircled size={ICONSIZE.SMALL} /> Accepter
-                </Button>
-              </Popconfirm>
-            )} */}
-          {demandeMUS.statusDemande === "Demande initié" &&
+                <RxCheckCircled size={ICONSIZE.SMALL} /> Accepter
+              </Button>
+            )}
+          {demandeMUS.statusDemande === "Préparation en cours" &&
             (role === "Admin" || role === "AGENT_MUS") && (
               /* Backend Check status before change in db */
 

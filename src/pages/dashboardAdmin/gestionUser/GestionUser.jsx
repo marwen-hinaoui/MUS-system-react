@@ -15,8 +15,9 @@ import { gestion_user_api } from "../../../api/gestion_user_api";
 import { get_all_users_api } from "../../../api/get_all_users_api";
 import { useSelector } from "react-redux";
 import { FiEdit } from "react-icons/fi";
-import { ICONSIZE } from "../../../constant/FontSizes";
+import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { openNotificationSuccess } from "../../../components/notificationComponent/openNotification";
+import { MdOutlinePassword } from "react-icons/md";
 const { Option } = Select;
 
 const GestionUser = () => {
@@ -162,10 +163,15 @@ const GestionUser = () => {
         <Form form={passwordForm} layout="vertical">
           <Form.Item
             name="newPassword"
+            required={false}
             label="Nouveau mot de passe"
             rules={[{ required: true, message: "Entrez un mot de passe" }]}
           >
-            <Input.Password />
+            <Input.Password
+              iconRender={() => (
+                <MdOutlinePassword style={{ fontSize: FONTSIZE.PRIMARY }} />
+              )}
+            />
           </Form.Item>
         </Form>
       </Modal>
@@ -175,9 +181,6 @@ const GestionUser = () => {
         visible={visible}
         onCancel={closeModal}
         footer={[
-          <Button key="cancel" onClick={closeModal}>
-            Annuler
-          </Button>,
           <Button
             key="submit"
             type="primary"
@@ -243,7 +246,11 @@ const GestionUser = () => {
             label="Password: "
             rules={[{ required: true, message: "Saisie password!" }]}
           >
-            <Input.Password />
+            <Input.Password
+              iconRender={() => (
+                <MdOutlinePassword style={{ fontSize: FONTSIZE.PRIMARY }} />
+              )}
+            />
           </Form.Item>
 
           <Form.Item
@@ -280,7 +287,6 @@ const GestionUser = () => {
         <Table
           size="small"
           rowClassName={() => "ant-row-no-hover"}
-          className="custom-table"
           bordered
           columns={columns}
           dataSource={users}

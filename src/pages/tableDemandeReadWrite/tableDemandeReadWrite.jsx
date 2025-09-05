@@ -21,9 +21,6 @@ const TableDemandeReadWrite = ({ data }) => {
   const { RangePicker } = DatePicker;
 
   useEffect(() => {
-    const sortedData = [...data].sort(
-      (a, b) => new Date(b.date_creation) - new Date(a.date_creation)
-    );
     dispatch(set_demande_data_table(data));
     dispatch(set_data_searching(data));
   }, [dispatch, data]);
@@ -55,11 +52,7 @@ const TableDemandeReadWrite = ({ data }) => {
       title: "Demandeur",
       dataIndex: "userFullName",
       render: (value, record) => {
-        return(
-          <p>
-            {`${record.firstName} ${record.lastName}`}
-          </p>
-        )
+        return <p>{`${record.firstName} ${record.lastName}`}</p>;
       },
     },
 
@@ -214,7 +207,6 @@ const TableDemandeReadWrite = ({ data }) => {
     <>
       <Table
         rowClassName={() => "ant-row-no-hover"}
-        className="custom-table"
         bordered
         columns={columns}
         dataSource={searchingData}

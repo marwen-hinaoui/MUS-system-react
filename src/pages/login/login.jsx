@@ -24,7 +24,6 @@ import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
 import { TbLockPassword } from "react-icons/tb";
 import { MdOutlinePassword } from "react-icons/md";
-import LoadingComponent from "../../components/loadingComponent/loadingComponent";
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -82,13 +81,19 @@ const Login = () => {
   return isAuthenticated === false ? (
     <Flex align="center" justify="center" className={styles.container}>
       {contextHolder}
-      <img src={LearLogo} className={`${styles.logo} m-0`} alt="Lear Logo" />
+      <div
+        style={{
+          padding: "17px",
+        }}
+      >
+        <img src={LearLogo} className={`${styles.logo} m-0`} alt="Lear Logo" />
+      </div>
 
-      
-
-      <Flex style={{
-        padding:"30px"
-      }}>
+      <Flex
+        style={{
+          padding: "14px",
+        }}
+      >
         <Flex style={{ width: "350px" }} align="center" justify="center">
           <Form
             name="basic"
@@ -146,7 +151,6 @@ const Login = () => {
             <SharedButton
               color={COLORS.LearRed}
               fontSize={FONTSIZE.PRIMARY}
-              margins={"mt-1"}
               width={"100%"}
               name={"Connexion"}
               padding={"17px 0"}
@@ -160,11 +164,11 @@ const Login = () => {
                 transform: "translateX(-50%)",
                 fontSize: "14px",
                 color: COLORS.BLACK,
+                padding: "14px 0 0 0",
               }}
             >
-              Make up area system
+              Make Up Area System
             </div>
-
             {/* Bottom-right version */}
             <div
               style={{
@@ -172,22 +176,10 @@ const Login = () => {
                 bottom: "20px",
                 right: "20px",
                 fontSize: "14px",
-                color: COLORS.GRAY,
               }}
             >
               v1.0
             </div>
-            {/* <div className="w-100 text-end mt-2">
-                <Link
-                  style={{
-                    fontSize: FONTSIZE.PRIMARY,
-                    textDecoration: "none",
-                    color: COLORS.BLACK,
-                  }}
-                >
-                  <div>Voir les demandes <FaArrowRight  /></div>
-                </Link>
-              </div> */}
           </Form>
         </Flex>
       </Flex>

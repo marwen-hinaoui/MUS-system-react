@@ -7,21 +7,19 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 import { LuLayers, LuSettings } from "react-icons/lu";
-import { MdOutlineLibraryAdd } from "react-icons/md";
-import { RiDashboardHorizontalLine } from "react-icons/ri";
-
+import { MdOutlineAddBox, MdOutlineSpaceDashboard } from "react-icons/md";
 const { Sider } = Layout;
 
 const navItems = [
   {
     key: "demande",
-    icon: <RiDashboardHorizontalLine size={ICONSIZE.SMALL} />,
+    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/admin",
   },
   {
     key: "cree_demande",
-    icon: <MdOutlineLibraryAdd size={ICONSIZE.SMALL} />,
+    icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
     label: "Création demande",
     route: "/admin/cree_demande",
   },

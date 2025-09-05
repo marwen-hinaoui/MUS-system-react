@@ -2,6 +2,7 @@ import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import {
   Button,
   Col,
+  DatePicker,
   Empty,
   Form,
   Input,
@@ -10,6 +11,7 @@ import {
   notification,
   Row,
   Select,
+  Space,
   Table,
   Tabs,
 } from "antd";
@@ -28,26 +30,19 @@ import {
 } from "../../components/notificationComponent/openNotification";
 import CardComponent from "../../components/card/cardComponent";
 
-import apiInstance from "../../api/axios";
 import { check_stock_api } from "../../api/check_stock_api";
+import { ajout_stock_admin_api } from "../../api/ajout_stock_admin_api";
 import { get_patterns_api } from "../../api/get_patterns_api";
-import { IoExitOutline, IoEnterOutline } from "react-icons/io5";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import dayjs from "dayjs";
+import {
+  IoArrowBackCircleOutline,
+  IoArrowForwardCircleOutline,
+} from "react-icons/io5";
+import "./gestionStock.css";
 const { Option } = Select;
-const items = [
-  {
-    key: "1",
-    label: "Tab 1",
-    children: "Content of Tab Pane 1",
-  },
-  {
-    key: "2",
-    label: "Tab 2",
-    children: "Content of Tab Pane 2",
-  },
-];
-
+const { RangePicker } = DatePicker;
 const GestionStock = () => {
   const [form] = Form.useForm();
   const [formAdmin] = Form.useForm();
@@ -60,6 +55,7 @@ const GestionStock = () => {
   const [api, contextHolder] = notification.useNotification();
 
   const [sequence, setSequence] = useState("");
+  const [partNumberAdmin, setPartNumberAdmin] = useState("");
   const [sequenceValid, setSequenceValid] = useState(false);
   const [partNumbers, setPartNumbers] = useState([]);
   const [availablePatterns, setAvailablePatterns] = useState([]);
@@ -99,6 +95,7 @@ const GestionStock = () => {
       console.error("Failed to fetch:", err);
     }
   };
+
   const exportToExcel = () => {
     if (!allStockMouvement || allStockMouvement.length === 0) {
       openNotification(api, "Aucune donnée à exporter !");
@@ -132,9 +129,8 @@ const GestionStock = () => {
     if (e.target.value.length >= 15) {
       const resPatterns = await get_patterns_api(e.target.value, token);
       if (resPatterns.resData) {
-        console.log("====================================");
         console.log(resPatterns.resData.data);
-        console.log("====================================");
+
         setPatterns(resPatterns.resData.data);
       }
     }
@@ -190,6 +186,30 @@ const GestionStock = () => {
     setMaterialPartNumber("");
   };
 
+  const handlePartNumberChangeAdmin = (e) => {
+    const partNumber = e.target.value;
+    let partObj;
+    for (const cms of data?.CMS) {
+      partObj = cms?.partNumbers.find((p) => p?.partNumber === partNumber);
+      if (partObj) {
+        setProjet(cms.projetNom);
+        break;
+      }
+    }
+
+    if (partObj) {
+      setPartNumberAdmin(partObj);
+      const mats = partObj?.materials;
+      const patterns = mats?.flatMap((mat) => data?.Materials[0][mat] || []);
+      setAvailablePatterns(patterns);
+    } else {
+      setAvailablePatterns([]);
+    }
+
+    form.setFieldsValue({});
+    setMaterialPartNumber("");
+  };
+
   const handlePatternChange = (pattern) => {
     const partNumber = form.getFieldValue("partNumber");
     const partObj = partNumbers.find((p) => p.partNumber === partNumber);
@@ -202,6 +222,16 @@ const GestionStock = () => {
 
     setMaterialPartNumber(matchedMat);
     form.setFieldsValue({ materialPartNumber: matchedMat });
+  };
+
+  const handlePatternChangeAdmin = (pattern) => {
+    const matchedMat =
+      partNumberAdmin?.materials?.find((mat) =>
+        data.Materials[0][mat]?.includes(Number(pattern))
+      ) || "";
+
+    setMaterialPartNumber(matchedMat);
+    formAdmin.setFieldsValue({ materialPartNumber: matchedMat });
   };
 
   const onSubmit = async (values) => {
@@ -219,9 +249,7 @@ const GestionStock = () => {
     if (resAjout.resData) {
       openNotificationSuccess(api, resAjout.resData.message);
     } else {
-      console.log("====================================");
       console.log(resAjout.resError.response.data.message);
-      console.log("====================================");
     }
     dispatch(set_loading(false));
     form.resetFields();
@@ -234,15 +262,101 @@ const GestionStock = () => {
     fetchStock();
   };
 
-  const onSubmitAdmin = () => {
-    console.log("onSubmitAdmin");
+  const onSubmitAdmin = async (values) => {
+    dispatch(set_loading(true));
+    const piece = {
+      projetNom: projetNom,
+      sequence: "x",
+      partNumber: values.partNumber,
+      patternNumb: values.patternNumb,
+      partNumberMaterial: values.materialPartNumber,
+      quantiteAjouter: values.quantite,
+    };
+
+    const resAjout = await ajout_stock_admin_api(piece, token);
+    if (resAjout.resData) {
+      openNotificationSuccess(api, resAjout.resData.message);
+      setIsModalOpen(false);
+      fetchStock();
+    } else {
+      console.log(resAjout.resError.response.data.message);
+    }
+    dispatch(set_loading(false));
+    formAdmin.resetFields();
+    setSequence("");
+    setSequenceValid(false);
+    setPartNumbers([]);
+    setAvailablePatterns([]);
+    setPartNumberAdmin("");
+    setMaterialPartNumber("");
   };
 
   const columns = [
     { title: "Id", dataIndex: "id", width: 60 },
-    { title: "Date", dataIndex: "date_creation" },
+    {
+      title: "Date",
+      dataIndex: "date_creation",
+
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }) => (
+        <div style={{ padding: 8 }}>
+          <RangePicker
+            format="YYYY-MM-DD"
+            value={selectedKeys[0] || []}
+            onChange={(dates) => {
+              setSelectedKeys(dates ? [dates] : []);
+            }}
+            style={{ marginBottom: 8, display: "flex" }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => confirm()}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Filtrer
+            </Button>
+            <Button
+              onClick={() => {
+                clearFilters();
+                confirm();
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Réinitialiser
+            </Button>
+          </Space>
+        </div>
+      ),
+      onFilter: (value, record) => {
+        if (!value || value.length === 0) return true;
+        const recordDate = dayjs(record.date_creation, "YYYY-MM-DD");
+        return (
+          recordDate.isSame(value[0], "day") ||
+          recordDate.isSame(value[1], "day") ||
+          (recordDate.isAfter(value[0], "day") &&
+            recordDate.isBefore(value[1], "day"))
+        );
+      },
+    },
     { title: "Séquence", dataIndex: "sequence" },
-    { title: "Projet", dataIndex: "projetNom" },
+    {
+      title: "Projet",
+      dataIndex: "projetNom",
+      filters: [...new Set(allStockMouvement?.map((d) => d.projetNom))].map(
+        (projet) => ({
+          text: projet,
+          value: projet,
+        })
+      ),
+      onFilter: (value, record) => record.projetNom === value,
+    },
     { title: "Part Number", dataIndex: "partNumber" },
     { title: "Pattern", dataIndex: "patternNumb" },
     { title: "Matière", dataIndex: "partNumberMaterial" },
@@ -258,9 +372,15 @@ const GestionStock = () => {
           }}
         >
           {record.statusMouvement === "Introduite" ? (
-            <IoExitOutline size={ICONSIZE.SMALL} color={COLORS.GREEN} />
+            <IoArrowForwardCircleOutline
+              size={ICONSIZE.SMALL}
+              color={COLORS.GREEN}
+            />
           ) : (
-            <IoEnterOutline size={ICONSIZE.SMALL} color={COLORS.LearRed} />
+            <IoArrowBackCircleOutline
+              size={ICONSIZE.SMALL}
+              color={COLORS.LearRed}
+            />
           )}
           <span style={{ paddingLeft: "5px" }}>{text}</span>
         </div>
@@ -392,21 +512,21 @@ const GestionStock = () => {
                   label="Part Number"
                   name="partNumber"
                   required={false}
-                  // rules={[
-                  //   { required: true, message: "Saisie part number!" },
-                  //   {
-                  //     validator: (_, value) => {
-                  //       if (!value || sequenceValid) return Promise.resolve();
-                  //       return Promise.reject(new Error("Part number invalid"));
-                  //     },
-                  //   },
-                  // ]}
+                  rules={[
+                    { required: true, message: "Saisie part number!" },
+                    //   {
+                    //     validator: (_, value) => {
+                    //       if (!value || sequenceValid) return Promise.resolve();
+                    //       return Promise.reject(new Error("Part number invalid"));
+                    //     },
+                    //   },
+                  ]}
                 >
                   <Input
                     style={{ height: "34px" }}
-                    // value={sequence}
-                    // onChange={(e) => handleSequenceChange(e.target.value)}
-                    maxLength={12}
+                    placeholder="Part Number"
+                    onChange={handlePartNumberChangeAdmin}
+                    maxLength={17}
                   />
                 </Form.Item>
                 {/* Pattern */}
@@ -418,7 +538,7 @@ const GestionStock = () => {
                 >
                   <Select
                     placeholder="Select Pattern"
-                    onChange={handlePatternChange}
+                    onChange={handlePatternChangeAdmin}
                     disabled={availablePatterns.length === 0}
                   >
                     {availablePatterns.map((pat, i) => (
@@ -470,6 +590,7 @@ const GestionStock = () => {
       {contextHolder}
 
       <Modal
+        title="Ajout Pattern"
         closable={{ "aria-label": "Custom Close Button" }}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
@@ -608,6 +729,9 @@ const GestionStock = () => {
           <Row gutter={24} justify={"space-around"}>
             <Col xs={24} sm={12} md={4}>
               <Form.Item
+                style={{
+                  marginBottom: "0px",
+                }}
                 name="partNumber"
                 rules={[
                   { required: true, message: "Saisie part number!" },
@@ -620,6 +744,7 @@ const GestionStock = () => {
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span style={{ paddingRight: "5px" }}>PN: </span>
                   <Input
+                    placeholder="Part Number"
                     onChange={getPatterns}
                     style={{ height: "34px" }}
                     maxLength={17}
@@ -638,7 +763,11 @@ const GestionStock = () => {
                     style={{ height: "34px", width: "100%" }}
                     onChange={(value) => {
                       const partNumber = formCheck.getFieldValue("partNumber");
-                      checkStock(partNumber, value);
+                      if (value) {
+                        checkStock(partNumber, value);
+                      } else {
+                        setStock("");
+                      }
                     }}
                     allowClear
                   >
@@ -684,7 +813,6 @@ const GestionStock = () => {
       {/* Table */}
       <Table
         rowClassName={() => "ant-row-no-hover"}
-        className="custom-table"
         bordered
         dataSource={allStockMouvement}
         columns={columns}

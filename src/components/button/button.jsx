@@ -27,27 +27,25 @@ const SharedButton = ({
   };
   // if (loading) {
   return (
-    <CardComponent>
-      <Button
-        htmlType="submit"
-        style={styles}
-        variant="solid"
-        className={margins}
-        onClick={callBack}
-        disabled={disabled}
-        loading={loading}
-      >
-        <span className="d-flex align-items-center">
-          {icon && icon}
-          {/* <span
+    <Button
+      htmlType="submit"
+      style={styles}
+      variant="solid"
+      className={margins}
+      onClick={callBack}
+      disabled={disabled}
+      loading={loading}
+    >
+      <span className="d-flex align-items-center">
+        {icon && icon}
+        {/* <span
             style={{
               paddingLeft: "5px",
             }}
           ></span>*/}
-          {name && name}
-        </span>
-      </Button>
-    </CardComponent>
+        {name && name}
+      </span>
+    </Button>
   );
   // }
   // else {
