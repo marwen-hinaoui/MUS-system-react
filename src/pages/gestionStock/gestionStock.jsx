@@ -706,7 +706,7 @@ const GestionStock = () => {
         )}
       </Modal>
 
-      <div style={{ padding: "10px 0px 48px 0px" }}>
+      <div style={{ padding: "10px 0px 30px 0px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
         <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez, filtrez et gérez les mouvements de stock en temps réel
@@ -714,7 +714,7 @@ const GestionStock = () => {
       </div>
       <div style={{ paddingBottom: "8px" }}>
         <h6 style={{ margin: "0px" }}>Check Stock:</h6>
-        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
+        <p style={{ margin: "0px", color: COLORS.Gray4 }}>Consultez en un clic le stock de chaque Pattern associé à un Part Number.</p>
       </div>
       <Form
         style={{
@@ -793,7 +793,7 @@ const GestionStock = () => {
       </Form>
       <div style={{ paddingTop: "35px" }}>
         <h6 style={{ margin: "0px" }}>Mouvement Stock:</h6>
-        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
+        <p style={{ margin: "0px", color: COLORS.Gray4 }}>Consultez l’historique et le statut des mouvements de Patterns : Introduits ou livrés.</p>
       </div>
       <div
         style={{

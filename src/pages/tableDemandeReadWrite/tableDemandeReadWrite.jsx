@@ -48,13 +48,13 @@ const TableDemandeReadWrite = ({ data }) => {
       sorter: (a, b) => a.numDemande.localeCompare(b.numDemande),
     },
 
-    {
-      title: "Demandeur",
-      dataIndex: "userFullName",
-      render: (value, record) => {
-        return <p>{`${record.firstName} ${record.lastName}`}</p>;
-      },
-    },
+    // {
+    //   title: "Demandeur",
+    //   dataIndex: "userFullName",
+    //   render: (value, record) => {
+    //     return <p>{`${record.firstName} ${record.lastName}`}</p>;
+    //   },
+    // },
 
     {
       title: "Séquence",

@@ -5,7 +5,7 @@ const appSlices = createSlice({
   initialState: {
     tokenValue: null,
     userId: "",
-    role: "",
+    roleList: [],
     fullname: "",
     isLoading: false,
     errorMsg: "",
@@ -24,7 +24,7 @@ const appSlices = createSlice({
       state.errorMsg = "";
     },
     set_role: (state, action) => {
-      state.role = action.payload;
+      state.roleList = action.payload;
     },
     set_userId: (state, action) => {
       state.userId = action.payload;

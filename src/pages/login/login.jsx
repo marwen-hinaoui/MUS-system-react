@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Divider, Form, Input, notification } from "antd";
+import { Card, Divider, Form, Input, notification } from "antd";
 import { Flex } from "antd";
 import styles from "./login.module.css";
 import "./login.css";
@@ -24,6 +24,7 @@ import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
 import { TbLockPassword } from "react-icons/tb";
 import { MdOutlinePassword } from "react-icons/md";
+import CardComponent from "../../components/card/cardComponent";
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -32,7 +33,6 @@ const inputErrorMsg = {
 
 const Login = () => {
   var navigate = useNavigate();
-  const [response, setResponse] = useState();
   const [api, contextHolder] = notification.useNotification();
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
   //DISPATCH
@@ -57,19 +57,19 @@ const Login = () => {
 
       navigate(res.resData.redirect, { replace: true });
       dispatch(set_redirection(res.resData.redirect));
-      dispatch(set_role(res.resData.roleMUS));
+      dispatch(set_role(res.resData.roleList));
       dispatch(set_token(res.resData.accessToken));
       dispatch(set_userId(res.resData.id));
       dispatch(
         set_fullname(`${res.resData.firstName} ${res.resData.lastName}`)
       );
-      console.log(res.resData.firstName);
-      console.log(res.resData.lastName);
 
-      setResponse(res.resData);
       dispatch(set_authenticated(true));
     } else {
-      if (res.resError.response) {
+      if (
+        res.resError.response.status === 404 ||
+        res.resError.response.status === 401
+      ) {
         console.log(res.resError);
         dispatch(set_error(res.resError.response.data.message));
         openNotification(api, res.resError.response.data.message);
@@ -83,15 +83,16 @@ const Login = () => {
       {contextHolder}
       <div
         style={{
-          padding: "17px",
+          padding: "0 0 14px 0",
+          textAlign: "center",
         }}
       >
-        <img src={LearLogo} className={`${styles.logo} m-0`} alt="Lear Logo" />
+        <img src={LearLogo} className={`${styles.logo}`} alt="Lear Logo" />
       </div>
 
       <Flex
         style={{
-          padding: "14px",
+          paddingTop: "14px",
         }}
       >
         <Flex style={{ width: "350px" }} align="center" justify="center">
@@ -158,31 +159,28 @@ const Login = () => {
             />
             <div
               style={{
-                position: "absolute",
-                bottom: "20px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                fontSize: "14px",
+                paddingTop: "14px",
+                fontSize: FONTSIZE.PRIMARY,
                 color: COLORS.BLACK,
-                padding: "14px 0 0 0",
+                fontWeight: "500",
               }}
             >
-              Make Up Area System
-            </div>
-            {/* Bottom-right version */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "20px",
-                right: "20px",
-                fontSize: "14px",
-              }}
-            >
-              v1.0
+              Make up area system
             </div>
           </Form>
         </Flex>
       </Flex>
+
+      <div
+        style={{
+          position: "absolute",
+          bottom: "20px",
+          right: "20px",
+          fontSize: FONTSIZE.PRIMARY,
+        }}
+      >
+        v1.0
+      </div>
     </Flex>
   ) : (
     <>{redirection && <Navigate to={redirection} />}</>

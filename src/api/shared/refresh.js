@@ -28,7 +28,7 @@ export const useRefreshAccessToken = () => {
 
         dispatch(set_authenticated(true));
         dispatch(set_token(res.data.accessToken));
-        dispatch(set_role(res.data.roleMUS));
+        dispatch(set_role(res.data.roleList));
         dispatch(set_userId(res.data.id));
         dispatch(set_redirection(res.data.redirection));
         dispatch(set_fullname(`${res.data.firstName} ${res.data.lastName}`));

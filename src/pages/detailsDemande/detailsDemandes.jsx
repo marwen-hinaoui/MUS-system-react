@@ -33,7 +33,7 @@ import { update_subDemande_api } from "../../api/update_subDemande_api";
 const DetailsDemande = () => {
   const [subDemandes, setSubDemandes] = useState([]);
   const [demandeMUS, setDemandeMUS] = useState([]);
-  const role = useSelector((state) => state.app.role);
+  const roleList = useSelector((state) => state.app.roleList);
   const token = useSelector((state) => state.app.tokenValue);
   const userId = useSelector((state) => state.app.userId);
   const isLoading = useSelector((state) => state.app.isLoading);
@@ -58,7 +58,6 @@ const DetailsDemande = () => {
   };
   useEffect(() => {
     getDemandeById();
-    console.log(role);
     console.log(id);
   }, []);
 
@@ -241,7 +240,7 @@ const DetailsDemande = () => {
   ];
   // if (
   //   demandeMUS?.statusDemande === "Demande initié" &&
-  //   (role === "Admin" || role === "DEMANDEUR")
+  //   (roleList.includes("Admin") || roleList.includes("DEMANDEUR"))
   // ) {
   //   columns.push({
   //     align: "center",
@@ -411,8 +410,9 @@ const DetailsDemande = () => {
         >
           <div className="pe-1">
             {demandeMUS.statusDemande === "Demande initié" &&
-              (role === "Admin" ||
-                (role === "DEMANDEUR" && demandeMUS.id_userMUS === userId)) && (
+              (roleList.includes("Admin") ||
+                (roleList.includes("DEMANDEUR") &&
+                  demandeMUS.id_userMUS === userId)) && (
                 <div className="d-flex">
                   <Button
                     style={{
@@ -430,7 +430,7 @@ const DetailsDemande = () => {
           </div>
 
           {demandeMUS.statusDemande === "Demande initié" &&
-            (role === "Admin" || role === "AGENT_MUS") && (
+            (roleList.includes("Admin") || roleList.includes("AGENT_MUS")) && (
               //  Backend Check status before change in db
 
               <Button
@@ -446,7 +446,7 @@ const DetailsDemande = () => {
               </Button>
             )}
           {demandeMUS.statusDemande === "Préparation en cours" &&
-            (role === "Admin" || role === "AGENT_MUS") && (
+            (roleList.includes("Admin") || roleList.includes("AGENT_MUS")) && (
               /* Backend Check status before change in db */
 
               <Button

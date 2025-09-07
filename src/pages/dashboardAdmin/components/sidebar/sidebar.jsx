@@ -6,32 +6,35 @@ import { useSelector } from "react-redux";
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { LuLayers, LuSettings } from "react-icons/lu";
-import { MdOutlineAddBox, MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdLibraryAdd } from "react-icons/md";
+import { MdSpaceDashboard } from "react-icons/md";
+import { FaLayerGroup } from "react-icons/fa6";
+import { RiSettings5Fill } from "react-icons/ri";
+
 const { Sider } = Layout;
 
 const navItems = [
   {
     key: "demande",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    icon: <MdSpaceDashboard size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/admin",
   },
   {
     key: "cree_demande",
-    icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
+    icon: <MdLibraryAdd size={ICONSIZE.SMALL} />,
     label: "Création demande",
     route: "/admin/cree_demande",
   },
   {
     key: "stock",
-    icon: <LuLayers size={ICONSIZE.SMALL} />,
+    icon: <FaLayerGroup size={ICONSIZE.SMALL} />,
     label: "Gestion stock",
     route: "/admin/stock",
   },
   {
     key: "gestion_user",
-    icon: <LuSettings size={ICONSIZE.SMALL} />,
+    icon: <RiSettings5Fill size={ICONSIZE.SMALL} />,
     label: "Gestion utilisateurs",
     route: "/admin/users",
   },

@@ -1,38 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Layout, Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
-import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
+
 import { LuLayers } from "react-icons/lu";
-import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdSpaceDashboard } from "react-icons/md";
+import {  MdLibraryAdd } from "react-icons/md";
+import { FaLayerGroup } from "react-icons/fa6";
 
 const { Sider } = Layout;
-
-const navItems = [
+const commonNavItems = [
   {
     key: "demande",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    icon: <MdSpaceDashboard size={ICONSIZE.SMALL} />,
     label: "Demande",
-    route: "/agent",
-  },
-
-  {
-    key: "stock",
-    icon: <LuLayers size={ICONSIZE.SMALL} />,
-    label: "Gestion stock",
-    route: "/agent/stock",
+    route: "/user",
   },
 ];
+const roleBasedNavItems = {
+  demandeur: [
+    {
+      key: "cree_demande",
+      icon: <MdLibraryAdd size={ICONSIZE.SMALL} />,
+      label: "Création demande",
+      route: "/user/cree_demande",
+    },
+  ],
+  agent: [
+    {
+      key: "stock",
+      icon: <FaLayerGroup size={ICONSIZE.SMALL} />,
+      label: "Gestion stock",
+      route: "/user/stock",
+    },
+  ],
+};
 
-const DashboardSidebarAgent = () => {
+const UserSidebar = ({ roleList }) => {
   const collapsedSidebar = useSelector((state) => state.app.collapsedSidebar);
-  const location = useLocation();
 
-  const [activePage, setActivePage] = useState("demande");
+  const location = useLocation();
   const navigate = useNavigate();
+  console.log("==================Sidebar==================");
+  console.log(roleList);
+  console.log("====================================");
+  const navItems = useMemo(() => {
+    let items = [...commonNavItems];
+    if (roleList.includes("DEMANDEUR")) {
+      items = [...items, ...roleBasedNavItems.demandeur];
+    }
+    if (roleList.includes("AGENT_MUS")) {
+      items = [...items, ...roleBasedNavItems.agent];
+    }
+    return items;
+  }, [roleList]);
 
   const selectedKey = navItems
     .filter((item) => location.pathname.startsWith(item.route))
@@ -42,9 +67,9 @@ const DashboardSidebarAgent = () => {
     const item = navItems.find((item) => item.key === key);
     if (item && item.route) {
       navigate(item.route);
-      setActivePage(key);
     }
   };
+
   const menuItems = navItems.map((item) => ({
     key: item.key,
     icon: item.icon,
@@ -63,6 +88,7 @@ const DashboardSidebarAgent = () => {
       </a>
     ),
   }));
+
   return (
     <Sider
       collapsible
@@ -120,4 +146,4 @@ const DashboardSidebarAgent = () => {
   );
 };
 
-export default DashboardSidebarAgent;
+export default UserSidebar;
