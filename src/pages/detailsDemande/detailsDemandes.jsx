@@ -366,7 +366,7 @@ const DetailsDemande = () => {
                 <Form.Item label="Demandeur">
                   <Input
                     style={{ width: "100%", height: "34px" }}
-                    value={demandeMUS.firstName + " " + demandeMUS.lastName}
+                    value={demandeMUS.demandeur}
                     readOnly
                   />
                 </Form.Item>

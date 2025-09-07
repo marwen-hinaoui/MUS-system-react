@@ -57,6 +57,10 @@ const TableDemandeReadWrite = ({ data }) => {
     // },
 
     {
+      title: "Demandeur",
+      dataIndex: "demandeur",
+    },
+    {
       title: "Séquence",
       dataIndex: "sequence",
     },
@@ -78,6 +82,10 @@ const TableDemandeReadWrite = ({ data }) => {
         value: projet,
       })),
       onFilter: (value, record) => record.projetNom === value,
+    },
+    {
+      title: "Heure",
+      dataIndex: "heure",
     },
     {
       title: "Date création",

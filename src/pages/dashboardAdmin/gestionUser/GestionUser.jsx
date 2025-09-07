@@ -9,15 +9,20 @@ import {
   Empty,
   notification,
   InputNumber,
+  Checkbox,
+  Row,
+  Col,
+  Tag,
 } from "antd";
 import { COLORS } from "../../../constant/colors";
 import { gestion_user_api } from "../../../api/gestion_user_api";
 import { get_all_users_api } from "../../../api/get_all_users_api";
+import { get_fonctions_api } from "../../../api/get_fonctions_api";
 import { useSelector } from "react-redux";
 import { FiEdit } from "react-icons/fi";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { openNotificationSuccess } from "../../../components/notificationComponent/openNotification";
-import { MdOutlinePassword } from "react-icons/md";
+import { MdDelete, MdOutlinePassword } from "react-icons/md";
 const { Option } = Select;
 
 const GestionUser = () => {
@@ -26,31 +31,25 @@ const GestionUser = () => {
   const [form] = Form.useForm();
   const [users, setUsers] = useState([]);
   const [api, contextHolder] = notification.useNotification();
+  const [selectedRoles, setSelectedRoles] = useState([]);
 
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState([]);
   const [passwordForm] = Form.useForm();
+  const [fonctionList, setFonctionList] = useState([]);
+  const token = useSelector((state) => state.app.tokenValue);
+  useEffect(() => {
+    getAllUsers();
+    getFonctions();
+  }, []);
+
   const openPasswordModal = (user) => {
     setSelectedUser(user);
     setPasswordModalVisible(true);
     passwordForm.resetFields();
   };
-  const token = useSelector((state) => state.app.tokenValue);
-  useEffect(() => {
-    getAllUsers();
-  }, []);
   const openModal = () => {
     setVisible(true);
-  };
-  const closeModal = () => setVisible(false);
-
-  const getAllUsers = async () => {
-    try {
-      const res = await get_all_users_api(token);
-      setUsers(res?.resData?.data);
-    } catch (error) {
-      console.log("Error fetching users:", error);
-    }
   };
   const columns = [
     {
@@ -84,14 +83,30 @@ const GestionUser = () => {
       key: "username",
     },
     {
+      title: "Fonction",
+      dataIndex: "fonctioNom",
+      key: "fonctioNom",
+    },
+    {
       title: "Rôle",
-      dataIndex: "id_roleMUS",
-      key: "id_roleMUS",
+      dataIndex: "roleList",
+      key: "roleList",
+      render: (roleList) => {
+        if (!roleList) return null;
+
+        const roleLabels = {
+          DEMANDEUR: "Demandeur",
+          AGENT_MUS: "Agent stock",
+          Admin: "Admin",
+        };
+
+        return roleList.map((role) => roleLabels[role] || role).join(", ");
+      },
     },
     {
       title: "Site",
-      dataIndex: "id_site",
-      key: "id_site",
+      dataIndex: "siteNom",
+      key: "siteNom",
     },
     {
       title: "Actions",
@@ -99,19 +114,87 @@ const GestionUser = () => {
       width: 80,
       align: "center",
       render: (_, record) => (
-        <>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-evenly",
+          }}
+        >
           <FiEdit
             color={COLORS.Blue}
             onClick={() => {
               openPasswordModal(record);
             }}
             style={{ cursor: "pointer" }}
-            size={ICONSIZE.XSMALL}
+            size={ICONSIZE.SMALL}
           />
-        </>
+          <MdDelete
+            color={COLORS.LearRed}
+            onClick={() => {
+              console.log("====================Deleted================");
+              console.log();
+              console.log("====================================");
+            }}
+            style={{ cursor: "pointer" }}
+            size={ICONSIZE.SMALL}
+          />
+        </div>
       ),
     },
   ];
+  const fonctionRoleMapping = {
+    1: ["Admin"], // Admin
+    2: ["DEMANDEUR"], // Chef de Ligne
+    3: ["AGENT_MUS"], // Agent Make-Up
+    4: ["AGENT_MUS"], // Analyste des flux
+    5: ["DEMANDEUR"], // Superviseur de Production
+  };
+
+  // Quand on change de fonction
+  const handleFonctionChange = (fonctionId) => {
+    if (fonctionRoleMapping[fonctionId]) {
+      setSelectedRoles(fonctionRoleMapping[fonctionId]);
+      form.setFieldsValue({ roles: fonctionRoleMapping[fonctionId] });
+    } else {
+      setSelectedRoles([]);
+      form.setFieldsValue({ roles: [] });
+    }
+  };
+  const handleChange = (checkedValues) => {
+    if (checkedValues.includes("Admin")) {
+      setSelectedRoles(["Admin"]);
+    } else {
+      setSelectedRoles(checkedValues);
+    }
+  };
+  const isAdminSelected = selectedRoles.includes("Admin");
+
+  const closeModal = () => {
+    setVisible(false);
+    setSelectedRoles([]);
+    form.resetFields();
+  };
+
+  const getAllUsers = async () => {
+    try {
+      const res = await get_all_users_api(token);
+      setUsers(res?.resData?.data);
+    } catch (error) {
+      console.log("Error fetching users:", error);
+    }
+  };
+
+  const getFonctions = async () => {
+    try {
+      const getFonctions = await get_fonctions_api(token);
+      if (getFonctions.resData) {
+        console.log(getFonctions.resData);
+        setFonctionList(getFonctions.resData.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSubmit = async () => {
     try {
@@ -181,6 +264,9 @@ const GestionUser = () => {
         visible={visible}
         onCancel={closeModal}
         footer={[
+          <Button key="cancel" onClick={closeModal}>
+            Annuler
+          </Button>,
           <Button
             key="submit"
             type="primary"
@@ -252,25 +338,64 @@ const GestionUser = () => {
               )}
             />
           </Form.Item>
-
           <Form.Item
-            name="id_roleMUS"
-            label="Role: "
+            name="id_fonction"
+            label="Fonction: "
+            required={false}
+            rules={[{ required: true, message: "Sélectionnez Fonction!" }]}
+          >
+            <Select
+              onChange={handleFonctionChange}
+              placeholder="Select Fonction"
+            >
+              {fonctionList.map((f) => {
+                return <Option value={f.id}>{f.nom}</Option>;
+              })}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="roles"
+            label="Rôle: "
             rules={[{ required: true, message: "Saisie role!" }]}
             required={false}
           >
-            <Select placeholder="Select role">
-              <Option value={1}>Admin</Option>
-              <Option value={2}>Demandeur</Option>
-              <Option value={3}>Agent MUS</Option>
-            </Select>
+            <Checkbox.Group value={selectedRoles} onChange={handleChange}>
+              {" "}
+              <Row>
+                <Col span={24}>
+                  <Checkbox value="Admin" style={{ lineHeight: "32px" }}>
+                    Admin
+                  </Checkbox>
+                </Col>
+                {!isAdminSelected && (
+                  <>
+                    <Col span={24}>
+                      <Checkbox
+                        value="DEMANDEUR"
+                        style={{ lineHeight: "32px" }}
+                      >
+                        Demandeur
+                      </Checkbox>
+                    </Col>
+                    <Col span={24}>
+                      <Checkbox
+                        value="AGENT_MUS"
+                        style={{ lineHeight: "32px" }}
+                      >
+                        Agent Stock
+                      </Checkbox>
+                    </Col>
+                  </>
+                )}
+              </Row>
+            </Checkbox.Group>
           </Form.Item>
 
           <Form.Item
             name="id_site"
             label="Site: "
             required={false}
-            rules={[{ required: true, message: "Saisie site!" }]}
+            rules={[{ required: true, message: "Sélectionnez site!" }]}
           >
             <Select placeholder="Select site">
               <Option value={1}>BrownField</Option>

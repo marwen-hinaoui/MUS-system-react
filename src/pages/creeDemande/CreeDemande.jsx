@@ -43,6 +43,7 @@ const CreeDemande = () => {
   const [api, contextHolder] = notification.useNotification();
   const [demande, setDemande] = useState({});
   const dispatch = useDispatch();
+  const fullname = useSelector((state) => state.app.fullname);
   const token = useSelector((state) => state.app.tokenValue);
   const id_userMUS = useSelector((state) => state.app.userId);
   const isLoading = useSelector((state) => state.app.isLoading);
@@ -348,6 +349,7 @@ const CreeDemande = () => {
       const demandeToSubmit = {
         demandeData: {
           id_userMUS,
+          demandeur: fullname,
           id_site: demande.id_site,
           id_lieuDetection: demande.id_lieuDetection,
           projetNom,
@@ -392,6 +394,7 @@ const CreeDemande = () => {
           decision,
           demandeData: {
             id_userMUS,
+            demandeur: fullname,
             id_site: demande.id_site,
             id_lieuDetection: demande.id_lieuDetection,
             sequence,
@@ -429,9 +432,7 @@ const CreeDemande = () => {
             // });
           }
         } else {
-          console.log("================COMFIRM====================");
           console.log(res.resError);
-          console.log("====================================");
         }
       }
 
@@ -441,7 +442,6 @@ const CreeDemande = () => {
       setProjet("");
     } catch (err) {
       dispatch(set_loading(false));
-      openNotification(api, "Erreur lors de la confirmation");
     }
   };
 

@@ -62,7 +62,7 @@ const GestionStock = () => {
   const [materialPartNumber, setMaterialPartNumber] = useState("");
   const token = useSelector((state) => state.app.tokenValue);
   const isLoading = useSelector((state) => state.app.isLoading);
-  const role = useSelector((state) => state.app.role);
+  const roleList = useSelector((state) => state.app.roleList);
   const [projetNom, setProjet] = useState("");
   const [stock, setStock] = useState("");
   const [patterns, setPatterns] = useState([]);
@@ -345,6 +345,7 @@ const GestionStock = () => {
         );
       },
     },
+    { title: "Heure", dataIndex: "heure" },
     { title: "Séquence", dataIndex: "sequence" },
     {
       title: "Projet",
@@ -483,6 +484,14 @@ const GestionStock = () => {
                 </Form.Item>
 
                 <div style={{ display: "flex", justifyContent: "end" }}>
+                  <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+                    Annuler
+                  </Button>
+                  <span
+                    style={{
+                      paddingLeft: "8px",
+                    }}
+                  ></span>
                   <SharedButton
                     loading={isLoading}
                     type="primary"
@@ -569,6 +578,14 @@ const GestionStock = () => {
                 </Form.Item>
 
                 <div style={{ display: "flex", justifyContent: "end" }}>
+                  <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+                    Annuler
+                  </Button>
+                  <span
+                    style={{
+                      paddingLeft: "8px",
+                    }}
+                  ></span>
                   <SharedButton
                     loading={isLoading}
                     type="primary"
@@ -594,9 +611,9 @@ const GestionStock = () => {
         closable={{ "aria-label": "Custom Close Button" }}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
-        footer={null}
+        footer={[]}
       >
-        {role === "Admin" ? (
+        {roleList.includes("Admin") ? (
           <Tabs defaultActiveKey="1" items={items} />
         ) : (
           <>
@@ -689,16 +706,6 @@ const GestionStock = () => {
                       style={{ width: "100%", height: "34px" }}
                     />
                   </Form.Item>
-
-                  <div style={{ display: "flex", justifyContent: "end" }}>
-                    <SharedButton
-                      loading={isLoading}
-                      type="primary"
-                      name="Enregistrer"
-                      color={COLORS.LearRed}
-                      htmlType="submit"
-                    />
-                  </div>
                 </Form>
               )}
             </div>
@@ -714,7 +721,10 @@ const GestionStock = () => {
       </div>
       <div style={{ paddingBottom: "8px" }}>
         <h6 style={{ margin: "0px" }}>Check Stock:</h6>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>Consultez en un clic le stock de chaque Pattern associé à un Part Number.</p>
+        <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+          Consultez en un clic le stock de chaque Pattern associé à un Part
+          Number.
+        </p>
       </div>
       <Form
         style={{
@@ -793,7 +803,10 @@ const GestionStock = () => {
       </Form>
       <div style={{ paddingTop: "35px" }}>
         <h6 style={{ margin: "0px" }}>Mouvement Stock:</h6>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>Consultez l’historique et le statut des mouvements de Patterns : Introduits ou livrés.</p>
+        <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+          Consultez l’historique et le statut des mouvements de Patterns :
+          Introduits ou livrés.
+        </p>
       </div>
       <div
         style={{
