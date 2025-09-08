@@ -24,7 +24,9 @@ import { FiEdit } from "react-icons/fi";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { openNotificationSuccess } from "../../../components/notificationComponent/openNotification";
 import { MdDelete, MdOutlinePassword } from "react-icons/md";
+import { delete_user_api } from "../../../api/delete_user_api";
 const { Option } = Select;
+const { confirm } = Modal;
 
 const GestionUser = () => {
   const [visible, setVisible] = useState(false);
@@ -38,6 +40,8 @@ const GestionUser = () => {
   const [selectedUser, setSelectedUser] = useState([]);
   const [passwordForm] = Form.useForm();
   const [fonctionList, setFonctionList] = useState([]);
+  const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
+  const [selectedUserDelete, setSelectedUserDelete] = useState({});
   const token = useSelector((state) => state.app.tokenValue);
   useEffect(() => {
     getAllUsers();
@@ -131,11 +135,7 @@ const GestionUser = () => {
           />
           <MdDelete
             color={COLORS.LearRed}
-            onClick={() => {
-              console.log("====================Deleted================");
-              console.log();
-              console.log("====================================");
-            }}
+            onClick={() => showModalDelete(record)}
             style={{ cursor: "pointer" }}
             size={ICONSIZE.SMALL}
           />
@@ -150,7 +150,16 @@ const GestionUser = () => {
     4: ["AGENT_MUS"], // Analyste des flux
     5: ["DEMANDEUR"], // Superviseur de Production
   };
+  const showModalDelete = (user) => {
+    setSelectedUserDelete(user);
+    setModalDeleteVisible(true);
+  };
 
+  // Close modal
+  const closeModalDelete = () => {
+    setSelectedUserDelete(null);
+    setModalDeleteVisible(false);
+  };
   const handleFonctionChange = (fonctionId) => {
     if (fonctionRoleMapping[fonctionId]) {
       setSelectedRoles(fonctionRoleMapping[fonctionId]);
@@ -193,6 +202,21 @@ const GestionUser = () => {
     }
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      setLoading(true);
+      const res = await delete_user_api(selectedUserDelete.id, token);
+      if (res.resData) {
+        openNotificationSuccess(api, res.resData.message);
+        getAllUsers();
+      }
+    } catch (error) {
+      console.error("Erreur suppression utilisateur:", error);
+    } finally {
+      setLoading(false);
+      closeModalDelete();
+    }
+  };
   const closeModal = () => {
     setVisible(false);
     setSelectedRoles([]);
@@ -244,8 +268,28 @@ const GestionUser = () => {
   return (
     <div className="dashboard">
       {contextHolder}
-
-      <div style={{ paddingBottom: "10px" }}>
+      <Modal
+        title="Confirmer la suppression"
+        visible={modalDeleteVisible}
+        onCancel={closeModalDelete}
+        footer={[
+          <Button key="cancel" onClick={closeModalDelete}>
+            Annuler
+          </Button>,
+          <Button key="delete" type="primary" danger onClick={handleDeleteUser}>
+            Supprimer
+          </Button>,
+        ]}
+      >
+        <p>
+          Êtes-vous sûr de vouloir supprimer{" "}
+          <strong>
+            {selectedUserDelete?.firstName} {selectedUserDelete?.lastName}
+          </strong>{" "}
+          ?
+        </p>
+      </Modal>
+      <div style={{ paddingBottom: "15px", paddingTop: "10px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Utilisateurs</h4>
         {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
       </div>

@@ -733,7 +733,7 @@ const GestionStock = () => {
         )}
       </Modal>
 
-      <div style={{ padding: "0px 0px 30px 0px" }}>
+      <div style={{ padding: "0px 0px 15px 0px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
         <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez, filtrez et gérez les mouvements de stock en temps réel
@@ -754,7 +754,7 @@ const GestionStock = () => {
         layout="vertical"
         form={formCheck}
       >
-        <CardComponent width={"100%"} padding={"7px"}>
+        <CardComponent width={"100%"} padding={"17px"}>
           {/* Part Number */}
           <Row gutter={24} justify={"space-around"}>
             <Col xs={24} sm={12} md={4}>
@@ -773,6 +773,7 @@ const GestionStock = () => {
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span style={{ paddingRight: "5px" }}>PN: </span>
+
                   <Input
                     placeholder="Part Number"
                     onChange={getPatterns}
@@ -784,6 +785,9 @@ const GestionStock = () => {
             </Col>
             <Col xs={24} sm={12} md={4}>
               <Form.Item
+                style={{
+                  marginBottom: "0px",
+                }}
                 name="patternNumb"
                 rules={[{ required: true, message: "Saisie Pattern!" }]}
               >
@@ -799,6 +803,7 @@ const GestionStock = () => {
                         setStock("");
                       }
                     }}
+                    placeholder="Sélectionnez pattern:"
                     allowClear
                   >
                     {patterns?.map((pat, i) => (
@@ -811,10 +816,20 @@ const GestionStock = () => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} md={4}>
-              <Form.Item name="stock">
+              <Form.Item
+                name="stock"
+                style={{
+                  marginBottom: "0px",
+                }}
+              >
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span style={{ paddingRight: "5px" }}>Stock: </span>
-                  <Input style={{ height: "34px" }} value={stock} readOnly />
+                  <Input
+                    placeholder="Qte en stock"
+                    style={{ height: "34px" }}
+                    value={stock}
+                    readOnly
+                  />
                 </div>
               </Form.Item>
             </Col>

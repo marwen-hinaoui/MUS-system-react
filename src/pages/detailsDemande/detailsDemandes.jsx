@@ -123,7 +123,7 @@ const DetailsDemande = () => {
 
   const breadcrumb = [
     {
-      title: <Link to={"/admin"}>Dashboard</Link>,
+      title: <Link to={"/admin"}>Liste demande</Link>,
     },
 
     {
@@ -317,58 +317,71 @@ const DetailsDemande = () => {
 
           <div style={{ paddingBottom: "13px" }}>
             <p style={{ fontSize: FONTSIZE.PRIMARY }}>
+              <b>Status: </b>
               {demandeMUS.statusDemande}
             </p>
           </div>
-          <CardComponent padding={"7px"}>
-            <Row
-              // justify={"center"}
-              gutter={24}
-            >
-              <Col xs={24} sm={12} md={5}>
-                <Form.Item label="Séquence">
-                  <Input
-                    style={{ height: "34px" }}
-                    value={demandeMUS.sequence}
-                    readOnly
-                    maxLength={12}
-                  />
+          <CardComponent padding={"17px"}>
+            <Row align={"middle"} justify={"space-evenly"} gutter={24}>
+              <Col xs={24} sm={12} md={4}>
+                <Form.Item style={{ marginBottom: "0" }}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span style={{ paddingRight: "5px" }}>Seq: </span>
+                    <Input
+                      style={{ height: "34px" }}
+                      value={demandeMUS.sequence}
+                      readOnly
+                      maxLength={12}
+                    />
+                  </div>
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={4}>
-                <Form.Item label="Site">
-                  <Input
-                    style={{ width: "100%", height: "34px" }}
-                    value={demandeMUS.siteNom}
-                    readOnly
-                  />
+                <Form.Item style={{ marginBottom: "0" }}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span style={{ paddingRight: "5px" }}>Site: </span>
+                    <Input
+                      style={{ width: "100%", height: "34px" }}
+                      value={demandeMUS.siteNom}
+                      readOnly
+                    />
+                  </div>
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={4}>
-                <Form.Item label="Projet">
-                  <Input
-                    style={{ width: "100%", height: "34px" }}
-                    value={demandeMUS.projetNom}
-                    readOnly
-                  />
+                <Form.Item style={{ marginBottom: "0" }}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span style={{ paddingRight: "5px" }}>Projet:</span>
+                    <Input
+                      style={{ width: "100%", height: "34px" }}
+                      value={demandeMUS.projetNom}
+                      readOnly
+                    />
+                  </div>
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={4}>
-                <Form.Item label="Lieu detection">
-                  <Input
-                    style={{ width: "100%", height: "34px" }}
-                    value={demandeMUS.nomDetection}
-                    readOnly
-                  />
+                <Form.Item style={{ marginBottom: "0" }}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span style={{ paddingRight: "5px" }}>Lieu detection:</span>
+                    <Input
+                      style={{ width: "100%", height: "34px" }}
+                      value={demandeMUS.nomDetection}
+                      readOnly
+                    />
+                  </div>
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={4}>
-                <Form.Item label="Demandeur">
-                  <Input
-                    style={{ width: "100%", height: "34px" }}
-                    value={demandeMUS.demandeur}
-                    readOnly
-                  />
+                <Form.Item style={{ marginBottom: "0" }}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span style={{ paddingRight: "5px" }}>Demandeur:</span>
+                    <Input
+                      style={{ width: "100%", height: "34px" }}
+                      value={demandeMUS.demandeur}
+                      readOnly
+                    />
+                  </div>
                 </Form.Item>
               </Col>
             </Row>

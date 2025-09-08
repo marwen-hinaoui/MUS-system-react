@@ -448,17 +448,18 @@ const CreeDemande = () => {
   return (
     <div className="dashboard">
       {contextHolder}
-      <div style={{ paddingBottom: "10px " }}>
+      <div style={{ paddingBottom: "15px", paddingTop: "10px" }}>
         <h4 style={{ margin: "0px" }}>Nouvelle demande</h4>
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSubmit}>
-        <CardComponent padding={"7px"}>
-          <Row gutter={24} align="middle">
-            <Col xs={24} sm={12} md={6}>
+        <CardComponent padding={"17px"}>
+          <Row gutter={24} justify={"space-evenly"} align={"middle"}>
+            <Col xs={24} sm={12} md={4}>
               {" "}
               <Form.Item
-                label="Seq:"
+                style={{ marginBottom: "0" }}
+                required={false}
                 name="sequence"
                 rules={[
                   {
@@ -479,30 +480,34 @@ const CreeDemande = () => {
                   },
                 ]}
               >
-                <Input
-                  style={{ width: 120, height: 34 }}
-                  value={sequence}
-                  onChange={(e) => handleSequenceChange(e.target.value)}
-                  maxLength={12}
-                />
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ paddingRight: "5px" }}>Seq: </span>
+                  <Input
+                    placeholder="Séquence"
+                    style={{ height: 34 }}
+                    value={sequence}
+                    onChange={(e) => handleSequenceChange(e.target.value)}
+                    maxLength={12}
+                  />
+                </div>
               </Form.Item>
             </Col>
 
-            <Col xs={24} sm={12} md={6}>
+            <Col xs={24} sm={12} md={4}>
               {" "}
-              <Form.Item label="Projet:">
-                <Input
-                  style={{ width: 150, height: 34 }}
-                  value={projetNom}
-                  readOnly
-                />
+              <Form.Item style={{ marginBottom: "0" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ paddingRight: "5px" }}>Projet:</span>
+                  <Input style={{ height: 34 }} value={projetNom} readOnly />
+                </div>
               </Form.Item>
             </Col>
 
-            <Col xs={24} sm={12} md={6}>
+            <Col xs={24} sm={12} md={4}>
               {" "}
               <Form.Item
-                label="Site:"
+                style={{ marginBottom: "0" }}
+                required={false}
                 name="id_site"
                 rules={[
                   {
@@ -511,27 +516,34 @@ const CreeDemande = () => {
                   },
                 ]}
               >
-                <Select
-                  style={{ width: 150, height: 34 }}
-                  placeholder="Sélectionnez un site"
-                  value={demande.id_site}
-                  onChange={(val) => handleSelectChange("id_site", val)}
-                  showSearch
-                  optionFilterProp="children"
-                >
-                  {sites?.map((rec) => (
-                    <Option key={rec.id} value={rec.id}>
-                      {rec.nom}
-                    </Option>
-                  ))}
-                </Select>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ paddingRight: "5px" }}>Site:</span>
+                  <Select
+                    style={{ height: 34 }}
+                    placeholder="Sélectionnez un site"
+                    value={demande.id_site}
+                    onChange={(val) => {
+                      form.setFieldsValue({ id_site: val });
+                      handleSelectChange("id_site", val);
+                    }}
+                    showSearch
+                    optionFilterProp="children"
+                  >
+                    {sites?.map((rec) => (
+                      <Option key={rec.id} value={rec.id}>
+                        {rec.nom}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
               </Form.Item>
             </Col>
 
-            <Col xs={24} sm={12} md={6}>
+            <Col xs={24} sm={12} md={4}>
               {" "}
               <Form.Item
-                label="Lieu:"
+                style={{ marginBottom: "0" }}
+                required={false}
                 name="id_lieuDetection"
                 rules={[
                   {
@@ -540,22 +552,26 @@ const CreeDemande = () => {
                   },
                 ]}
               >
-                <Select
-                  style={{ width: 150, height: 34 }}
-                  placeholder="Sélectionnez un lieu"
-                  value={demande.id_lieuDetection}
-                  onChange={(val) =>
-                    handleSelectChange("id_lieuDetection", val)
-                  }
-                  showSearch
-                  optionFilterProp="children"
-                >
-                  {lieuDetection?.map((rec) => (
-                    <Option key={rec.id} value={rec.id}>
-                      {rec.nom}
-                    </Option>
-                  ))}
-                </Select>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ paddingRight: "5px" }}>Lieu: </span>
+                  <Select
+                    style={{ height: 34 }}
+                    placeholder="Sélectionnez un lieu detection"
+                    value={demande.id_lieuDetection}
+                    onChange={(val) => {
+                      form.setFieldsValue({ id_lieuDetection: val });
+                      handleSelectChange("id_lieuDetection", val);
+                    }}
+                    showSearch
+                    optionFilterProp="children"
+                  >
+                    {lieuDetection?.map((rec) => (
+                      <Option key={rec.id} value={rec.id}>
+                        {rec.nom}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
               </Form.Item>
             </Col>
           </Row>
