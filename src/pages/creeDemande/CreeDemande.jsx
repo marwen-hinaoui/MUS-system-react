@@ -448,19 +448,18 @@ const CreeDemande = () => {
   return (
     <div className="dashboard">
       {contextHolder}
-      <div style={{ padding: "13px 0px" }}>
-        <h4 style={{ margin: "0px" }}>Création Demande</h4>
-        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
+      <div style={{ paddingBottom: "10px " }}>
+        <h4 style={{ margin: "0px" }}>Nouvelle demande</h4>
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSubmit}>
         <CardComponent padding={"7px"}>
-          <Row gutter={24}>
+          <Row gutter={24} align="middle">
             <Col xs={24} sm={12} md={6}>
+              {" "}
               <Form.Item
-                label="Sequence"
+                label="Seq:"
                 name="sequence"
-                required={false}
                 rules={[
                   {
                     required: true,
@@ -481,27 +480,30 @@ const CreeDemande = () => {
                 ]}
               >
                 <Input
-                  style={{ height: "34px" }}
+                  style={{ width: 120, height: 34 }}
                   value={sequence}
                   onChange={(e) => handleSequenceChange(e.target.value)}
                   maxLength={12}
                 />
               </Form.Item>
             </Col>
+
             <Col xs={24} sm={12} md={6}>
-              <Form.Item label="Projet" required={false}>
+              {" "}
+              <Form.Item label="Projet:">
                 <Input
-                  style={{ width: "100%", height: "34px" }}
+                  style={{ width: 150, height: 34 }}
                   value={projetNom}
                   readOnly
                 />
               </Form.Item>
             </Col>
+
             <Col xs={24} sm={12} md={6}>
+              {" "}
               <Form.Item
-                label="Site"
+                label="Site:"
                 name="id_site"
-                required={false}
                 rules={[
                   {
                     required: true,
@@ -510,7 +512,7 @@ const CreeDemande = () => {
                 ]}
               >
                 <Select
-                  style={{ height: "34px" }}
+                  style={{ width: 150, height: 34 }}
                   placeholder="Sélectionnez un site"
                   value={demande.id_site}
                   onChange={(val) => handleSelectChange("id_site", val)}
@@ -527,9 +529,9 @@ const CreeDemande = () => {
             </Col>
 
             <Col xs={24} sm={12} md={6}>
+              {" "}
               <Form.Item
-                label="Lieu de détection"
-                required={false}
+                label="Lieu:"
                 name="id_lieuDetection"
                 rules={[
                   {
@@ -539,8 +541,8 @@ const CreeDemande = () => {
                 ]}
               >
                 <Select
-                  style={{ height: "34px" }}
-                  placeholder="Sélectionnez un lieu de détection"
+                  style={{ width: 150, height: 34 }}
+                  placeholder="Sélectionnez un lieu"
                   value={demande.id_lieuDetection}
                   onChange={(val) =>
                     handleSelectChange("id_lieuDetection", val)

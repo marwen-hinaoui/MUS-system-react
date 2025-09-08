@@ -6,9 +6,10 @@ import { useSelector } from "react-redux";
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { MdOutlineAddBox, MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdOutlineAddToPhotos, MdOutlineSpaceDashboard } from "react-icons/md";
 import { LuLayers } from "react-icons/lu";
-import { TbUsers } from "react-icons/tb";
+import { TbUsersPlus } from "react-icons/tb";
+import { BsPerson } from "react-icons/bs";
 
 const { Sider } = Layout;
 
@@ -21,8 +22,8 @@ const navItems = [
   },
   {
     key: "cree_demande",
-    icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
-    label: "Création demande",
+    icon: <MdOutlineAddToPhotos size={ICONSIZE.SMALL} />,
+    label: "Nouvelle demande",
     route: "/admin/cree_demande",
   },
   {
@@ -33,7 +34,7 @@ const navItems = [
   },
   {
     key: "gestion_user",
-    icon: <TbUsers size={ICONSIZE.SMALL} />,
+    icon: <BsPerson size={ICONSIZE.SMALL} />,
     label: "Gestion utilisateurs",
     route: "/admin/users",
   },

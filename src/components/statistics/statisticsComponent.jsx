@@ -17,7 +17,6 @@ const StatisticsComponent = ({
   const navigate = useNavigate();
   const [animatedPercent, setAnimatedPercent] = useState(0);
 
-  // Animate percent value when it changes
   useEffect(() => {
     let start = 0;
     const end = valuePercent;
@@ -40,11 +39,11 @@ const StatisticsComponent = ({
   }, [valuePercent]);
 
   const getProgressColor = () => {
-    if (status === "Cloturé") {
+    if (status === "Préparation en cours" || status === "Demande livrée") {
       if (valuePercent >= 80) return COLORS.GREEN;
       if (valuePercent >= 60) return COLORS.Warning;
       return COLORS.LearRed;
-    } else if (status === "En cours" || status === "Hors stock") {
+    } else if (status === "Hors stock") {
       if (valuePercent <= 20) return COLORS.GREEN;
       if (valuePercent <= 40) return COLORS.Warning;
       return COLORS.LearRed;
@@ -108,6 +107,9 @@ const StatisticsComponent = ({
             size={85}
             strokeColor={getProgressColor()}
             strokeWidth={7}
+            format={(percent) => (
+              <span style={{ color: COLORS.BLACK }}>{percent}%</span>
+            )}
           />
         )}
         {/* {status === "Total" && (

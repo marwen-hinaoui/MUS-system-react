@@ -35,10 +35,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
     return <Navigate to="/" />;
   }
   const hasAccess = roleList?.some((role) => allowedRoles.includes(role));
-  console.log("====================================");
-  console.log(hasAccess);
-  console.log(roleList);
-  console.log("====================================");
+
   if (!hasAccess) {
     return <Navigate to="/unauthorized" />;
   }
@@ -48,11 +45,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
       <div className="d-flex">
         <UserSidebar roleList={roleList} />
         <div style={bgStyles} className="d-flex flex-column w-100">
-          <DashboardHeader
-            token={token}
-            role={roleList.join(", ")}
-            fullname={fullname}
-          />
+          <DashboardHeader token={token} role={roleList} fullname={fullname} />
           <div style={{ marginTop: "63px" }}>{children}</div>
         </div>
       </div>
@@ -63,7 +56,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
       <div className="d-flex">
         <DashboardSidebarAdmin />
         <div style={bgStyles} className="d-flex flex-column w-100">
-          <DashboardHeader token={token} role={"Admin"} fullname={fullname} />
+          <DashboardHeader token={token} role={["Admin"]} fullname={fullname} />
           <div style={{ marginTop: "63px" }}>{children}</div>
         </div>
       </div>

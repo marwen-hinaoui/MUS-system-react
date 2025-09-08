@@ -35,7 +35,7 @@ const Dashboard = () => {
       setTotal(resDemandes.resData.data.length);
       setEnCours(
         resDemandes.resData.data.filter(
-          (d) => d.statusDemande === "Demande initié"
+          (d) => d.statusDemande === "Préparation en cours"
         ).length
       );
       setHorsStock(
@@ -65,10 +65,10 @@ const Dashboard = () => {
   return (
     demandes && (
       <div className="dashboard">
-        <div style={{ padding: "13px 0px" }}>
-          <h4 style={{ margin: "0px" }}>Liste Demandes</h4>
-          {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
-        </div>
+        {/* <div style={{ paddingBottom: "10px" }}> */}
+        {/* <h4 style={{ margin: "0px" }}>Suivi des demandes</h4> */}
+        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
+        {/* </div> */}
         <div className="flex-container">
           <StatisticsComponent
             icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
@@ -78,7 +78,7 @@ const Dashboard = () => {
           />
           <StatisticsComponent
             icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
-            status="Demande initié"
+            status="Préparation en cours"
             valuePercent={((enCours / total) * 100).toFixed(0)}
             chiffre={enCours}
             total={total}

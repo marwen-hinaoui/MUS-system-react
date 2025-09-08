@@ -18,6 +18,7 @@ import { COLORS } from "../../../constant/colors";
 import { gestion_user_api } from "../../../api/gestion_user_api";
 import { get_all_users_api } from "../../../api/get_all_users_api";
 import { get_fonctions_api } from "../../../api/get_fonctions_api";
+import { update_password_api } from "../../../api/update_password_api";
 import { useSelector } from "react-redux";
 import { FiEdit } from "react-icons/fi";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
@@ -150,7 +151,6 @@ const GestionUser = () => {
     5: ["DEMANDEUR"], // Superviseur de Production
   };
 
-  // Quand on change de fonction
   const handleFonctionChange = (fonctionId) => {
     if (fonctionRoleMapping[fonctionId]) {
       setSelectedRoles(fonctionRoleMapping[fonctionId]);
@@ -168,6 +168,30 @@ const GestionUser = () => {
     }
   };
   const isAdminSelected = selectedRoles.includes("Admin");
+  const handlePasswordUpdate = async () => {
+    console.log("====================================");
+    console.log(selectedUser.id);
+    console.log("====================================");
+    try {
+      const values = await passwordForm.validateFields();
+      setLoading(true);
+
+      const res = await update_password_api(
+        selectedUser.id,
+        values.newPassword,
+        token
+      );
+
+      if (res.resData) {
+        openNotificationSuccess(api, res.resData.message);
+        setPasswordModalVisible(false);
+      }
+    } catch (error) {
+      console.log("Erreur mise à jour mot de passe:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const closeModal = () => {
     setVisible(false);
@@ -221,7 +245,7 @@ const GestionUser = () => {
     <div className="dashboard">
       {contextHolder}
 
-      <div style={{ padding: "13px 0px" }}>
+      <div style={{ paddingBottom: "10px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Utilisateurs</h4>
         {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
       </div>
@@ -237,7 +261,7 @@ const GestionUser = () => {
             key="submit"
             type="primary"
             loading={loading}
-            // onClick={}
+            onClick={handlePasswordUpdate}
           >
             Mettre à jour
           </Button>,

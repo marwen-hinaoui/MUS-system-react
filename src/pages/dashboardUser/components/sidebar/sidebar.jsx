@@ -8,7 +8,7 @@ import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 
 import { LuLayers } from "react-icons/lu";
-import { MdOutlineAddBox, MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdOutlineAddToPhotos, MdOutlineSpaceDashboard } from "react-icons/md";
 
 const { Sider } = Layout;
 const commonNavItems = [
@@ -23,8 +23,8 @@ const roleBasedNavItems = {
   demandeur: [
     {
       key: "cree_demande",
-      icon: <MdOutlineAddBox size={ICONSIZE.SMALL} />,
-      label: "Création demande",
+      icon: <MdOutlineAddToPhotos size={ICONSIZE.SMALL} />,
+      label: "Nouvelle demande",
       route: "/user/cree_demande",
     },
   ],

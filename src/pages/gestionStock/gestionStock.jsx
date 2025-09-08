@@ -53,6 +53,7 @@ const GestionStock = () => {
   const [allStockMouvement, setAllStockMouvement] = useState([]);
   const [sites, setSites] = useState([]);
   const [api, contextHolder] = notification.useNotification();
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const [sequence, setSequence] = useState("");
   const [partNumberAdmin, setPartNumberAdmin] = useState("");
@@ -66,6 +67,7 @@ const GestionStock = () => {
   const [projetNom, setProjet] = useState("");
   const [stock, setStock] = useState("");
   const [patterns, setPatterns] = useState([]);
+  const [exportDateRange, setExportDateRange] = useState([]);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -102,24 +104,42 @@ const GestionStock = () => {
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(allStockMouvement);
+    // Filter by date range
+    let filteredData = allStockMouvement;
+    if (exportDateRange && exportDateRange.length === 2) {
+      const [start, end] = exportDateRange;
+      filteredData = allStockMouvement.filter((item) => {
+        const itemDate = dayjs(item.date_creation, "YYYY-MM-DD");
+        return (
+          itemDate.isSame(start, "day") ||
+          itemDate.isSame(end, "day") ||
+          (itemDate.isAfter(start, "day") && itemDate.isBefore(end, "day"))
+        );
+      });
+    }
+
+    if (filteredData.length === 0) {
+      openNotification(api, "Aucune donnée trouvée pour cette période !");
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "MouvementStock");
-
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
 
     const date = new Date();
     const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
       .toString()
       .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
 
-    const fileName = `MouvementStock_${formattedDate}.xlsx`;
-
-    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(data, fileName);
+    const fileName = `MouvementStock_${exportDateRange}.xlsx`;
+    const dataBlob = new Blob(
+      [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],
+      {
+        type: "application/octet-stream",
+      }
+    );
+    saveAs(dataBlob, fileName);
   };
 
   const getPatterns = async (e) => {
@@ -713,18 +733,18 @@ const GestionStock = () => {
         )}
       </Modal>
 
-      <div style={{ padding: "10px 0px 30px 0px" }}>
+      <div style={{ padding: "0px 0px 30px 0px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
         <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez, filtrez et gérez les mouvements de stock en temps réel
         </p>
       </div>
-      <div style={{ paddingBottom: "8px" }}>
+      <div style={{ paddingBottom: "13px" }}>
         <h6 style={{ margin: "0px" }}>Check Stock:</h6>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez en un clic le stock de chaque Pattern associé à un Part
           Number.
-        </p>
+        </p> */}
       </div>
       <Form
         style={{
@@ -803,10 +823,10 @@ const GestionStock = () => {
       </Form>
       <div style={{ paddingTop: "35px" }}>
         <h6 style={{ margin: "0px" }}>Mouvement Stock:</h6>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez l’historique et le statut des mouvements de Patterns :
           Introduits ou livrés.
-        </p>
+        </p> */}
       </div>
       <div
         style={{
@@ -818,7 +838,8 @@ const GestionStock = () => {
         <Button onClick={showModal} color="danger" variant="outlined">
           Ajouter Pattern
         </Button>
-        <Button type="primary" onClick={exportToExcel}>
+
+        <Button type="primary" onClick={() => setIsExportModalOpen(true)}>
           Export Excel
         </Button>
       </div>
@@ -844,6 +865,21 @@ const GestionStock = () => {
         }}
         size="small"
       />
+      <Modal
+        title="Exporter Mouvement Stock"
+        open={isExportModalOpen}
+        onCancel={() => setIsExportModalOpen(false)}
+        onOk={() => exportToExcel()}
+        okText="Exporter"
+        cancelText="Annuler"
+      >
+        <RangePicker
+          format="YYYY-MM-DD"
+          value={exportDateRange}
+          onChange={(dates) => setExportDateRange(dates)}
+          style={{ width: "100%" }}
+        />
+      </Modal>
     </div>
   );
 };

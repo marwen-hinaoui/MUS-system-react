@@ -3,11 +3,10 @@ import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import ClickingIcon from "../clickingIcon/clickingIcon";
 import "./header.css";
 
-import { BsPerson } from "react-icons/bs";
 import { IoLogOut } from "react-icons/io5";
 import { logout_api } from "../../api/logout_api";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   set_authenticated,
   set_fullname,
@@ -20,6 +19,11 @@ const DashboardHeader = ({ role, fullname, token }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const roleLabels = {
+    DEMANDEUR: "Demandeur",
+    AGENT_MUS: "Agent Stock",
+  };
+
   const logout = async () => {
     const res = await logout_api(token);
     if (res.resData) {
@@ -31,25 +35,32 @@ const DashboardHeader = ({ role, fullname, token }) => {
       dispatch(set_authenticated(false));
     }
   };
+
   return (
-    <div style={{ backgroundColor: COLORS.WHITE }} className="header px-4">
-      <div className="">
-        <div className="d-flex">
-          <div className="d-flex align-items-center">
-            <BsPerson size={ICONSIZE.SMALL} />
-            <p style={{ fontSize: FONTSIZE.PRIMARY }} className="ps-1 pe-3">
-              {fullname ? fullname : ""}
-            </p>
+    <div
+      style={{ backgroundColor: COLORS.WHITE }}
+      className="header px-4 d-flex justify-content-between align-items-center"
+    >
+      {/* User info */}
+      <div className="user-info position-relative d-flex align-items-center">
+        <p style={{ fontSize: FONTSIZE.PRIMARY }} className="mb-0">
+          {fullname || ""}
+        </p>
+
+        {/* Dropdown with roles */}
+        {role && role.length > 0 && (
+          <div className="role-dropdown position-absolute">
+            {role?.map((r) => (
+              <div key={r} className="role-item">
+                {roleLabels[r] || r}
+              </div>
+            ))}
           </div>
-          <p style={{ fontSize: FONTSIZE.PRIMARY }}>{role ? role : ""}</p>
-        </div>
+        )}
       </div>
 
-      <p
-        onClick={() => {
-          logout();
-        }}
-      >
+      {/* Logout */}
+      <p onClick={logout}>
         <ClickingIcon
           color={COLORS.LearRed}
           name={"Déconnexion"}
