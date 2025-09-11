@@ -2,7 +2,6 @@ import "./dashboard.css";
 
 import TableDemandeReadWrite from "../../tableDemandeReadWrite/tableDemandeReadWrite";
 
-import CardComponent from "../../../components/card/cardComponent";
 import StatisticsComponent from "../../../components/statistics/statisticsComponent";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { useEffect, useState } from "react";
@@ -17,7 +16,7 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 import { RxCheckCircled } from "react-icons/rx";
 import { TbHistory } from "react-icons/tb";
 import { LuLayers } from "react-icons/lu";
-import { COLORS } from "../../../constant/colors";
+import { Button } from "antd";
 
 const Dashboard = () => {
   const [demandes, setDemande] = useState([]);
@@ -27,6 +26,7 @@ const Dashboard = () => {
   const [enCours, setEnCours] = useState(0);
   const [horsStock, setHorsStock] = useState(0);
   const [livree, setLivree] = useState(0);
+  const [initie, setInitie] = useState(0);
   const get_all_demande = async () => {
     dispatch(set_loading(true));
     const resDemandes = await get_all_demande_api(token);
@@ -41,6 +41,11 @@ const Dashboard = () => {
       setHorsStock(
         resDemandes.resData.data.filter((d) => d.statusDemande === "Hors stock")
           .length
+      );
+      setInitie(
+        resDemandes.resData.data.filter(
+          (d) => d.statusDemande === "Demande initié"
+        ).length
       );
       setLivree(
         resDemandes.resData.data.filter(
@@ -93,9 +98,9 @@ const Dashboard = () => {
           <StatisticsComponent
             icon={<RxCheckCircled size={ICONSIZE.XLARGE} />}
             status="Demande livrée"
-            valuePercent={((livree / total) * 100).toFixed(0)}
+            valuePercent={((livree / enCours + initie) * 100).toFixed(0)}
             chiffre={livree}
-            total={total}
+            total={enCours + initie}
           />
         </div>
         <div style={{ padding: "17px 0 0 0" }}>

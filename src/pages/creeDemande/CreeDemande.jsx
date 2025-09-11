@@ -29,6 +29,10 @@ import { create_demande_api } from "../../api/create_demande_api";
 import { confirm_demande_api } from "../../api/confirm_demande_api";
 import { useDispatch, useSelector } from "react-redux";
 import { set_loading } from "../../redux/slices";
+import { get_seq_api } from "../../api/plt/get_seq_api";
+import { get_patterns_api } from "../../api/plt/get_patterns_api";
+import { get_projet_api } from "../../api/plt/get_projet_api";
+import { get_material_api } from "../../api/plt/get_material_api";
 
 const { Option } = Select;
 
@@ -55,6 +59,10 @@ const CreeDemande = () => {
   const [modalStyle, setModalStyle] = useState({});
   const [open, setOpen] = useState(false);
   const [projetNom, setProjet] = useState("");
+  const [partNumbers, setPartNumbers] = useState([]);
+  const [patternsByRow, setPatternsByRow] = useState({});
+  const [selectedPnCover, setSelectedPnCover] = useState("");
+
   const fetchData = async () => {
     try {
       const res = await fetch("/cms.json");
@@ -76,34 +84,45 @@ const CreeDemande = () => {
   }, []);
 
   // Validation et changement de sequence
-  const handleSequenceChange = (val) => {
-    if (/^\d{12}$/.test(val)) {
-      const cmsObj = data?.CMS?.find((c) => c?.sequence === val);
-      if (cmsObj) {
-        setSequence(val);
-        setProjet(cmsObj.projetNom);
+  const handleSequenceChange = async (val) => {
+    form.setFieldsValue({
+      partNumber: undefined,
+      projetNom: undefined,
+      patternNumb: undefined,
+      materialPartNumber: undefined,
+    });
+    setPartNumbers([]);
+    setSubDemandes([]);
 
-        setSubDemandes([
-          {
-            key: Date.now(),
-            partNumber: "",
-            patternNumb: "",
-            materialPartNumber: "",
-            code_defaut: "",
-            quantite: "",
-          },
-        ]);
-      } else if (val?.length === 12) {
+    try {
+      if (val.length === 12) {
+        const resPltSeq = await get_seq_api(val, token);
+        console.log(resPltSeq);
+        setSequence(val);
+
+        if (resPltSeq.resData?.length > 0) {
+          setSubDemandes([
+            {
+              key: Date.now(),
+              partNumber: "",
+              patternNumb: "",
+              materialPartNumber: "",
+              code_defaut: "",
+              quantite: "",
+            },
+          ]);
+
+          setPartNumbers(resPltSeq.resData);
+        } else if (val?.length === 12) {
+          setSubDemandes([]);
+        }
+      } else {
         setSubDemandes([]);
       }
-    } else {
-      setSubDemandes([]);
+    } catch (error) {
+      console.log(error);
     }
   };
-
-  const partNumbers =
-    data.CMS?.find((c) => c.sequence === sequence)?.partNumbers || [];
-  const materialsMap = data?.Materials?.[0] || null;
 
   const handleAddRow = () => {
     setSubDemandes((prev) => [
@@ -119,32 +138,92 @@ const CreeDemande = () => {
     ]);
   };
 
-  const handleChange = (key, field, value) => {
-    setSubDemandes((prev) =>
-      prev.map((row) => {
-        if (row.key !== key) return row;
-        const updatedRow = { ...row };
-        if (field === "defaut") {
-          updatedRow.code_defaut = value.code_defaut;
-          updatedRow.typeDefaut = value.typeDefaut;
-        } else {
-          updatedRow[field] = value;
-        }
-        if (field === "patternNumb") {
-          const partObj =
-            partNumbers?.find(
-              (p) => p?.partNumber === updatedRow?.partNumber
-            ) || null;
-          const partMaterials = partObj?.materials || [];
-          const matchedMaterial =
-            partMaterials?.find((mat) =>
-              materialsMap[mat]?.includes(Number(value))
-            ) || "";
-          updatedRow.materialPartNumber = matchedMaterial;
-        }
-        return updatedRow;
-      })
-    );
+  const handleChange = async (key, field, value) => {
+    if (field === "patternNumb") {
+      try {
+        const resMaterial = await get_material_api(
+          selectedPnCover,
+          value,
+          token
+        );
+
+        const material = resMaterial.resData.part_number_material;
+
+        setSubDemandes((prev) =>
+          prev.map((row) =>
+            row.key === key
+              ? {
+                  ...row,
+                  patternNumb: value,
+                  materialPartNumber: material,
+                }
+              : row
+          )
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    if (field === "partNumber") {
+      form.setFieldsValue({
+        projetNom: undefined,
+        patternNumb: undefined,
+        materialPartNumber: undefined,
+      });
+      setSubDemandes((prev) =>
+        prev.map((row) =>
+          row.key === key
+            ? {
+                ...row,
+                patternNumb: "",
+                materialPartNumber: "",
+              }
+            : row
+        )
+      );
+      setSelectedPnCover("");
+
+      const resPatterns = await get_patterns_api(value, token);
+      setSelectedPnCover(value);
+
+      try {
+        const resProjet = await get_projet_api(value, token);
+        console.log(resProjet.resData.projet);
+
+        setProjet(resProjet.resData.projet);
+      } catch (error) {
+        console.error("Failed to fetch project name:", error);
+        setProjet("Erreur de chargement");
+      }
+      setPatternsByRow((prev) => ({
+        ...prev,
+        [key]: resPatterns.resData,
+      }));
+
+      setSubDemandes((prev) =>
+        prev.map((row) =>
+          row.key === key
+            ? { ...row, partNumber: value, patternNumb: undefined }
+            : row
+        )
+      );
+    } else if (field === "defaut") {
+      setSubDemandes((prev) =>
+        prev.map((row) =>
+          row.key === key
+            ? {
+                ...row,
+                code_defaut: value.code_defaut,
+                typeDefaut: value.typeDefaut,
+              }
+            : row
+        )
+      );
+    } else {
+      setSubDemandes((prev) =>
+        prev.map((row) => (row.key === key ? { ...row, [field]: value } : row))
+      );
+    }
   };
 
   const handleDelete = (key) => {
@@ -166,8 +245,8 @@ const CreeDemande = () => {
           style={{ width: "100%", height: "34px" }}
         >
           {partNumbers.map((p) => (
-            <Option key={p.partNumber} value={p.partNumber}>
-              {p.partNumber}
+            <Option key={p.cover_part_number} value={p.cover_part_number}>
+              {p.cover_part_number}
             </Option>
           ))}
         </Select>
@@ -177,44 +256,34 @@ const CreeDemande = () => {
       title: "Pattern",
       dataIndex: "patternNumb",
       key: "patternNumb",
-      width: 350,
-      render: (text, record) => {
-        const partObj =
-          partNumbers?.find((p) => p?.partNumber === record?.partNumber) ||
-          null;
-        const partMaterials = partObj?.materials || [];
-        let availablePatterns = [];
-        partMaterials.forEach((mat) => {
-          if (materialsMap[mat])
-            availablePatterns = [...availablePatterns, ...materialsMap[mat]];
-        });
-        return (
-          <Select
-            value={record.patternNumb || undefined}
-            placeholder="Sélectionnez le Pattern"
-            onChange={(val) => handleChange(record.key, "patternNumb", val)}
-            disabled={!record.partNumber}
-            showSearch
-            optionFilterProp="children"
-            style={{ width: "100%", height: "34px" }}
-          >
-            {availablePatterns.map((pat, i) => (
-              <Option key={i} value={pat}>
-                {pat}
-              </Option>
-            ))}
-          </Select>
-        );
-      },
+      render: (text, record) => (
+        <Select
+          value={record.patternNumb || undefined}
+          placeholder="Sélectionnez le Pattern"
+          onChange={(val) => handleChange(record.key, "patternNumb", val)}
+          showSearch
+          optionFilterProp="children"
+          style={{ width: "100%", height: "34px" }}
+          disabled={!record.partNumber}
+        >
+          {patternsByRow[record.key]?.map((p) => (
+            <Option key={p.panel_number} value={p.panel_number}>
+              {p.panel_number}
+            </Option>
+          ))}
+        </Select>
+      ),
     },
+
     {
       title: "Matière",
       dataIndex: "materialPartNumber",
       key: "materialPartNumber",
+
       render: (text, record) => (
         <Input
           style={{ width: "100%", height: "34px" }}
-          value={record.materialPartNumber}
+          value={record.materialPartNumber || ""}
           readOnly
         />
       ),
@@ -223,10 +292,10 @@ const CreeDemande = () => {
       title: "Défaut",
       dataIndex: "defaut",
       key: "defaut",
-      width: 400,
+      width: 350,
       render: (text, record) => (
         <Select
-          mode="tags"
+          showSearch
           placeholder="Sélectionnez ou Saisir un défaut"
           style={{ width: "100%" }}
           value={
@@ -241,9 +310,9 @@ const CreeDemande = () => {
             setOpen((prev) => ({ ...prev, [record.key]: isOpen }));
           }}
           onChange={(values) => {
-            const val = values[values.length - 1];
+            const val = values;
 
-            const cmsMatch = data.DefautCMS.find(
+            const cmsMatch = data?.DefautCMS?.find(
               (d) => `${d.code_defaut} ${d.typeDefaut}` === val
             );
 
@@ -252,23 +321,19 @@ const CreeDemande = () => {
                 code_defaut: cmsMatch.code_defaut,
                 typeDefaut: cmsMatch.typeDefaut,
               });
-            } else {
-              handleChange(record.key, "defaut", {
-                code_defaut: "",
-                typeDefaut: val,
-              });
             }
+            console.log("cmsMatch");
+            console.log(cmsMatch);
+
             setOpen((prev) => ({ ...prev, [record.key]: false }));
           }}
         >
-          {data.DefautCMS.map((def) => (
+          {data?.DefautCMS?.map((def) => (
             <Select.Option
               key={`${def.code_defaut} ${def.typeDefaut}`}
               value={`${def.code_defaut} ${def.typeDefaut}`}
             >
-              {def.code_defaut === ""
-                ? `${def.code_defaut} (${def.typeDefaut})`
-                : def.typeDefaut}
+              {def.code_defaut} {def.typeDefaut}
             </Select.Option>
           ))}
         </Select>
@@ -410,11 +475,7 @@ const CreeDemande = () => {
         if (res.resData) {
           setMessageDetails(res.resData.message);
           setModalDetails(true);
-          console.log(
-            "================res.resData.data.demandeDetailsAfterAcceptation===================="
-          );
-          console.log(res.resData.data.demandeDetailsAfterAcceptation);
-          console.log("====================================");
+
           setSubDemandesModalComfirm(
             res.resData.data.demandeDetailsAfterAcceptation
           );
@@ -470,14 +531,6 @@ const CreeDemande = () => {
                     len: 12,
                     message: "La sequence doit contenir 12 chiffres !",
                   },
-                  {
-                    validator: (_, value) =>
-                      data?.CMS?.some((c) => c?.sequence === value)
-                        ? Promise.resolve()
-                        : Promise.reject(
-                            "La sequence n'existe pas dans le CMS"
-                          ),
-                  },
                 ]}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -485,20 +538,10 @@ const CreeDemande = () => {
                   <Input
                     placeholder="Séquence"
                     style={{ height: 34 }}
-                    value={sequence}
+                    // value={sequence}
                     onChange={(e) => handleSequenceChange(e.target.value)}
                     maxLength={12}
                   />
-                </div>
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12} md={4}>
-              {" "}
-              <Form.Item style={{ marginBottom: "0" }}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <span style={{ paddingRight: "5px" }}>Projet:</span>
-                  <Input style={{ height: 34 }} value={projetNom} readOnly />
                 </div>
               </Form.Item>
             </Col>
@@ -574,6 +617,15 @@ const CreeDemande = () => {
                 </div>
               </Form.Item>
             </Col>
+            <Col xs={24} sm={12} md={4}>
+              {" "}
+              <Form.Item style={{ marginBottom: "0" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ paddingRight: "5px" }}>Projet:</span>
+                  <Input style={{ height: 34 }} value={projetNom} readOnly />
+                </div>
+              </Form.Item>
+            </Col>
           </Row>
         </CardComponent>
 
@@ -619,12 +671,9 @@ const CreeDemande = () => {
             </Button>
           </div>
           <Form.Item>
-            <SharedButton
-              loading={isLoading}
-              type="primary"
-              name={"Enregistrer"}
-              color={COLORS.LearRed}
-            />
+            <Button htmlType="submit" type="primary" color={COLORS.LearRed} loading={isLoading}>
+              Enregistrer
+            </Button>
           </Form.Item>
         </div>
       </Form>
@@ -735,7 +784,7 @@ const CreeDemande = () => {
           .ant-modal-content{
 
               background-color:${modalStyle.bg} !important;
-              
+
             }
           `}</style> */}
 

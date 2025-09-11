@@ -6,7 +6,7 @@ import "./header.css";
 import { IoLogOut } from "react-icons/io5";
 import { logout_api } from "../../api/logout_api";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   set_authenticated,
   set_fullname,
@@ -14,10 +14,12 @@ import {
   set_role,
   set_token,
 } from "../../redux/slices";
+import { BsPerson } from "react-icons/bs";
 
 const DashboardHeader = ({ role, fullname, token }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const fonction = useSelector((state) => state.app.fonction);
 
   const roleLabels = {
     DEMANDEUR: "Demandeur",
@@ -43,12 +45,13 @@ const DashboardHeader = ({ role, fullname, token }) => {
     >
       {/* User info */}
       <div className="user-info position-relative d-flex align-items-center">
-        <p style={{ fontSize: FONTSIZE.PRIMARY }} className="mb-0">
-          {fullname || ""}
+        <p style={{ fontSize: FONTSIZE.PRIMARY }}>{fullname || ""}</p>
+        <p style={{ fontSize: FONTSIZE.PRIMARY, paddingLeft: "15px" }}>
+          {fonction}
         </p>
 
         {/* Dropdown with roles */}
-        {role && role.length > 0 && (
+        {/* {role && role.length > 0 && (
           <div className="role-dropdown position-absolute">
             {role?.map((r) => (
               <div key={r} className="role-item">
@@ -56,7 +59,7 @@ const DashboardHeader = ({ role, fullname, token }) => {
               </div>
             ))}
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Logout */}

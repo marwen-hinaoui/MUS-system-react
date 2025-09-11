@@ -1,10 +1,11 @@
-import apiInstance from "./axios";
+import apiInstance from "../axios";
 
-export const get_fonctions_api = async (token) => {
+export const get_patterns_api = async (cover_pn, token) => {
   try {
-    const res = await apiInstance.get("trim/fonction", {
+    const res = await apiInstance.get(`cms/patterns/${cover_pn}`, {
       headers: {
         Authorization: `Bearer ${token}`,
+
         "Content-Type": "application/json",
       },
     });

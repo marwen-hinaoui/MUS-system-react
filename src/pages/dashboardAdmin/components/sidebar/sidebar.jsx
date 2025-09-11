@@ -6,35 +6,35 @@ import { useSelector } from "react-redux";
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { MdOutlineAddToPhotos, MdOutlineSpaceDashboard } from "react-icons/md";
-import { LuLayers } from "react-icons/lu";
-import { TbUsersPlus } from "react-icons/tb";
-import { BsPerson } from "react-icons/bs";
+import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
+
+import { IoLayers } from "react-icons/io5";
+import { IoMdSettings } from "react-icons/io";
 
 const { Sider } = Layout;
 
 const navItems = [
   {
     key: "demande",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    icon: <MdSpaceDashboard size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/admin",
   },
   {
     key: "cree_demande",
-    icon: <MdOutlineAddToPhotos size={ICONSIZE.SMALL} />,
+    icon: <MdLibraryAdd size={ICONSIZE.SMALL} />,
     label: "Nouvelle demande",
     route: "/admin/cree_demande",
   },
   {
     key: "stock",
-    icon: <LuLayers size={ICONSIZE.SMALL} />,
+    icon: <IoLayers size={ICONSIZE.SMALL} />,
     label: "Gestion stock",
     route: "/admin/stock",
   },
   {
     key: "gestion_user",
-    icon: <BsPerson size={ICONSIZE.SMALL} />,
+    icon: <IoMdSettings size={ICONSIZE.SMALL} />,
     label: "Gestion utilisateurs",
     route: "/admin/users",
   },

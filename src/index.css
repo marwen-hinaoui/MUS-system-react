@@ -135,7 +135,7 @@ p {
 }
 
 .ant-select-item {
-  border-radius: 4px !important; /* applies rounded corners to each option */
+  border-radius: 4px !important;
 }
 
 .ant-input-number {
@@ -152,4 +152,3 @@ h4 {
 .ant-modal-content {
   border-radius: 4px !important;
 }
-

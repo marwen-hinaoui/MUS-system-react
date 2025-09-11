@@ -20,11 +20,12 @@ import { get_all_users_api } from "../../../api/get_all_users_api";
 import { get_fonctions_api } from "../../../api/get_fonctions_api";
 import { update_password_api } from "../../../api/update_password_api";
 import { useSelector } from "react-redux";
-import { FiEdit } from "react-icons/fi";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { openNotificationSuccess } from "../../../components/notificationComponent/openNotification";
 import { MdDelete, MdOutlinePassword } from "react-icons/md";
 import { delete_user_api } from "../../../api/delete_user_api";
+import { BiSolidPencil } from "react-icons/bi";
+
 const { Option } = Select;
 const { confirm } = Modal;
 
@@ -125,7 +126,7 @@ const GestionUser = () => {
             justifyContent: "space-evenly",
           }}
         >
-          <FiEdit
+          <BiSolidPencil
             color={COLORS.Blue}
             onClick={() => {
               openPasswordModal(record);

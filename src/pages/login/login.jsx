@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Card, Divider, Form, Input, notification } from "antd";
+import { Button, Form, Input, notification } from "antd";
 import { Flex } from "antd";
 import styles from "./login.module.css";
 import "./login.css";
@@ -9,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   set_authenticated,
   set_error,
+  set_fonction,
   set_fullname,
   set_loading,
   set_redirection,
@@ -24,7 +24,6 @@ import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
 import { TbLockPassword } from "react-icons/tb";
 import { MdOutlinePassword } from "react-icons/md";
-import CardComponent from "../../components/card/cardComponent";
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -57,6 +56,7 @@ const Login = () => {
 
       navigate(res.resData.redirect, { replace: true });
       dispatch(set_redirection(res.resData.redirect));
+      dispatch(set_fonction(res.resData.fonction));
       dispatch(set_role(res.resData.roleList));
       dispatch(set_token(res.resData.accessToken));
       dispatch(set_userId(res.resData.id));
@@ -148,15 +148,18 @@ const Login = () => {
                 )}
               />
             </Form.Item>
-
-            <SharedButton
-              color={COLORS.LearRed}
-              fontSize={FONTSIZE.PRIMARY}
-              width={"100%"}
-              name={"Connexion"}
-              padding={"17px 0"}
+            <Button
+              type="primary"
               loading={isLoading}
-            />
+              color={COLORS.LearRed}
+              style={{
+                width: "100%",
+                fontSize: FONTSIZE.PRIMARY,
+              }}
+              htmlType="submit"
+            >
+              Connexion
+            </Button>
             <div
               style={{
                 paddingTop: "14px",

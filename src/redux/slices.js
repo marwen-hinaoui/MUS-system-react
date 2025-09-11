@@ -7,6 +7,7 @@ const appSlices = createSlice({
     userId: "",
     roleList: [],
     fullname: "",
+    fonction: "",
     isLoading: false,
     errorMsg: "",
     isAuthenticated: null,
@@ -15,6 +16,9 @@ const appSlices = createSlice({
     openDrawer: false,
     searchingData: [],
     demandeData: [],
+    sequenceData: [],
+    cover_pn: [],
+    patterns: [],
   },
   reducers: {
     set_token: (state, action) => {
@@ -31,6 +35,9 @@ const appSlices = createSlice({
     },
     set_fullname: (state, action) => {
       state.fullname = action.payload;
+    },
+    set_fonction: (state, action) => {
+      state.fonction = action.payload;
     },
     clear_auth: (state) => {
       state.tokenValue = null;
@@ -61,6 +68,15 @@ const appSlices = createSlice({
     set_demande_data_table: (state, action) => {
       state.demandeData = action.payload;
     },
+    set_cover_pn: (state, action) => {
+      state.cover_pn = action.payload;
+    },
+    set_patterns: (state, action) => {
+      state.patterns = action.payload;
+    },
+    set_sequenceData: (state, action) => {
+      state.sequenceData = action.payload;
+    },
   },
 });
 
@@ -78,6 +94,10 @@ export const {
   set_fullname,
   set_role,
   set_userId,
+  set_sequenceData,
+  set_patterns,
+  set_cover_pn,
+  set_fonction,
 } = appSlices.actions;
 
 export default appSlices.reducer;

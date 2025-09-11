@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Table, Empty, DatePicker, Button, Space } from "antd";
+import {
+  Table,
+  Empty,
+  DatePicker,
+  Button,
+  Space,
+  Modal,
+  notification,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { set_data_searching, set_demande_data_table } from "../../redux/slices";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 import { COLORS } from "../../constant/colors";
 import { ICONSIZE } from "../../constant/FontSizes";
@@ -13,8 +23,12 @@ import SearchComponent from "../../components/searchComponent/searchComponent";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { RxCheckCircled } from "react-icons/rx";
+import { openNotification } from "../../components/notificationComponent/openNotification";
 const TableDemandeReadWrite = ({ data }) => {
   const navigate = useNavigate();
+  const [exportDateRange, setExportDateRange] = useState([]);
+  const [api, contextHolder] = notification.useNotification();
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const dispatch = useDispatch();
   const searchingData = useSelector((state) => state.app.searchingData);
@@ -211,8 +225,86 @@ const TableDemandeReadWrite = ({ data }) => {
     },
   ];
 
+  const exportToExcel = () => {
+    if (!data || data.length === 0) {
+      openNotification(api, "Aucune donnée à exporter !");
+      return;
+    }
+
+    let filteredData = data;
+    if (exportDateRange && exportDateRange.length === 2) {
+      const [start, end] = exportDateRange;
+      filteredData = data.filter((item) => {
+        const itemDate = dayjs(item.date_creation, "YYYY-MM-DD");
+        return (
+          itemDate.isSame(start, "day") ||
+          itemDate.isSame(end, "day") ||
+          (itemDate.isAfter(start, "day") && itemDate.isBefore(end, "day"))
+        );
+      });
+    }
+
+    if (filteredData.length === 0) {
+      openNotification(api, "Aucune donnée trouvée pour cette période !");
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Demandes");
+
+    const date = new Date();
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+
+    const fileName = `Demandes_MUS_${exportDateRange}.xlsx`;
+    const dataBlob = new Blob(
+      [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],
+      {
+        type: "application/octet-stream",
+      }
+    );
+    saveAs(dataBlob, fileName);
+  };
+
   return (
     <>
+      {contextHolder}
+
+      <Modal
+        title="Exporter Demandes"
+        open={isExportModalOpen}
+        onCancel={() => setIsExportModalOpen(false)}
+        onOk={() => exportToExcel()}
+        okText="Exporter"
+        cancelText="Annuler"
+      >
+        <RangePicker
+          format="YYYY-MM-DD"
+          value={exportDateRange}
+          onChange={(dates) => setExportDateRange(dates)}
+          style={{ width: "100%" }}
+        />
+      </Modal>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          paddingBottom: "17px",
+        }}
+      >
+        <Button
+          style={{
+            float: "right",
+          }}
+          type="primary"
+          onClick={() => setIsExportModalOpen(true)}
+        >
+          Export Excel
+        </Button>
+      </div>
+
       <Table
         rowClassName={() => "ant-row-no-hover"}
         bordered

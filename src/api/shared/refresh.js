@@ -9,6 +9,7 @@ import {
   set_role,
   set_fullname,
   set_userId,
+  set_fonction,
 } from "../../redux/slices";
 
 export const useRefreshAccessToken = () => {
@@ -27,6 +28,7 @@ export const useRefreshAccessToken = () => {
         console.log(res);
 
         dispatch(set_authenticated(true));
+        dispatch(set_fonction(res.data.fonction));
         dispatch(set_token(res.data.accessToken));
         dispatch(set_role(res.data.roleList));
         dispatch(set_userId(res.data.id));

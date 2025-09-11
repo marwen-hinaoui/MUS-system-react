@@ -7,14 +7,14 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 
-import { LuLayers } from "react-icons/lu";
-import { MdOutlineAddToPhotos, MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
+import { IoLayers } from "react-icons/io5";
 
 const { Sider } = Layout;
 const commonNavItems = [
   {
     key: "demande",
-    icon: <MdOutlineSpaceDashboard size={ICONSIZE.SMALL} />,
+    icon: <MdSpaceDashboard size={ICONSIZE.SMALL} />,
     label: "Demande",
     route: "/user",
   },
@@ -23,7 +23,7 @@ const roleBasedNavItems = {
   demandeur: [
     {
       key: "cree_demande",
-      icon: <MdOutlineAddToPhotos size={ICONSIZE.SMALL} />,
+      icon: <MdLibraryAdd size={ICONSIZE.SMALL} />,
       label: "Nouvelle demande",
       route: "/user/cree_demande",
     },
@@ -31,7 +31,7 @@ const roleBasedNavItems = {
   agent: [
     {
       key: "stock",
-      icon: <LuLayers size={ICONSIZE.SMALL} />,
+      icon: <IoLayers size={ICONSIZE.SMALL} />,
       label: "Gestion stock",
       route: "/user/stock",
     },

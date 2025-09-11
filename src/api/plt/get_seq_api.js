@@ -1,10 +1,11 @@
-import apiInstance from "./axios";
+import apiInstance from "../axios";
 
-export const get_fonctions_api = async (token) => {
+export const get_seq_api = async (sequence, token) => {
   try {
-    const res = await apiInstance.get("trim/fonction", {
+    const res = await apiInstance.get(`cms/sequences/${sequence}`, {
       headers: {
         Authorization: `Bearer ${token}`,
+
         "Content-Type": "application/json",
       },
     });

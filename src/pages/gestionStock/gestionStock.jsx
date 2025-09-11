@@ -31,8 +31,9 @@ import {
 import CardComponent from "../../components/card/cardComponent";
 
 import { check_stock_api } from "../../api/check_stock_api";
+import { get_patterns_api } from "../../api/plt/get_patterns_api";
+import { get_patterns_stock_api } from "../../api/get_patterns_stock_api";
 import { ajout_stock_admin_api } from "../../api/ajout_stock_admin_api";
-import { get_patterns_api } from "../../api/get_patterns_api";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import dayjs from "dayjs";
@@ -41,6 +42,9 @@ import {
   IoArrowForwardCircleOutline,
 } from "react-icons/io5";
 import "./gestionStock.css";
+import { get_seq_api } from "../../api/plt/get_seq_api";
+import { get_material_api } from "../../api/plt/get_material_api";
+import { get_projet_api } from "../../api/plt/get_projet_api";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const GestionStock = () => {
@@ -55,9 +59,6 @@ const GestionStock = () => {
   const [api, contextHolder] = notification.useNotification();
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  const [sequence, setSequence] = useState("");
-  const [partNumberAdmin, setPartNumberAdmin] = useState("");
-  const [sequenceValid, setSequenceValid] = useState(false);
   const [partNumbers, setPartNumbers] = useState([]);
   const [availablePatterns, setAvailablePatterns] = useState([]);
   const [materialPartNumber, setMaterialPartNumber] = useState("");
@@ -143,11 +144,19 @@ const GestionStock = () => {
   };
 
   const getPatterns = async (e) => {
+    formCheck.setFieldsValue({
+      patternNumb: undefined,
+    });
     setPatterns([]);
     setStock("");
-
+    const partNumber = e.target.value;
     if (e.target.value.length >= 15) {
-      const resPatterns = await get_patterns_api(e.target.value, token);
+      const resPatterns = await get_patterns_stock_api(
+        partNumber.trim(),
+        token
+      );
+      console.log(resPatterns.resData);
+
       if (resPatterns.resData) {
         console.log(resPatterns.resData.data);
 
@@ -155,7 +164,9 @@ const GestionStock = () => {
       }
     }
   };
-  const checkStock = async (partNumber, patternNumb) => {
+  const checkStock = async (patternNumb) => {
+    const partNumber = formCheck.getFieldValue("partNumber");
+
     try {
       const res = await check_stock_api(partNumber, patternNumb, token);
       if (res.resData) {
@@ -171,87 +182,117 @@ const GestionStock = () => {
     setIsModalOpen(true);
   };
 
-  const handleSequenceChange = (val) => {
-    if (/^\d{12}$/.test(val)) {
-      if (!Array.isArray(data?.CMS)) return [];
-      const cmsObj = data?.CMS.find((c) => c?.sequence === val);
-      if (cmsObj) {
-        setSequence(val);
-        setProjet(cmsObj.projetNom);
-        setSequenceValid(true);
-        setPartNumbers(cmsObj?.partNumbers);
-      } else {
-        setSequenceValid(false);
-        setPartNumbers([]);
-      }
-    } else {
-      setSequenceValid(false);
-      setPartNumbers([]);
-    }
-    form.setFieldsValue({ partNumber: undefined, patternNumb: undefined });
+  const handleSequenceChange = async (val) => {
+    form.setFieldsValue({
+      partNumber: undefined,
+      projetNom: undefined,
+      patternNumb: undefined,
+      materialPartNumber: undefined,
+    });
+    formAdmin.setFieldsValue({
+      partNumber: undefined,
+      projetNom: undefined,
+      patternNumb: undefined,
+      materialPartNumber: undefined,
+    });
+    setPartNumbers([]);
+    setMaterialPartNumber([]);
     setAvailablePatterns([]);
-    setMaterialPartNumber("");
+    try {
+      if (val.length === 12) {
+        const resPltSeq = await get_seq_api(val, token);
+        console.log(resPltSeq);
+
+        if (resPltSeq.resData?.length > 0) {
+          setPartNumbers(resPltSeq.resData);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handlePartNumberChange = (partNumber) => {
-    const partObj = partNumbers.find((p) => p.partNumber === partNumber);
-    if (partObj) {
-      const mats = partObj.materials;
-      const patterns = mats.flatMap((mat) => data.Materials[0][mat] || []);
-      setAvailablePatterns(patterns);
-    } else {
-      setAvailablePatterns([]);
+  const handlePartNumberChange = async (value) => {
+    console.log(value);
+
+    const resPatterns = await get_patterns_api(value, token);
+    console.log(resPatterns.resData);
+    try {
+      const resProjet = await get_projet_api(value, token);
+      console.log(resProjet.resData.projet);
+
+      setProjet(resProjet.resData.projet);
+    } catch (error) {
+      console.error("Failed to fetch project name:", error);
+      setProjet("Erreur de chargement");
+    }
+    if (resPatterns.resData) {
+      setAvailablePatterns(resPatterns.resData);
     }
     form.setFieldsValue({ patternNumb: undefined });
     setMaterialPartNumber("");
   };
 
-  const handlePartNumberChangeAdmin = (e) => {
+  const handlePartNumberChangeAdmin = async (e) => {
+    formAdmin.setFieldsValue({
+      projetNom: undefined,
+      patternNumb: undefined,
+      materialPartNumber: undefined,
+    });
+    setPartNumbers([]);
+    setMaterialPartNumber([]);
+    setAvailablePatterns([]);
     const partNumber = e.target.value;
-    let partObj;
-    for (const cms of data?.CMS) {
-      partObj = cms?.partNumbers.find((p) => p?.partNumber === partNumber);
-      if (partObj) {
-        setProjet(cms.projetNom);
-        break;
+    console.log(partNumber);
+
+    if (partNumber.length >= 15) {
+      const resPatterns = await get_patterns_api(partNumber, token);
+      console.log(resPatterns.resData);
+
+      try {
+        const resProjet = await get_projet_api(partNumber, token);
+        console.log(resProjet.resData.projet);
+
+        setProjet(resProjet.resData.projet);
+        if (resPatterns.resData) {
+          setAvailablePatterns(resPatterns.resData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch project name:", error);
+        setProjet("Erreur de chargement");
       }
     }
 
-    if (partObj) {
-      setPartNumberAdmin(partObj);
-      const mats = partObj?.materials;
-      const patterns = mats?.flatMap((mat) => data?.Materials[0][mat] || []);
-      setAvailablePatterns(patterns);
-    } else {
-      setAvailablePatterns([]);
+    form.setFieldsValue({});
+  };
+
+  const handlePatternChange = async (pattern) => {
+    const partNumber = form.getFieldValue("partNumber");
+    let material;
+    try {
+      const resMaterial = await get_material_api(partNumber, pattern, token);
+
+      material = resMaterial.resData.part_number_material;
+      setMaterialPartNumber(material);
+    } catch (error) {
+      console.log(error);
     }
 
-    form.setFieldsValue({});
-    setMaterialPartNumber("");
+    form.setFieldsValue({ materialPartNumber: material });
   };
 
-  const handlePatternChange = (pattern) => {
-    const partNumber = form.getFieldValue("partNumber");
-    const partObj = partNumbers.find((p) => p.partNumber === partNumber);
-    if (!partObj) return;
+  const handlePatternChangeAdmin = async (pattern) => {
+    const partNumber = formAdmin.getFieldValue("partNumber");
+    let material;
 
-    const matchedMat =
-      partObj.materials.find((mat) =>
-        data.Materials[0][mat]?.includes(Number(pattern))
-      ) || "";
+    try {
+      const resMaterial = await get_material_api(partNumber, pattern, token);
+      material = resMaterial.resData.part_number_material;
+    } catch (error) {
+      console.log(error);
+    }
 
-    setMaterialPartNumber(matchedMat);
-    form.setFieldsValue({ materialPartNumber: matchedMat });
-  };
-
-  const handlePatternChangeAdmin = (pattern) => {
-    const matchedMat =
-      partNumberAdmin?.materials?.find((mat) =>
-        data.Materials[0][mat]?.includes(Number(pattern))
-      ) || "";
-
-    setMaterialPartNumber(matchedMat);
-    formAdmin.setFieldsValue({ materialPartNumber: matchedMat });
+    formAdmin.setFieldsValue({ materialPartNumber: material });
   };
 
   const onSubmit = async (values) => {
@@ -273,8 +314,6 @@ const GestionStock = () => {
     }
     dispatch(set_loading(false));
     form.resetFields();
-    setSequence("");
-    setSequenceValid(false);
     setPartNumbers([]);
     setAvailablePatterns([]);
     setMaterialPartNumber("");
@@ -303,11 +342,8 @@ const GestionStock = () => {
     }
     dispatch(set_loading(false));
     formAdmin.resetFields();
-    setSequence("");
-    setSequenceValid(false);
     setPartNumbers([]);
     setAvailablePatterns([]);
-    setPartNumberAdmin("");
     setMaterialPartNumber("");
   };
 
@@ -426,18 +462,19 @@ const GestionStock = () => {
                   name="sequence"
                   required={false}
                   rules={[
-                    { required: true, message: "Saisie Séquence!" },
                     {
-                      validator: (_, value) => {
-                        if (!value || sequenceValid) return Promise.resolve();
-                        return Promise.reject(new Error("Séquence invalid"));
-                      },
+                      required: true,
+                      message: "Le champ sequence est obligatoire !",
+                    },
+                    {
+                      len: 12,
+                      message: "La sequence doit contenir 12 chiffres !",
                     },
                   ]}
                 >
                   <Input
                     style={{ height: "34px" }}
-                    value={sequence}
+                    // value={sequence}
                     onChange={(e) => handleSequenceChange(e.target.value)}
                     maxLength={12}
                   />
@@ -454,11 +491,13 @@ const GestionStock = () => {
                   <Select
                     placeholder="Select Part Number"
                     onChange={handlePartNumberChange}
-                    disabled={!sequenceValid}
                   >
                     {partNumbers.map((p) => (
-                      <Option key={p.partNumber} value={p.partNumber}>
-                        {p.partNumber}
+                      <Option
+                        key={p.cover_part_number}
+                        value={p.cover_part_number}
+                      >
+                        {p.cover_part_number}
                       </Option>
                     ))}
                   </Select>
@@ -473,12 +512,12 @@ const GestionStock = () => {
                 >
                   <Select
                     placeholder="Select Pattern"
-                    onChange={handlePatternChange}
+                    onChange={(val) => handlePatternChange(val)}
                     disabled={availablePatterns.length === 0}
                   >
                     {availablePatterns.map((pat, i) => (
-                      <Option key={i} value={pat}>
-                        {pat}
+                      <Option key={i} value={pat.panel_number}>
+                        {pat.panel_number}
                       </Option>
                     ))}
                   </Select>
@@ -504,7 +543,13 @@ const GestionStock = () => {
                 </Form.Item>
 
                 <div style={{ display: "flex", justifyContent: "end" }}>
-                  <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+                  <Button
+                    key="cancel"
+                    onClick={() => {
+                      formAdmin.resetFields();
+                      setIsModalOpen(false);
+                    }}
+                  >
                     Annuler
                   </Button>
                   <span
@@ -541,21 +586,13 @@ const GestionStock = () => {
                   label="Part Number"
                   name="partNumber"
                   required={false}
-                  rules={[
-                    { required: true, message: "Saisie part number!" },
-                    //   {
-                    //     validator: (_, value) => {
-                    //       if (!value || sequenceValid) return Promise.resolve();
-                    //       return Promise.reject(new Error("Part number invalid"));
-                    //     },
-                    //   },
-                  ]}
+                  rules={[{ required: true, message: "Saisie part number!" }]}
                 >
                   <Input
                     style={{ height: "34px" }}
                     placeholder="Part Number"
                     onChange={handlePartNumberChangeAdmin}
-                    maxLength={17}
+                    maxLength={19}
                   />
                 </Form.Item>
                 {/* Pattern */}
@@ -567,12 +604,12 @@ const GestionStock = () => {
                 >
                   <Select
                     placeholder="Select Pattern"
-                    onChange={handlePatternChangeAdmin}
+                    onChange={(val) => handlePatternChangeAdmin(val)}
                     disabled={availablePatterns.length === 0}
                   >
                     {availablePatterns.map((pat, i) => (
-                      <Option key={i} value={pat}>
-                        {pat}
+                      <Option key={i} value={pat.panel_number}>
+                        {pat.panel_number}
                       </Option>
                     ))}
                   </Select>
@@ -630,7 +667,11 @@ const GestionStock = () => {
         title="Ajout Pattern"
         closable={{ "aria-label": "Custom Close Button" }}
         open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => {
+          setIsModalOpen(false);
+          form.resetFields();
+          formAdmin.resetFields();
+        }}
         footer={[]}
       >
         {roleList.includes("Admin") ? (
@@ -648,18 +689,19 @@ const GestionStock = () => {
                     name="sequence"
                     required={false}
                     rules={[
-                      { required: true, message: "Saisie séquence!" },
                       {
-                        validator: (_, value) => {
-                          if (!value || sequenceValid) return Promise.resolve();
-                          return Promise.reject(new Error("Séquence invalid"));
-                        },
+                        required: true,
+                        message: "Le champ sequence est obligatoire !",
+                      },
+                      {
+                        len: 12,
+                        message: "La sequence doit contenir 12 chiffres !",
                       },
                     ]}
                   >
                     <Input
                       style={{ height: "34px" }}
-                      value={sequence}
+                      // value={sequence}
                       onChange={(e) => handleSequenceChange(e.target.value)}
                       maxLength={12}
                     />
@@ -677,12 +719,14 @@ const GestionStock = () => {
                   >
                     <Select
                       placeholder="Select Part Number"
-                      onChange={handlePartNumberChange}
-                      disabled={!sequenceValid}
+                      onChange={(val) => handlePartNumberChange(val)}
                     >
                       {partNumbers.map((p) => (
-                        <Option key={p.partNumber} value={p.partNumber}>
-                          {p.partNumber}
+                        <Option
+                          key={p.cover_part_number}
+                          value={p.cover_part_number}
+                        >
+                          {p.cover_part_number}
                         </Option>
                       ))}
                     </Select>
@@ -697,12 +741,12 @@ const GestionStock = () => {
                   >
                     <Select
                       placeholder="Select Pattern"
-                      onChange={handlePatternChange}
+                      onChange={(val) => handlePatternChange(val)}
                       disabled={availablePatterns.length === 0}
                     >
                       {availablePatterns.map((pat, i) => (
-                        <Option key={i} value={pat}>
-                          {pat}
+                        <Option key={i} value={pat.panel_number}>
+                          {pat.panel_number}
                         </Option>
                       ))}
                     </Select>
@@ -726,6 +770,30 @@ const GestionStock = () => {
                       style={{ width: "100%", height: "34px" }}
                     />
                   </Form.Item>
+
+                  <div style={{ display: "flex", justifyContent: "end" }}>
+                    <Button
+                      key="cancel"
+                      onClick={() => {
+                        form.resetFields();
+                        setIsModalOpen(false);
+                      }}
+                    >
+                      Annuler
+                    </Button>
+                    <span
+                      style={{
+                        paddingLeft: "8px",
+                      }}
+                    ></span>
+                    <SharedButton
+                      loading={isLoading}
+                      type="primary"
+                      name="Enregistrer"
+                      color={COLORS.LearRed}
+                      htmlType="submit"
+                    />
+                  </div>
                 </Form>
               )}
             </div>
@@ -733,18 +801,18 @@ const GestionStock = () => {
         )}
       </Modal>
 
-      <div style={{ padding: "0px 0px 15px 0px" }}>
+      <div style={{ padding: "10px 0px 35px 0px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
         <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez, filtrez et gérez les mouvements de stock en temps réel
         </p>
       </div>
       <div style={{ paddingBottom: "13px" }}>
-        <h6 style={{ margin: "0px" }}>Check Stock:</h6>
-        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+        <h6 style={{ margin: "0px" }}>Check Stock</h6>
+        <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez en un clic le stock de chaque Pattern associé à un Part
           Number.
-        </p> */}
+        </p>
       </div>
       <Form
         style={{
@@ -766,7 +834,7 @@ const GestionStock = () => {
                 rules={[
                   { required: true, message: "Saisie part number!" },
                   {
-                    max: 17,
+                    max: 19,
                     message: "Part number incorrect",
                   },
                 ]}
@@ -778,42 +846,36 @@ const GestionStock = () => {
                     placeholder="Part Number"
                     onChange={getPatterns}
                     style={{ height: "34px" }}
-                    maxLength={17}
+                    maxLength={19}
                   />
                 </div>
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} md={4}>
-              <Form.Item
-                style={{
-                  marginBottom: "0px",
-                }}
-                name="patternNumb"
-                rules={[{ required: true, message: "Saisie Pattern!" }]}
-              >
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <span style={{ paddingRight: "5px" }}>Pattern: </span>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span style={{ paddingRight: "5px" }}>Pattern: </span>
+
+                <Form.Item
+                  required={false}
+                  name="patternNumb"
+                  rules={[{ required: true, message: "Choisir Pattern!" }]}
+                  style={{
+                    margin: 0,
+                  }}
+                >
                   <Select
-                    style={{ height: "34px", width: "100%" }}
-                    onChange={(value) => {
-                      const partNumber = formCheck.getFieldValue("partNumber");
-                      if (value) {
-                        checkStock(partNumber, value);
-                      } else {
-                        setStock("");
-                      }
-                    }}
-                    placeholder="Sélectionnez pattern:"
-                    allowClear
+                    placeholder="Select Pattern"
+                    onChange={(val) => checkStock(val)}
+                    disabled={patterns.length === 0}
                   >
                     {patterns?.map((pat, i) => (
-                      <Option key={i} value={patterns ? pat.patternNumb : ""}>
+                      <Option key={i} value={pat.patternNumb}>
                         {pat.patternNumb}
                       </Option>
                     ))}
                   </Select>
-                </div>
-              </Form.Item>
+                </Form.Item>
+              </div>
             </Col>
             <Col xs={24} sm={12} md={4}>
               <Form.Item
@@ -837,11 +899,11 @@ const GestionStock = () => {
         </CardComponent>
       </Form>
       <div style={{ paddingTop: "35px" }}>
-        <h6 style={{ margin: "0px" }}>Mouvement Stock:</h6>
-        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+        <h6 style={{ margin: "0px" }}>Mouvement Stock</h6>
+        <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez l’historique et le statut des mouvements de Patterns :
           Introduits ou livrés.
-        </p> */}
+        </p>
       </div>
       <div
         style={{
