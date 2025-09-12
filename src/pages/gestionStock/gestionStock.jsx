@@ -625,115 +625,7 @@ const GestionStock = () => {
   return (
     <div className="dashboard">
       {contextHolder}
-
-      <Modal
-        title="Ajout Pattern"
-        closable={{ "aria-label": "Custom Close Button" }}
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        footer={[]}
-      >
-        {roleList.includes("Admin") ? (
-          <Tabs defaultActiveKey="1" items={items} />
-        ) : (
-          <>
-            <div style={{ width: "100%" }}>
-              {data.length === 0 || sites.length === 0 ? (
-                <LoadingComponent height={true} header={true} />
-              ) : (
-                <Form layout="vertical" form={form} onFinish={onSubmit}>
-                  {/* Sequence */}
-                  <Form.Item
-                    label="Séquence"
-                    name="sequence"
-                    required={false}
-                    rules={[
-                      { required: true, message: "Saisie séquence!" },
-                      {
-                        validator: (_, value) => {
-                          if (!value || sequenceValid) return Promise.resolve();
-                          return Promise.reject(new Error("Séquence invalid"));
-                        },
-                      },
-                    ]}
-                  >
-                    <Input
-                      style={{ height: "34px" }}
-                      value={sequence}
-                      onChange={(e) => handleSequenceChange(e.target.value)}
-                      maxLength={12}
-                    />
-                  </Form.Item>
-
-                  {/* Part Number */}
-
-                  <Form.Item
-                    label="Part Number"
-                    name="partNumber"
-                    required={false}
-                    rules={[
-                      { required: true, message: "Choisir part Number!" },
-                    ]}
-                  >
-                    <Select
-                      placeholder="Select Part Number"
-                      onChange={handlePartNumberChange}
-                      disabled={!sequenceValid}
-                    >
-                      {partNumbers.map((p) => (
-                        <Option key={p.partNumber} value={p.partNumber}>
-                          {p.partNumber}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-
-                  {/* Pattern */}
-                  <Form.Item
-                    required={false}
-                    label="Pattern"
-                    name="patternNumb"
-                    rules={[{ required: true, message: "Choisir pattern!" }]}
-                  >
-                    <Select
-                      placeholder="Select Pattern"
-                      onChange={handlePatternChange}
-                      disabled={availablePatterns.length === 0}
-                    >
-                      {availablePatterns.map((pat, i) => (
-                        <Option key={i} value={pat}>
-                          {pat}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-
-                  {/* Material */}
-                  <Form.Item label="Material" name="materialPartNumber">
-                    <Input value={materialPartNumber} readOnly />
-                  </Form.Item>
-
-                  {/* Quantité */}
-                  <Form.Item
-                    required={false}
-                    label="Quantité"
-                    name="quantite"
-                    rules={[{ required: true, message: "Saisie quantité!" }]}
-                  >
-                    <InputNumber
-                      min={1}
-                      max={999}
-                      style={{ width: "100%", height: "34px" }}
-                    />
-                  </Form.Item>
-                </Form>
-              )}
-            </div>
-          </>
-        )}
-      </Modal>
-
-      <div style={{ padding: "0px 0px 15px 0px" }}>
+      <div style={{ padding: "10px 0px 15px 0px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
         <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez, filtrez et gérez les mouvements de stock en temps réel
@@ -894,6 +786,112 @@ const GestionStock = () => {
           onChange={(dates) => setExportDateRange(dates)}
           style={{ width: "100%" }}
         />
+      </Modal>
+      <Modal
+        title="Ajout Pattern"
+        closable={{ "aria-label": "Custom Close Button" }}
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={[]}
+      >
+        {roleList.includes("Admin") ? (
+          <Tabs defaultActiveKey="1" items={items} />
+        ) : (
+          <>
+            <div style={{ width: "100%" }}>
+              {data.length === 0 || sites.length === 0 ? (
+                <LoadingComponent height={true} header={true} />
+              ) : (
+                <Form layout="vertical" form={form} onFinish={onSubmit}>
+                  {/* Sequence */}
+                  <Form.Item
+                    label="Séquence"
+                    name="sequence"
+                    required={false}
+                    rules={[
+                      { required: true, message: "Saisie séquence!" },
+                      {
+                        validator: (_, value) => {
+                          if (!value || sequenceValid) return Promise.resolve();
+                          return Promise.reject(new Error("Séquence invalid"));
+                        },
+                      },
+                    ]}
+                  >
+                    <Input
+                      style={{ height: "34px" }}
+                      value={sequence}
+                      onChange={(e) => handleSequenceChange(e.target.value)}
+                      maxLength={12}
+                    />
+                  </Form.Item>
+
+                  {/* Part Number */}
+
+                  <Form.Item
+                    label="Part Number"
+                    name="partNumber"
+                    required={false}
+                    rules={[
+                      { required: true, message: "Choisir part Number!" },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select Part Number"
+                      onChange={handlePartNumberChange}
+                      disabled={!sequenceValid}
+                    >
+                      {partNumbers.map((p) => (
+                        <Option key={p.partNumber} value={p.partNumber}>
+                          {p.partNumber}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+
+                  {/* Pattern */}
+                  <Form.Item
+                    required={false}
+                    label="Pattern"
+                    name="patternNumb"
+                    rules={[{ required: true, message: "Choisir pattern!" }]}
+                  >
+                    <Select
+                      placeholder="Select Pattern"
+                      onChange={handlePatternChange}
+                      disabled={availablePatterns.length === 0}
+                    >
+                      {availablePatterns.map((pat, i) => (
+                        <Option key={i} value={pat}>
+                          {pat}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+
+                  {/* Material */}
+                  <Form.Item label="Material" name="materialPartNumber">
+                    <Input value={materialPartNumber} readOnly />
+                  </Form.Item>
+
+                  {/* Quantité */}
+                  <Form.Item
+                    required={false}
+                    label="Quantité"
+                    name="quantite"
+                    rules={[{ required: true, message: "Saisie quantité!" }]}
+                  >
+                    <InputNumber
+                      min={1}
+                      max={999}
+                      style={{ width: "100%", height: "34px" }}
+                    />
+                  </Form.Item>
+                </Form>
+              )}
+            </div>
+          </>
+        )}
       </Modal>
     </div>
   );

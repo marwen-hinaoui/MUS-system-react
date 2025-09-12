@@ -58,7 +58,7 @@ const CreeDemande = () => {
   const fetchData = async () => {
     try {
       const res = await fetch("/cms.json");
-      const json = await res.json();
+      const json = await res.json();              //CHANGE
       setData(json);
 
       const resSites = await get_sites();
@@ -76,9 +76,9 @@ const CreeDemande = () => {
   }, []);
 
   // Validation et changement de sequence
-  const handleSequenceChange = (val) => {
+  const handleSequenceChange = (val) => {                           //CHANGE MAYBE 
     if (/^\d{12}$/.test(val)) {
-      const cmsObj = data?.CMS?.find((c) => c?.sequence === val);
+      const cmsObj = data?.CMS?.find((c) => c?.sequence === val);  
       if (cmsObj) {
         setSequence(val);
         setProjet(cmsObj.projetNom);
@@ -103,7 +103,7 @@ const CreeDemande = () => {
 
   const partNumbers =
     data.CMS?.find((c) => c.sequence === sequence)?.partNumbers || [];
-  const materialsMap = data?.Materials?.[0] || null;
+  const materialsMap = data?.Materials?.[0] || null;                         ///CHANGE 
 
   const handleAddRow = () => {
     setSubDemandes((prev) => [
@@ -410,11 +410,7 @@ const CreeDemande = () => {
         if (res.resData) {
           setMessageDetails(res.resData.message);
           setModalDetails(true);
-          console.log(
-            "================res.resData.data.demandeDetailsAfterAcceptation===================="
-          );
-          console.log(res.resData.data.demandeDetailsAfterAcceptation);
-          console.log("====================================");
+
           setSubDemandesModalComfirm(
             res.resData.data.demandeDetailsAfterAcceptation
           );
@@ -472,7 +468,7 @@ const CreeDemande = () => {
                   },
                   {
                     validator: (_, value) =>
-                      data?.CMS?.some((c) => c?.sequence === value)
+                      data?.CMS?.some((c) => c?.sequence === value) ///  CHANGE 
                         ? Promise.resolve()
                         : Promise.reject(
                             "La sequence n'existe pas dans le CMS"

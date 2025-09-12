@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { Card, Divider, Form, Input, notification } from "antd";
+import { Card, Form, Input, notification, Typography, Divider } from "antd";
 import { Flex } from "antd";
-import styles from "./login.module.css";
-import "./login.css";
-import { login_api } from "../../api/login_api";
+import { AiOutlineUser } from "react-icons/ai";
+import { TbLockPassword } from "react-icons/tb";
+import { MdOutlinePassword } from "react-icons/md";
 import { Navigate, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,15 +15,16 @@ import {
   set_token,
   set_userId,
 } from "../../redux/slices";
-import { AiOutlineUser } from "react-icons/ai";
+import { login_api } from "../../api/login_api";
 import SharedButton from "../../components/button/button";
 import LearLogo from "../../assets/img/LearLogo.png";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
-import { TbLockPassword } from "react-icons/tb";
-import { MdOutlinePassword } from "react-icons/md";
-import CardComponent from "../../components/card/cardComponent";
+import styles from "./login.module.css";
+import "./login.css";
+
+const { Title, Text } = Typography;
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -32,29 +32,23 @@ const inputErrorMsg = {
 };
 
 const Login = () => {
-  var navigate = useNavigate();
+  const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
-  const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
-  //DISPATCH
-  const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.app.isLoading);
-  //SUBSCRIBE TO STORE
 
+  const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
+  const isLoading = useSelector((state) => state.app.isLoading);
   const redirection = useSelector((state) => state.app.redirection);
 
-  //LOGIN ACTION
+  const dispatch = useDispatch();
+
+  // LOGIN ACTION
   const onFinish = async (form) => {
     dispatch(set_loading(true));
-    const formData = {
-      username: form.username,
-      password: form.password,
-    };
+    const formData = { username: form.username, password: form.password };
 
     const res = await login_api(formData);
 
     if (res.resData) {
-      console.log(res.resData);
-
       navigate(res.resData.redirect, { replace: true });
       dispatch(set_redirection(res.resData.redirect));
       dispatch(set_role(res.resData.roleList));
@@ -63,14 +57,12 @@ const Login = () => {
       dispatch(
         set_fullname(`${res.resData.firstName} ${res.resData.lastName}`)
       );
-
       dispatch(set_authenticated(true));
     } else {
       if (
-        res.resError.response.status === 404 ||
-        res.resError.response.status === 401
+        res.resError?.response?.status === 404 ||
+        res.resError?.response?.status === 401
       ) {
-        console.log(res.resError);
         dispatch(set_error(res.resError.response.data.message));
         openNotification(api, res.resError.response.data.message);
       }
@@ -79,51 +71,63 @@ const Login = () => {
   };
 
   return isAuthenticated === false ? (
-    <Flex align="center" justify="center" className={styles.container}>
+    <main
+      className={styles.container}
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #f5f6fa, #ffffff)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+      }}
+    >
       {contextHolder}
-      <div
-        style={{
-          padding: "0 0 14px 0",
-          textAlign: "center",
-        }}
-      >
-        <img src={LearLogo} className={`${styles.logo}`} alt="Lear Logo" />
-      </div>
 
-      <Flex
+      <Card
+        bordered={false}
         style={{
-          paddingTop: "14px",
+          width: 380,
+          borderRadius: "12px",
+          boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
+          padding: "24px",
+          background: "#fff",
         }}
       >
-        <Flex style={{ width: "350px" }} align="center" justify="center">
+        {/* Header */}
+        <header style={{ textAlign: "center", marginBottom: "20px" }}>
+          <img
+            src={LearLogo}
+            alt="Lear Logo"
+            style={{ width: "120px", marginBottom: "10px" }}
+          />
+          <Title level={4} style={{ marginBottom: "4px", fontWeight: "600" }}>
+            Make Up Area System
+          </Title>
+          <Text type="secondary" style={{ fontSize: "13px" }}>
+            Connexion à votre compte
+          </Text>
+        </header>
+
+        {/* Login Form */}
+        <section>
           <Form
-            name="basic"
+            name="loginForm"
             onFinish={onFinish}
             autoComplete="off"
-            className={styles.formStyle}
+            layout="vertical"
+            requiredMark={false}
           >
             <Form.Item
-              style={{ fontSize: FONTSIZE.PRIMARY }}
               name="username"
-              rules={[
-                {
-                  required: true,
-                  message: inputErrorMsg.username,
-                },
-              ]}
+              rules={[{ required: true, message: inputErrorMsg.username }]}
             >
               <Input
-                style={{
-                  fontSize: FONTSIZE.PRIMARY,
-                  borderRadius: "5px",
-                  height: "34px",
-                }}
-                className="input p-2"
+                size="large"
                 prefix={
-                  <AiOutlineUser style={{ fontSize: FONTSIZE.PRIMARY }} />
+                  <AiOutlineUser style={{ fontSize: 18, color: "#999" }} />
                 }
-                placeholder="Username"
-                name="username"
+                placeholder="Nom d'utilisateur"
               />
             </Form.Item>
 
@@ -132,19 +136,13 @@ const Login = () => {
               rules={[{ required: true, message: inputErrorMsg.password }]}
             >
               <Input.Password
-                style={{
-                  fontSize: FONTSIZE.PRIMARY,
-                  borderRadius: "5px",
-                  height: "34px",
-                }}
-                className="p-2"
-                placeholder="Mot de passe"
-                name="password"
+                size="large"
                 prefix={
-                  <TbLockPassword style={{ fontSize: FONTSIZE.PRIMARY }} />
+                  <TbLockPassword style={{ fontSize: 18, color: "#999" }} />
                 }
+                placeholder="Mot de passe"
                 iconRender={() => (
-                  <MdOutlinePassword style={{ fontSize: FONTSIZE.PRIMARY }} />
+                  <MdOutlinePassword style={{ fontSize: 18, color: "#999" }} />
                 )}
               />
             </Form.Item>
@@ -154,34 +152,27 @@ const Login = () => {
               fontSize={FONTSIZE.PRIMARY}
               width={"100%"}
               name={"Connexion"}
-              padding={"17px 0"}
+              padding={"14px 0"}
               loading={isLoading}
             />
-            <div
-              style={{
-                paddingTop: "14px",
-                fontSize: FONTSIZE.PRIMARY,
-                color: COLORS.BLACK,
-                fontWeight: "500",
-              }}
-            >
-              Make up area system
-            </div>
           </Form>
-        </Flex>
-      </Flex>
+        </section>
 
-      <div
-        style={{
-          position: "absolute",
-          bottom: "20px",
-          right: "20px",
-          fontSize: FONTSIZE.PRIMARY,
-        }}
-      >
-        v1.0
-      </div>
-    </Flex>
+        <Divider />
+
+        {/* Footer */}
+        <footer>
+          <Flex align="center" justify="space-between">
+            <Text strong style={{ fontSize: "12px" }}>
+              Lear Trim Bizerte
+            </Text>
+            <Text type="secondary" style={{ fontSize: "12px" }}>
+              v1.0
+            </Text>
+          </Flex>
+        </footer>
+      </Card>
+    </main>
   ) : (
     <>{redirection && <Navigate to={redirection} />}</>
   );
