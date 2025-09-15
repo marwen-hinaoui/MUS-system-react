@@ -1,13 +1,14 @@
-import { Card, Form, Input, notification, Typography, Divider } from "antd";
+import { Button, Form, Input, notification } from "antd";
 import { Flex } from "antd";
-import { AiOutlineUser } from "react-icons/ai";
-import { TbLockPassword } from "react-icons/tb";
-import { MdOutlinePassword } from "react-icons/md";
+import styles from "./login.module.css";
+import "./login.css";
+import { login_api } from "../../api/login_api";
 import { Navigate, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
   set_authenticated,
   set_error,
+  set_fonction,
   set_fullname,
   set_loading,
   set_redirection,
@@ -15,16 +16,13 @@ import {
   set_token,
   set_userId,
 } from "../../redux/slices";
-import { login_api } from "../../api/login_api";
-import SharedButton from "../../components/button/button";
+import { AiOutlineUser } from "react-icons/ai";
 import LearLogo from "../../assets/img/LearLogo.png";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
-import styles from "./login.module.css";
-import "./login.css";
-
-const { Title, Text } = Typography;
+import { TbLockPassword } from "react-icons/tb";
+import { MdOutlinePassword } from "react-icons/md";
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -34,23 +32,24 @@ const inputErrorMsg = {
 const Login = () => {
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
-
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
+  const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.app.isLoading);
   const redirection = useSelector((state) => state.app.redirection);
 
-  const dispatch = useDispatch();
-
-  // LOGIN ACTION
   const onFinish = async (form) => {
     dispatch(set_loading(true));
-    const formData = { username: form.username, password: form.password };
+    const formData = {
+      username: form.username,
+      password: form.password,
+    };
 
     const res = await login_api(formData);
 
     if (res.resData) {
       navigate(res.resData.redirect, { replace: true });
       dispatch(set_redirection(res.resData.redirect));
+      // dispatch(set_fonction(res.resData.fonction));
       dispatch(set_role(res.resData.roleList));
       dispatch(set_token(res.resData.accessToken));
       dispatch(set_userId(res.resData.id));
@@ -71,108 +70,112 @@ const Login = () => {
   };
 
   return isAuthenticated === false ? (
-    <main
-      className={styles.container}
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #f5f6fa, #ffffff)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "20px",
-      }}
-    >
+    <Flex align="center" justify="center" className={styles.container}>
       {contextHolder}
+      <div style={{ padding: "0 0 14px 0", textAlign: "center" }}>
+        <img src={LearLogo} className={styles.logo} alt="Lear Logo" />
+      </div>
 
-      <Card
-        bordered={false}
-        style={{
-          width: 380,
-          borderRadius: "12px",
-          boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
-          padding: "24px",
-          background: "#fff",
-        }}
-      >
-        {/* Header */}
-        <header style={{ textAlign: "center", marginBottom: "20px" }}>
-          <img
-            src={LearLogo}
-            alt="Lear Logo"
-            style={{ width: "120px", marginBottom: "10px" }}
-          />
-          <Title level={4} style={{ marginBottom: "4px", fontWeight: "600" }}>
-            Make Up Area System
-          </Title>
-          <Text type="secondary" style={{ fontSize: "13px" }}>
-            Connexion à votre compte
-          </Text>
-        </header>
-
-        {/* Login Form */}
-        <section>
+      <Flex style={{ paddingTop: "14px" }}>
+        <Flex style={{ width: "350px" }} align="center" justify="center">
           <Form
-            name="loginForm"
+            name="basic"
             onFinish={onFinish}
             autoComplete="off"
-            layout="vertical"
-            requiredMark={false}
+            className={styles.formStyle}
           >
+            {/* Username */}
             <Form.Item
               name="username"
-              rules={[{ required: true, message: inputErrorMsg.username }]}
+              rules={[
+                {
+                  required: true,
+                  message: inputErrorMsg.username,
+                },
+              ]}
+              colon={false}
+              label={null}
             >
               <Input
-                size="large"
+                style={{
+                  fontSize: FONTSIZE.PRIMARY,
+                  borderRadius: "5px",
+                  height: "34px",
+                }}
+                className="input p-2"
                 prefix={
-                  <AiOutlineUser style={{ fontSize: 18, color: "#999" }} />
+                  <AiOutlineUser style={{ fontSize: FONTSIZE.PRIMARY }} />
                 }
-                placeholder="Nom d'utilisateur"
+                placeholder="Username"
+                name="username"
               />
             </Form.Item>
 
+            {/* Password */}
             <Form.Item
               name="password"
               rules={[{ required: true, message: inputErrorMsg.password }]}
+              colon={false}
+              label={null}
             >
               <Input.Password
-                size="large"
-                prefix={
-                  <TbLockPassword style={{ fontSize: 18, color: "#999" }} />
-                }
+                style={{
+                  fontSize: FONTSIZE.PRIMARY,
+                  borderRadius: "5px",
+                  height: "34px",
+                }}
+                className="p-2"
                 placeholder="Mot de passe"
+                name="password"
+                prefix={
+                  <TbLockPassword style={{ fontSize: FONTSIZE.PRIMARY }} />
+                }
                 iconRender={() => (
-                  <MdOutlinePassword style={{ fontSize: 18, color: "#999" }} />
+                  <MdOutlinePassword style={{ fontSize: FONTSIZE.PRIMARY }} />
                 )}
               />
             </Form.Item>
 
-            <SharedButton
-              color={COLORS.LearRed}
-              fontSize={FONTSIZE.PRIMARY}
-              width={"100%"}
-              name={"Connexion"}
-              padding={"14px 0"}
+            {/* Submit Button */}
+            <Button
+              type="primary"
               loading={isLoading}
-            />
+              color={COLORS.LearRed}
+              style={{
+                width: "100%",
+                fontSize: FONTSIZE.PRIMARY,
+              }}
+              htmlType="submit"
+            >
+              Connexion
+            </Button>
+
+            <div
+              style={{
+                paddingTop: "14px",
+                fontSize: FONTSIZE.PRIMARY,
+                color: COLORS.BLACK,
+                fontWeight: "500",
+              }}
+            >
+              Make up area system
+            </div>
           </Form>
-        </section>
+        </Flex>
+      </Flex>
 
-        <Divider />
-
-        {/* Footer */}
-        <footer>
-          <Flex align="center" justify="space-between">
-            <Text strong style={{ fontSize: "12px" }}>
-              Lear Trim Bizerte
-            </Text>
-            <Text type="secondary" style={{ fontSize: "12px" }}>
-              v1.0
-            </Text>
-          </Flex>
-        </footer>
-      </Card>
-    </main>
+      {/* Footer */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "20px",
+          right: "20px",
+          fontSize: FONTSIZE.PRIMARY,
+        }}
+      >
+        Lear Trim Bizerte &nbsp; v1.0
+      </div>
+    </Flex>
   ) : (
     <>{redirection && <Navigate to={redirection} />}</>
   );
