@@ -29,6 +29,7 @@ import {
   openNotificationSuccess,
 } from "../../components/notificationComponent/openNotification";
 import CardComponent from "../../components/card/cardComponent";
+import { MdAdd, MdOutlineFileDownload } from "react-icons/md";
 
 import { check_stock_api } from "../../api/check_stock_api";
 import { get_patterns_api } from "../../api/plt/get_patterns_api";
@@ -151,10 +152,10 @@ const GestionStock = () => {
     setStock("");
     const partNumber = e.target.value;
     if (e.target.value.length >= 15) {
-      const resPatterns = await get_patterns_stock_api(
-        partNumber.trim(),
-        token
-      );
+      console.log('"partNumber"');
+      console.log(partNumber);
+
+      const resPatterns = await get_patterns_stock_api(partNumber, token);
       console.log(resPatterns.resData);
 
       if (resPatterns.resData) {
@@ -305,6 +306,8 @@ const GestionStock = () => {
       partNumberMaterial: values.materialPartNumber,
       quantiteAjouter: values.quantite,
     };
+    console.log("-------------------piece ---------------------------------");
+    console.log(piece);
 
     const resAjout = await ajout_stock_api(piece, token);
     if (resAjout.resData) {
@@ -489,6 +492,7 @@ const GestionStock = () => {
                   rules={[{ required: true, message: "Choisir part Number!" }]}
                 >
                   <Select
+                    showSearch
                     placeholder="Select Part Number"
                     onChange={handlePartNumberChange}
                   >
@@ -511,6 +515,7 @@ const GestionStock = () => {
                   rules={[{ required: true, message: "Choisir pattern!" }]}
                 >
                   <Select
+                    showSearch
                     placeholder="Select Pattern"
                     onChange={(val) => handlePatternChange(val)}
                     disabled={availablePatterns.length === 0}
@@ -603,6 +608,7 @@ const GestionStock = () => {
                   rules={[{ required: true, message: "Choisir Pattern!" }]}
                 >
                   <Select
+                    showSearch
                     placeholder="Select Pattern"
                     onChange={(val) => handlePatternChangeAdmin(val)}
                     disabled={availablePatterns.length === 0}
@@ -718,6 +724,7 @@ const GestionStock = () => {
                     ]}
                   >
                     <Select
+                      showSearch
                       placeholder="Select Part Number"
                       onChange={(val) => handlePartNumberChange(val)}
                     >
@@ -740,6 +747,7 @@ const GestionStock = () => {
                     rules={[{ required: true, message: "Choisir pattern!" }]}
                   >
                     <Select
+                    showSearch
                       placeholder="Select Pattern"
                       onChange={(val) => handlePatternChange(val)}
                       disabled={availablePatterns.length === 0}
@@ -801,18 +809,27 @@ const GestionStock = () => {
         )}
       </Modal>
 
-      <div style={{ padding: "10px 0px 35px 0px" }}>
+      <div style={{ padding: "0px 0 13px 0px" }}>
         <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez, filtrez et gérez les mouvements de stock en temps réel
-        </p>
+        </p> */}
       </div>
-      <div style={{ paddingBottom: "13px" }}>
+      <div
+        style={{
+          paddingBottom: "13px",
+        }}
+      >
+        <Button onClick={showModal} color="danger" variant="outlined">
+          Ajouter Pattern
+        </Button>
+      </div>
+      <div style={{ paddingBottom: "7px", paddingTop: "7px" }}>
         <h6 style={{ margin: "0px" }}>Check Stock</h6>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
           Consultez en un clic le stock de chaque Pattern associé à un Part
           Number.
-        </p>
+        </p> */}
       </div>
       <Form
         style={{
@@ -861,9 +878,11 @@ const GestionStock = () => {
                   rules={[{ required: true, message: "Choisir Pattern!" }]}
                   style={{
                     margin: 0,
+                    width: "100%",
                   }}
                 >
                   <Select
+                  showSearch
                     placeholder="Select Pattern"
                     onChange={(val) => checkStock(val)}
                     disabled={patterns.length === 0}
@@ -898,29 +917,30 @@ const GestionStock = () => {
           </Row>
         </CardComponent>
       </Form>
-      <div style={{ paddingTop: "35px" }}>
-        <h6 style={{ margin: "0px" }}>Mouvement Stock</h6>
-        <p style={{ margin: "0px", color: COLORS.Gray4 }}>
-          Consultez l’historique et le statut des mouvements de Patterns :
-          Introduits ou livrés.
-        </p>
-      </div>
+
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          padding: "13px 0",
+          alignItems: "end",
+          padding: "10px 0",
         }}
       >
-        <Button onClick={showModal} color="danger" variant="outlined">
-          Ajouter Pattern
-        </Button>
-
-        <Button type="primary" onClick={() => setIsExportModalOpen(true)}>
-          Export Excel
+        <div>
+          <h6 style={{ margin: "0px" }}>Mouvement Stock</h6>
+          {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+          Consultez l’historique et le statut des mouvements de Patterns :
+          Introduits ou livrés.
+        </p> */}
+        </div>
+        <Button
+          // icon={<MdOutlineFileDownload size={ICONSIZE.XSMALL} />}
+          type="primary"
+          onClick={() => setIsExportModalOpen(true)}
+        >
+          Export Excel <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
         </Button>
       </div>
-
       {/* Table */}
       <Table
         rowClassName={() => "ant-row-no-hover"}
@@ -930,6 +950,7 @@ const GestionStock = () => {
         pagination={{
           position: ["bottomCenter"],
           showSizeChanger: true,
+          defaultPageSize: "5",
           pageSizeOptions: ["5", "10", "25", "50", "100"],
         }}
         locale={{

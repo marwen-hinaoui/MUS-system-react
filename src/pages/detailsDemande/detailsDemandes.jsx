@@ -14,10 +14,12 @@ import { COLORS } from "../../constant/colors";
 import CardComponent from "../../components/card/cardComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { RiDashboardHorizontalLine } from "react-icons/ri";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import { useEffect, useState } from "react";
-import { IoCloseCircleOutline } from "react-icons/io5";
+import {
+  IoCheckmarkCircleOutline,
+  IoCloseCircleOutline,
+} from "react-icons/io5";
 import { get_demande_by_id_api } from "../../api/get_demande_by_id_api";
 import { status_change_api } from "../../api/status_change_api";
 import { set_loading } from "../../redux/slices";
@@ -50,9 +52,6 @@ const DetailsDemande = () => {
       console.log(res.resData.data.subDemandeMUS);
       setSubDemandes(res.resData.data.subDemandeMUS);
       setDemandeMUS(res.resData.data);
-      console.log("=====Demande===============================");
-      console.log(res.resData.data);
-      console.log("====================================");
     }
     dispatch(set_loading(false));
   };
@@ -102,11 +101,11 @@ const DetailsDemande = () => {
     dispatch(set_loading(true));
     const resStatus = await status_change_api(id, token);
     if (resStatus.resData) {
-      openNotificationSuccess(api, resStatus.resData.message);
+      openNotificationSuccess(api, resStatus?.resData?.message);
       getDemandeById();
     } else {
-      openNotification(api, resStatus.resError.response.data.message);
-      console.log(resStatus.resError);
+      openNotification(api, resStatus?.resError?.response?.data?.message);
+      console.log(resStatus?.resError);
     }
     dispatch(set_loading(false));
   };
@@ -123,7 +122,7 @@ const DetailsDemande = () => {
 
   const breadcrumb = [
     {
-      title: <Link to={"/admin"}>Liste demande</Link>,
+      title: <Link to={"/"}>Suivi des demandes</Link>,
     },
 
     {
@@ -455,7 +454,7 @@ const DetailsDemande = () => {
                 }}
                 onClick={changeStatus}
               >
-                <RxCheckCircled size={ICONSIZE.SMALL} /> Accepter
+                <IoCheckmarkCircleOutline size={ICONSIZE.SMALL} /> Accepter
               </Button>
             )}
           {demandeMUS.statusDemande === "Préparation en cours" &&

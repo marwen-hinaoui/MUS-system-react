@@ -17,7 +17,6 @@ import {
   set_userId,
 } from "../../redux/slices";
 import { AiOutlineUser } from "react-icons/ai";
-import SharedButton from "../../components/button/button";
 import LearLogo from "../../assets/img/LearLogo.png";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
@@ -166,14 +165,13 @@ const Login = () => {
                 fontSize: FONTSIZE.PRIMARY,
                 color: COLORS.BLACK,
                 fontWeight: "500",
+                display: "flex",
+                justifyContent: "space-between",
               }}
-            >
-              Make up area system
-            </div>
+            ></div>
           </Form>
         </Flex>
       </Flex>
-
       <div
         style={{
           position: "absolute",
@@ -183,6 +181,26 @@ const Login = () => {
         }}
       >
         v1.0
+      </div>
+      <div
+        className="headerLogin"
+        style={{
+          position: "absolute",
+          top: "0",
+          left: "50%",
+          textAlign: "center",
+          transform: "translateX(-50%)",
+          fontSize: FONTSIZE.PRIMARY,
+          fontWeight: "bolder",
+          wordSpacing: "5px",
+          letterSpacing: "1px",
+          display: "flex",
+          justifyContent: "space-between",
+          padding: "0 10px",
+        }}
+      >
+        <p>Make up area system</p>
+        <p>LEAR TRIM BIZERTE</p>
       </div>
     </Flex>
   ) : (

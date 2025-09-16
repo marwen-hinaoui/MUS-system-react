@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
+import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
-import { Progress, Tooltip } from "antd";
+import { Progress } from "antd";
 import CardComponent from "../card/cardComponent";
-import { IoStatsChartOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import "./statisticsComponent.css";
 

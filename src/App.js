@@ -1,11 +1,24 @@
 import { ConfigProvider } from "antd";
 import AppRoutes from "./routes/routes";
 import "@fontsource/inter";
+import { COLORS } from "./constant/colors";
 const App = () => {
   return (
     <>
       <ConfigProvider
         theme={{
+          components: {
+            Typography: {
+              linkDecoration: "underline",
+              linkHoverColor: "inherit",
+            },
+            Table: {
+              borderRadius: "4px",
+              headerBorderRadius: "4px",
+              cellBorderRadius: 0,
+              headerColor: COLORS.BLACK,
+            },
+          },
           token: {
             fontFamily: "Inter, sans-serif",
             colorPrimary: "#EE3124",

@@ -15,7 +15,7 @@ const commonNavItems = [
   {
     key: "demande",
     icon: <MdSpaceDashboard size={ICONSIZE.SMALL} />,
-    label: "Demande",
+    label: "Suivi des demandes",
     route: "/user",
   },
 ];
@@ -43,9 +43,7 @@ const UserSidebar = ({ roleList }) => {
 
   const location = useLocation();
   const navigate = useNavigate();
-  console.log("==================Sidebar==================");
-  console.log(roleList);
-  console.log("====================================");
+
   const navItems = useMemo(() => {
     let items = [...commonNavItems];
     if (roleList.includes("DEMANDEUR")) {

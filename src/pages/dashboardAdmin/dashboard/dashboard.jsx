@@ -3,7 +3,7 @@ import "./dashboard.css";
 import TableDemandeReadWrite from "../../tableDemandeReadWrite/tableDemandeReadWrite";
 
 import StatisticsComponent from "../../../components/statistics/statisticsComponent";
-import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
+import { ICONSIZE } from "../../../constant/FontSizes";
 import { useEffect, useState } from "react";
 import { get_all_demande_api } from "../../../api/get_all_demande_api";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,6 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 import { RxCheckCircled } from "react-icons/rx";
 import { TbHistory } from "react-icons/tb";
 import { LuLayers } from "react-icons/lu";
-import { Button } from "antd";
 
 const Dashboard = () => {
   const [demandes, setDemande] = useState([]);
@@ -70,10 +69,9 @@ const Dashboard = () => {
   return (
     demandes && (
       <div className="dashboard">
-        {/* <div style={{ paddingBottom: "10px" }}> */}
-        {/* <h4 style={{ margin: "0px" }}>Suivi des demandes</h4> */}
-        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
-        {/* </div> */}
+        {/* <div style={{ paddingBottom: "13px" }}>
+          <h4 style={{ margin: "0px" }}>Suivi des demandes</h4>
+        </div> */}
         <div className="flex-container">
           <StatisticsComponent
             icon={<LuLayers strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
@@ -98,7 +96,7 @@ const Dashboard = () => {
           <StatisticsComponent
             icon={<RxCheckCircled size={ICONSIZE.XLARGE} />}
             status="Demande livrée"
-            valuePercent={((livree / enCours + initie) * 100).toFixed(0)}
+            valuePercent={((livree / (enCours + initie)) * 100).toFixed(0)}
             chiffre={livree}
             total={enCours + initie}
           />

@@ -14,7 +14,6 @@ import {
   set_role,
   set_token,
 } from "../../redux/slices";
-import { BsPerson } from "react-icons/bs";
 
 const DashboardHeader = ({ role, fullname, token }) => {
   const navigate = useNavigate();

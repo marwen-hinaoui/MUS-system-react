@@ -12,7 +12,6 @@ import {
   Checkbox,
   Row,
   Col,
-  Tag,
 } from "antd";
 import { COLORS } from "../../../constant/colors";
 import { gestion_user_api } from "../../../api/gestion_user_api";
@@ -24,10 +23,10 @@ import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { openNotificationSuccess } from "../../../components/notificationComponent/openNotification";
 import { MdDelete, MdOutlinePassword } from "react-icons/md";
 import { delete_user_api } from "../../../api/delete_user_api";
-import { BiSolidPencil } from "react-icons/bi";
+import {} from "react-icons/bi";
+import { RiEditFill } from "react-icons/ri";
 
 const { Option } = Select;
-const { confirm } = Modal;
 
 const GestionUser = () => {
   const [visible, setVisible] = useState(false);
@@ -126,7 +125,7 @@ const GestionUser = () => {
             justifyContent: "space-evenly",
           }}
         >
-          <BiSolidPencil
+          <RiEditFill
             color={COLORS.Blue}
             onClick={() => {
               openPasswordModal(record);
@@ -290,10 +289,6 @@ const GestionUser = () => {
           ?
         </p>
       </Modal>
-      <div style={{ paddingBottom: "15px", paddingTop: "10px" }}>
-        <h4 style={{ margin: "0px" }}>Gestion Utilisateurs</h4>
-        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>message</p> */}
-      </div>
       <Modal
         title={`Modifier mot de passe pour ${selectedUser?.username}`}
         visible={passwordModalVisible}
@@ -414,6 +409,7 @@ const GestionUser = () => {
             rules={[{ required: true, message: "Sélectionnez Fonction!" }]}
           >
             <Select
+              showSearch
               onChange={handleFonctionChange}
               placeholder="Select Fonction"
             >
@@ -473,11 +469,14 @@ const GestionUser = () => {
           </Form.Item>
         </Form>
       </Modal>
+      <div style={{ paddingBottom: "13px" }}>
+        <h4 style={{ margin: "0px" }}>Gestion des comptes</h4>
+      </div>
 
       <Button onClick={openModal} color="danger" variant="outlined">
         Ajouter Utilisateur
       </Button>
-      <div style={{ padding: "13px 0" }}>
+      <div style={{ padding: "20px 0" }}>
         <Table
           size="small"
           rowClassName={() => "ant-row-no-hover"}

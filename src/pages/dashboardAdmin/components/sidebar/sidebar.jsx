@@ -17,7 +17,7 @@ const navItems = [
   {
     key: "demande",
     icon: <MdSpaceDashboard size={ICONSIZE.SMALL} />,
-    label: "Demande",
+    label: "Suivi des demandes",
     route: "/admin",
   },
   {
@@ -35,7 +35,7 @@ const navItems = [
   {
     key: "gestion_user",
     icon: <IoMdSettings size={ICONSIZE.SMALL} />,
-    label: "Gestion utilisateurs",
+    label: "Gestion des comptes",
     route: "/admin/users",
   },
 ];

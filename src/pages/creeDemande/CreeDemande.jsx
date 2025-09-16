@@ -12,17 +12,14 @@ import {
   Button,
   Modal,
   Card,
+  Typography,
 } from "antd";
 import CardComponent from "../../components/card/cardComponent";
-import {
-  openNotification,
-  openNotificationSuccess,
-} from "../../components/notificationComponent/openNotification";
-import { Link } from "react-router-dom";
+import { openNotification } from "../../components/notificationComponent/openNotification";
+import { Link, useLocation } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { COLORS } from "../../constant/colors";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
-import SharedButton from "../../components/button/button";
 import { get_sites } from "../../api/get_sites";
 import { get_lieuDetection } from "../../api/get_lieuDetection";
 import { create_demande_api } from "../../api/create_demande_api";
@@ -33,7 +30,12 @@ import { get_seq_api } from "../../api/plt/get_seq_api";
 import { get_patterns_api } from "../../api/plt/get_patterns_api";
 import { get_projet_api } from "../../api/plt/get_projet_api";
 import { get_material_api } from "../../api/plt/get_material_api";
-
+import { Result } from "antd";
+import {
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
 const { Option } = Select;
 
 const CreeDemande = () => {
@@ -56,13 +58,17 @@ const CreeDemande = () => {
   const [modalDetails, setModalDetails] = useState(false);
   const [messageDetails, setMessageDetails] = useState("");
   const [demandeStatus, setDemandeStatus] = useState("");
-  const [modalStyle, setModalStyle] = useState({});
   const [open, setOpen] = useState(false);
   const [projetNom, setProjet] = useState("");
   const [partNumbers, setPartNumbers] = useState([]);
   const [patternsByRow, setPatternsByRow] = useState({});
   const [selectedPnCover, setSelectedPnCover] = useState("");
-
+  const [numeroDemande, setNumeroDemande] = useState("");
+  const [idDemande, setIdDemande] = useState(0);
+  const location = useLocation();
+  const pathSegments = location.pathname.split("/").filter(Boolean);
+  const rolePrefix = pathSegments[0] || "user";
+  const linkPath = `/${rolePrefix}/details/${idDemande}`;
   const fetchData = async () => {
     try {
       const res = await fetch("/cms.json");
@@ -296,7 +302,7 @@ const CreeDemande = () => {
       render: (text, record) => (
         <Select
           showSearch
-          placeholder="Sélectionnez ou Saisir un défaut"
+          placeholder="Sélectionnez ou recherchez un défaut"
           style={{ width: "100%" }}
           value={
             record.code_defaut
@@ -428,11 +434,10 @@ const CreeDemande = () => {
       if (resDemande.resData) {
         if (resDemande.resData?.data?.demande?.statusDemande === "Hors stock") {
           setMessageDetails(resDemande?.resData?.message || "");
+          setNumeroDemande(resDemande?.resData?.numeroDemande);
+          setIdDemande(resDemande?.resData?.data?.demande?.id);
           setDemandeStatus(resDemande.resData?.data?.demande?.statusDemande);
-          setModalStyle({
-            bg: COLORS.RED_ALERT,
-            tableColunmColor: COLORS.RED_ALERT_TABLE_COLUMN,
-          });
+
           form.resetFields();
           setSubDemandes([]);
           setProjet("");
@@ -443,12 +448,17 @@ const CreeDemande = () => {
           setSubDemandesModalComfirm(resDemande?.resData?.data || []);
           setMessageDetails("");
           setModalVisible(true);
+          console.log(resDemande?.resData);
         }
       }
     } catch (err) {
       console.log("Erreur lors de la validation des champs");
     }
     dispatch(set_loading(false));
+    // form.setFieldsValue({
+    //   id_site: undefined,
+    //   id_lieuDetection: undefined,
+    // });
   };
 
   const handleConfirm = async (decision) => {
@@ -475,22 +485,16 @@ const CreeDemande = () => {
         if (res.resData) {
           setMessageDetails(res.resData.message);
           setModalDetails(true);
+          setNumeroDemande(res?.resData?.numeroDemande);
+          setIdDemande(res?.resData?.data?.demande?.id);
 
           setSubDemandesModalComfirm(
             res.resData.data.demandeDetailsAfterAcceptation
           );
           if (res.resData.data.hasStockLimite) {
             setDemandeStatus("LIMITE");
-            // setModalStyle({
-            //   bg: COLORS.WARNIGN_ALERT,
-            //   tableColunmColor: COLORS.WARNIGN_ALERT_TABLE_COLUMN,
-            // });
           } else {
             setDemandeStatus("ENSTOCK");
-            // setModalStyle({
-            //   bg: COLORS.GREEN_ALERT,
-            //   tableColunmColor: COLORS.GREEN_ALERT_TABLE_COLUMN,
-            // });
           }
         } else {
           console.log(res.resError);
@@ -509,7 +513,8 @@ const CreeDemande = () => {
   return (
     <div className="dashboard">
       {contextHolder}
-      <div style={{ paddingBottom: "15px", paddingTop: "10px" }}>
+      <div style={{ paddingBottom: "13px" }}>
+        {" "}
         <h4 style={{ margin: "0px" }}>Nouvelle demande</h4>
       </div>
 
@@ -564,7 +569,6 @@ const CreeDemande = () => {
                   <Select
                     style={{ height: 34 }}
                     placeholder="Sélectionnez un site"
-                    value={demande.id_site}
                     onChange={(val) => {
                       form.setFieldsValue({ id_site: val });
                       handleSelectChange("id_site", val);
@@ -600,7 +604,6 @@ const CreeDemande = () => {
                   <Select
                     style={{ height: 34 }}
                     placeholder="Sélectionnez un lieu detection"
-                    value={demande.id_lieuDetection}
                     onChange={(val) => {
                       form.setFieldsValue({ id_lieuDetection: val });
                       handleSelectChange("id_lieuDetection", val);
@@ -671,7 +674,12 @@ const CreeDemande = () => {
             </Button>
           </div>
           <Form.Item>
-            <Button htmlType="submit" type="primary" color={COLORS.LearRed} loading={isLoading}>
+            <Button
+              htmlType="submit"
+              type="primary"
+              color={COLORS.LearRed}
+              loading={isLoading}
+            >
               Enregistrer
             </Button>
           </Form.Item>
@@ -769,72 +777,94 @@ const CreeDemande = () => {
         </>
       </Modal> */}
 
-      <Modal
-        title="Détails de la demande"
+      <CustomModal
         open={modalDetails}
         onCancel={() => setModalDetails(false)}
-        width={800}
-        footer={[]}
-      >
-        <>
-          {/* <style>{`
-          .ant-modal-title{
-          background-color:${modalStyle.bg};
-          }
-          .ant-modal-content{
-
-              background-color:${modalStyle.bg} !important;
-
-            }
-          `}</style> */}
-
-          <p style={{ paddingBottom: "17px" }}>{messageDetails}</p>
-          <Table
-            style={{
-              background: "#000",
-              borderRadius: "0",
-            }}
-            rowClassName={() => "ant-row-no-hover"}
-            bordered
-            size="small"
-            dataSource={
-              demandeStatus === "Hors stock"
-                ? subDemandesModal
-                : subDemandesModalComfirm
-            }
-            rowKey="key"
-            pagination={false}
-            columns={[
-              {
-                title: "Part Number",
-                dataIndex: "partNumber",
-              },
-              {
-                title: "Pattern",
-                dataIndex: "patternNumb",
-              },
-              {
-                title: "Matière",
-                dataIndex: "materialPartNumber",
-              },
-              {
-                title: "Qte demandé",
-                dataIndex: "quantite",
-              },
-              {
-                title: "Qte disponible",
-                dataIndex: "quantiteDisponible",
-              },
-              {
-                title: "Status",
-                dataIndex: "statusSubDemande",
-              },
-            ]}
-          />
-        </>
-      </Modal>
+        status={demandeStatus}
+        message={
+          <>
+            {messageDetails} {"->"}{" "}
+            <Typography.Link
+              href={linkPath}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {numeroDemande}
+            </Typography.Link>
+          </>
+        }
+        data={
+          demandeStatus === "Hors stock"
+            ? subDemandesModal
+            : subDemandesModalComfirm
+        }
+      />
     </div>
   );
 };
 
 export default CreeDemande;
+
+const CustomModal = ({ open, onCancel, status, message, data }) => {
+  console.log(status);
+
+  const getModalProps = () => {
+    switch (status) {
+      case "ENSTOCK":
+        return {
+          icon: <CheckCircleOutlined style={{ color: "green" }} />,
+          status: "success",
+          title: "Demande en stock",
+          subTitle: message || "Toutes les pièces sont disponibles en stock.",
+        };
+      case "LIMITE":
+        return {
+          icon: <ExclamationCircleOutlined style={{ color: COLORS.Warning }} />,
+          status: "warning",
+          title: "Stock limité",
+          subTitle: message || "Certaines pièces ont un stock limité.",
+        };
+      case "Hors stock":
+        return {
+          icon: <CloseCircleOutlined style={{ color: "red" }} />,
+          status: "error",
+          title: "Hors stock",
+          subTitle: message || "Aucune pièce n’est disponible.",
+        };
+      default:
+        return {};
+    }
+  };
+
+  const modalProps = getModalProps();
+
+  return (
+    <Modal open={open} onCancel={onCancel} footer={null} width={800} centered>
+      <Result
+        style={{
+          padding: "0 0 20px 0",
+        }}
+        icon={modalProps.icon}
+        status={modalProps.status}
+        title={modalProps.title}
+        subTitle={modalProps.subTitle}
+      />
+      <Table
+        bordered
+        rowClassName={() => "ant-row-no-hover"}
+        size="small"
+        rowKey="key"
+        dataSource={data}
+        pagination={false}
+        columns={[
+          { title: "Part Number", dataIndex: "partNumber" },
+          { title: "Pattern", dataIndex: "patternNumb" },
+          { title: "Matière", dataIndex: "materialPartNumber" },
+          { title: "Qte demandé", dataIndex: "quantite" },
+          { title: "Qte disponible", dataIndex: "quantiteDisponible" },
+          { title: "Status", dataIndex: "statusSubDemande" },
+        ]}
+      />
+    </Modal>
+  );
+};

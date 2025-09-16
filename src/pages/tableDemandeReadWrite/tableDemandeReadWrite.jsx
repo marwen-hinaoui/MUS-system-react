@@ -18,12 +18,15 @@ import { ICONSIZE } from "../../constant/FontSizes";
 import "./tableDemandeReadWrite.css";
 
 import { TbHistory } from "react-icons/tb";
-import { IoCloseCircleOutline } from "react-icons/io5";
+import {
+  IoCheckmarkCircleOutline,
+  IoCloseCircleOutline,
+} from "react-icons/io5";
 import SearchComponent from "../../components/searchComponent/searchComponent";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { RxCheckCircled } from "react-icons/rx";
 import { openNotification } from "../../components/notificationComponent/openNotification";
+import { MdOutlineFileDownload } from "react-icons/md";
 const TableDemandeReadWrite = ({ data }) => {
   const navigate = useNavigate();
   const [exportDateRange, setExportDateRange] = useState([]);
@@ -170,12 +173,29 @@ const TableDemandeReadWrite = ({ data }) => {
       onFilter: (value, record) => record.statusDemande === value,
       render: (status) => {
         const tagProps = {
-          Cloturé: {
+          "Demande livrée": {
             icon: (
-              <RxCheckCircled color={COLORS.GREEN} size={ICONSIZE.PRIMARY} />
+              <IoCheckmarkCircleOutline
+                color={COLORS.GREEN}
+                size={ICONSIZE.SMALL}
+              />
             ),
           },
-          "En cours": {
+          "Demande partiellement livrée": {
+            icon: (
+              <IoCheckmarkCircleOutline
+                color={COLORS.GREEN}
+                size={ICONSIZE.SMALL}
+              />
+            ),
+          },
+
+          "Demande annulé": {
+            icon: (
+              <IoCloseCircleOutline color={COLORS.Blue} size={ICONSIZE.SMALL} />
+            ),
+          },
+          "Préparation en cours": {
             icon: (
               <TbHistory
                 color={COLORS.Blue}
@@ -254,7 +274,7 @@ const TableDemandeReadWrite = ({ data }) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Demandes");
 
     const date = new Date();
-    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1) // Todelete
       .toString()
       .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
 
@@ -301,7 +321,7 @@ const TableDemandeReadWrite = ({ data }) => {
           type="primary"
           onClick={() => setIsExportModalOpen(true)}
         >
-          Export Excel
+          Export Excel <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
         </Button>
       </div>
 

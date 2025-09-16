@@ -4,7 +4,7 @@ export const COLORS = {
   WHITE: "#FFFFFF",
   BG: "#fdfdfdff",
   BLACK: "#000000",
-  Gray1: "#F0EFEE",
+  Gray1: "#f5f5f5ff",
   Gray2: "#E1DFDE",
   Gray3: "#9d9d9dff",
   Gray4: "#535353ff",
@@ -15,7 +15,7 @@ export const COLORS = {
   WARNIGN_ALERT: "#FFFBE6",
   RED_ALERT_TABLE_COLUMN: "#ab1c1eff",
   GREEN_ALERT_TABLE_COLUMN: "#307d0aff",
-  WARNIGN_ALERT_TABLE_COLUMN: "rgba(224, 153, 12, 1)ff",
+  WARNIGN_ALERT_TABLE_COLUMN: "#e0990c",
   GREEN: "#309933ff",
-  Warning: "rgba(224, 153, 12, 1)ff",
+  Warning: "#e0990c",
 };
