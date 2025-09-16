@@ -1,6 +1,7 @@
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import {
   Button,
+  Card,
   Col,
   DatePicker,
   Empty,
@@ -28,8 +29,7 @@ import {
   openNotification,
   openNotificationSuccess,
 } from "../../components/notificationComponent/openNotification";
-import CardComponent from "../../components/card/cardComponent";
-import { MdAdd, MdOutlineFileDownload } from "react-icons/md";
+import { MdOutlineFileDownload } from "react-icons/md";
 
 import { check_stock_api } from "../../api/check_stock_api";
 import { get_patterns_api } from "../../api/plt/get_patterns_api";
@@ -747,7 +747,7 @@ const GestionStock = () => {
                     rules={[{ required: true, message: "Choisir pattern!" }]}
                   >
                     <Select
-                    showSearch
+                      showSearch
                       placeholder="Select Pattern"
                       onChange={(val) => handlePatternChange(val)}
                       disabled={availablePatterns.length === 0}
@@ -839,7 +839,13 @@ const GestionStock = () => {
         layout="vertical"
         form={formCheck}
       >
-        <CardComponent width={"100%"} padding={"17px"}>
+        <Card
+          style={{
+            width: "100%",
+            padding: "17px",
+          }}
+        >
+          {" "}
           {/* Part Number */}
           <Row gutter={24} justify={"space-around"}>
             <Col xs={24} sm={12} md={4}>
@@ -882,7 +888,7 @@ const GestionStock = () => {
                   }}
                 >
                   <Select
-                  showSearch
+                    showSearch
                     placeholder="Select Pattern"
                     onChange={(val) => checkStock(val)}
                     disabled={patterns.length === 0}
@@ -915,7 +921,7 @@ const GestionStock = () => {
               </Form.Item>
             </Col>
           </Row>
-        </CardComponent>
+        </Card>
       </Form>
 
       <div

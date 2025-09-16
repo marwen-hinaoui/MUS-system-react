@@ -1,4 +1,4 @@
-import { Button, Form, Input, notification } from "antd";
+import { Button, Card, Form, Input, notification } from "antd";
 import { Flex } from "antd";
 import styles from "./login.module.css";
 import "./login.css";
@@ -23,6 +23,7 @@ import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
 import { TbLockPassword } from "react-icons/tb";
 import { MdOutlinePassword } from "react-icons/md";
+import CardComponent from "../../components/card/cardComponent";
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -88,6 +89,16 @@ const Login = () => {
       >
         <img src={LearLogo} className={`${styles.logo}`} alt="Lear Logo" />
       </div>
+
+      <h6
+        style={{
+          margin: 0,
+          letterSpacing: "4px",
+          fontStyle: "italic",
+        }}
+      >
+        LEAR TRIM BIZERTE
+      </h6>
 
       <Flex
         style={{
@@ -181,26 +192,6 @@ const Login = () => {
         }}
       >
         v1.0
-      </div>
-      <div
-        className="headerLogin"
-        style={{
-          position: "absolute",
-          top: "0",
-          left: "50%",
-          textAlign: "center",
-          transform: "translateX(-50%)",
-          fontSize: FONTSIZE.PRIMARY,
-          fontWeight: "bolder",
-          wordSpacing: "5px",
-          letterSpacing: "1px",
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "0 10px",
-        }}
-      >
-        <p>Make up area system</p>
-        <p>LEAR TRIM BIZERTE</p>
       </div>
     </Flex>
   ) : (

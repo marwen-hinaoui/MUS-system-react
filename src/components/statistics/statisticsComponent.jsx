@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
-import { Progress } from "antd";
+import { Card, Progress } from "antd";
 import CardComponent from "../card/cardComponent";
 import { useNavigate } from "react-router-dom";
 import "./statisticsComponent.css";
@@ -51,7 +51,18 @@ const StatisticsComponent = ({
   };
 
   return (
-    <CardComponent height={"100px"} padding={"12px"} width={"25%"} hoverable>
+    <CardComponent
+      // style={{
+      //   borderRadius: "4px",
+      //   height: "100px",
+      //   padding: "12px",
+      //   width: "25%",
+      // }}
+      height={"100px"}
+      padding={"12px"}
+      width={"25%"}
+      hoverable
+    >
       <div
         style={{
           display: "flex",

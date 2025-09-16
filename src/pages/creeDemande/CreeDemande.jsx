@@ -519,7 +519,11 @@ const CreeDemande = () => {
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSubmit}>
-        <CardComponent padding={"17px"}>
+        <Card
+          style={{
+            padding: "17px",
+          }}
+        >
           <Row gutter={24} justify={"space-evenly"} align={"middle"}>
             <Col xs={24} sm={12} md={4}>
               {" "}
@@ -630,7 +634,7 @@ const CreeDemande = () => {
               </Form.Item>
             </Col>
           </Row>
-        </CardComponent>
+        </Card>
 
         <div
           style={{

@@ -1,6 +1,7 @@
 import {
   Breadcrumb,
   Button,
+  Card,
   Col,
   Empty,
   Form,
@@ -11,7 +12,6 @@ import {
   Table,
 } from "antd";
 import { COLORS } from "../../constant/colors";
-import CardComponent from "../../components/card/cardComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
@@ -312,15 +312,17 @@ const DetailsDemande = () => {
           />
         </div>
         <Form layout="vertical">
-          {/* <CardComponent padding={"10px"} margin={"0 0 10px 0"}> */}
-
           <div style={{ paddingBottom: "13px" }}>
             <p style={{ fontSize: FONTSIZE.PRIMARY }}>
-              <b>Status: </b>
+              <b>Status demande : </b>
               {demandeMUS.statusDemande}
             </p>
           </div>
-          <CardComponent padding={"17px"}>
+          <Card
+            style={{
+              padding: "17px",
+            }}
+          >
             <Row align={"middle"} justify={"space-evenly"} gutter={24}>
               <Col xs={24} sm={12} md={4}>
                 <Form.Item style={{ marginBottom: "0" }}>
@@ -384,8 +386,7 @@ const DetailsDemande = () => {
                 </Form.Item>
               </Col>
             </Row>
-          </CardComponent>
-          {/* </CardComponent> */}
+          </Card>
 
           {/* {sequenceValid && ( */}
           <div
@@ -393,7 +394,6 @@ const DetailsDemande = () => {
               paddingTop: "17px",
             }}
           >
-            {/* <CardComponent> */}
             <Table
               rowClassName={() => "ant-row-no-hover"}
               bordered
@@ -411,7 +411,6 @@ const DetailsDemande = () => {
                 ),
               }}
             />
-            {/* </CardComponent> */}
           </div>
         </Form>
         <div
