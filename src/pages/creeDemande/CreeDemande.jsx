@@ -65,6 +65,7 @@ const CreeDemande = () => {
   const [selectedPnCover, setSelectedPnCover] = useState("");
   const [numeroDemande, setNumeroDemande] = useState("");
   const [idDemande, setIdDemande] = useState(0);
+  const [laodingComfirmation, setLaodingComfirmation] = useState(false);
   const location = useLocation();
   const pathSegments = location.pathname.split("/").filter(Boolean);
   const rolePrefix = pathSegments[0] || "user";
@@ -462,8 +463,9 @@ const CreeDemande = () => {
   };
 
   const handleConfirm = async (decision) => {
+    setLaodingComfirmation(true);
+
     try {
-      dispatch(set_loading(true));
       const res = await confirm_demande_api(
         {
           decision,
@@ -479,7 +481,6 @@ const CreeDemande = () => {
         },
         token
       );
-      dispatch(set_loading(false));
       setModalVisible(false);
       if (decision === "accept") {
         if (res.resData) {
@@ -508,12 +509,13 @@ const CreeDemande = () => {
     } catch (err) {
       dispatch(set_loading(false));
     }
+    setLaodingComfirmation(false);
   };
 
   return (
     <div className="dashboard">
       {contextHolder}
-      <div style={{ paddingBottom: "13px" }}>
+      <div style={{ paddingBottom: "20px" }}>
         {" "}
         <h4 style={{ margin: "0px" }}>Nouvelle demande</h4>
       </div>
@@ -524,7 +526,7 @@ const CreeDemande = () => {
             padding: "17px",
           }}
         >
-          <Row gutter={24} justify={"space-evenly"} align={"middle"}>
+          <Row gutter={24} align={"middle"}>
             <Col xs={24} sm={12} md={4}>
               {" "}
               <Form.Item
@@ -703,6 +705,7 @@ const CreeDemande = () => {
             key="accept"
             type="primary"
             onClick={() => handleConfirm("accept")}
+            loading={laodingComfirmation}
           >
             Accepter
           </Button>,

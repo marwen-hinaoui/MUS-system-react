@@ -8,6 +8,10 @@ const App = () => {
       <ConfigProvider
         theme={{
           components: {
+            // Segmented: {
+            //   itemSelectedBg: COLORS.LearRed,
+            //   itemSelectedColor: COLORS.WHITE,
+            // },
             Typography: {
               linkDecoration: "underline",
               linkHoverColor: "inherit",
@@ -20,6 +24,7 @@ const App = () => {
             },
           },
           token: {
+            // motion: false,
             fontFamily: "Inter, sans-serif",
             colorPrimary: "#EE3124",
             colorInfo: "#EE3124",

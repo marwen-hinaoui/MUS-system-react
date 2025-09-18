@@ -49,7 +49,10 @@ const UserSidebar = ({ roleList }) => {
     if (roleList.includes("DEMANDEUR")) {
       items = [...items, ...roleBasedNavItems.demandeur];
     }
-    if (roleList.includes("AGENT_MUS")) {
+    if (
+      roleList.includes("AGENT_MUS") ||
+      roleList.includes("GESTIONNEUR_STOCK")
+    ) {
       items = [...items, ...roleBasedNavItems.agent];
     }
     return items;

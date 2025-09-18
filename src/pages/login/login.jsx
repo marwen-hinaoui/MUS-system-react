@@ -23,7 +23,6 @@ import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
 import { TbLockPassword } from "react-icons/tb";
 import { MdOutlinePassword } from "react-icons/md";
-import CardComponent from "../../components/card/cardComponent";
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -67,10 +66,10 @@ const Login = () => {
       dispatch(set_authenticated(true));
     } else {
       if (
-        res.resError.response.status === 404 ||
-        res.resError.response.status === 401
+        res?.resError?.response?.status === 404 ||
+        res?.resError?.response?.status === 401
       ) {
-        console.log(res.resError);
+        console.log(res?.resError);
         dispatch(set_error(res.resError.response.data.message));
         openNotification(api, res.resError.response.data.message);
       }
@@ -89,16 +88,6 @@ const Login = () => {
       >
         <img src={LearLogo} className={`${styles.logo}`} alt="Lear Logo" />
       </div>
-
-      <h6
-        style={{
-          margin: 0,
-          letterSpacing: "4px",
-          fontStyle: "italic",
-        }}
-      >
-        LEAR TRIM BIZERTE
-      </h6>
 
       <Flex
         style={{

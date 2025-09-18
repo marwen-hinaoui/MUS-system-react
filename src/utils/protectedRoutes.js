@@ -40,7 +40,11 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
     return <Navigate to="/unauthorized" />;
   }
 
-  if (roleList.includes("AGENT_MUS") || roleList.includes("DEMANDEUR")) {
+  if (
+    roleList.includes("AGENT_MUS") ||
+    roleList.includes("DEMANDEUR") ||
+    roleList.includes("GESTIONNEUR_STOCK")
+  ) {
     return (
       <div className="d-flex">
         <UserSidebar roleList={roleList} />

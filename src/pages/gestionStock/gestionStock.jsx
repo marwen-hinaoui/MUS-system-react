@@ -1,8 +1,6 @@
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import {
   Button,
-  Card,
-  Col,
   DatePicker,
   Empty,
   Form,
@@ -10,7 +8,7 @@ import {
   InputNumber,
   Modal,
   notification,
-  Row,
+  Segmented,
   Select,
   Space,
   Table,
@@ -19,9 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import SharedButton from "../../components/button/button";
 import { COLORS } from "../../constant/colors";
-import { get_sites } from "../../api/get_sites";
 import { get_all_mouvement_stock_api } from "../../api/get_all_mouvement_stock_api";
-import LoadingComponent from "../../components/loadingComponent/loadingComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { ajout_stock_api } from "../../api/ajout_stock_api";
 import { set_loading } from "../../redux/slices";
@@ -31,9 +27,7 @@ import {
 } from "../../components/notificationComponent/openNotification";
 import { MdOutlineFileDownload } from "react-icons/md";
 
-import { check_stock_api } from "../../api/check_stock_api";
 import { get_patterns_api } from "../../api/plt/get_patterns_api";
-import { get_patterns_stock_api } from "../../api/get_patterns_stock_api";
 import { ajout_stock_admin_api } from "../../api/ajout_stock_admin_api";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -46,17 +40,17 @@ import "./gestionStock.css";
 import { get_seq_api } from "../../api/plt/get_seq_api";
 import { get_material_api } from "../../api/plt/get_material_api";
 import { get_projet_api } from "../../api/plt/get_projet_api";
+import { CheckStock } from "./checkStock/checkStock";
+import { get_stock_api } from "../../api/get_stock_api";
+
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const GestionStock = () => {
   const [form] = Form.useForm();
   const [formAdmin] = Form.useForm();
-  const [formCheck] = Form.useForm();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [data, setData] = useState([]);
   const [allStockMouvement, setAllStockMouvement] = useState([]);
-  const [sites, setSites] = useState([]);
   const [api, contextHolder] = notification.useNotification();
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
@@ -67,14 +61,29 @@ const GestionStock = () => {
   const isLoading = useSelector((state) => state.app.isLoading);
   const roleList = useSelector((state) => state.app.roleList);
   const [projetNom, setProjet] = useState("");
-  const [stock, setStock] = useState("");
-  const [patterns, setPatterns] = useState([]);
+  const [stockDATA, setStockDATA] = useState([]);
+
   const [exportDateRange, setExportDateRange] = useState([]);
+  const [currentView, setCurrentView] = useState("Mouvement Stock");
+  const id_userMUS = useSelector((state) => state.app.userId);
 
   const dispatch = useDispatch();
   useEffect(() => {
     fetchStock();
+    fetchStockAllQte();
   }, []);
+  const fetchStockAllQte = async () => {
+    try {
+      const resStock = await get_stock_api(token);
+      if (resStock.resData) {
+        console.log(resStock.resData.data);
+        setStockDATA(resStock.resData.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const fetchStock = async () => {
     try {
       const resStock = await get_all_mouvement_stock_api(token);
@@ -86,31 +95,31 @@ const GestionStock = () => {
       console.log(error);
     }
   };
+  const exportSchema = [
+    { header: "Id", dataIndex: "id" },
+    { header: "Date", dataIndex: "date_creation" },
+    { header: "Créateur de mvt", dataIndex: "mvt_create" },
+    { header: "Heure", dataIndex: "heure" },
+    { header: "Séquence", dataIndex: "sequence" },
+    { header: "Projet", dataIndex: "projetNom" },
+    { header: "Part Number", dataIndex: "partNumber" },
+    { header: "Pattern", dataIndex: "patternNumb" },
+    { header: "Matière", dataIndex: "partNumberMaterial" },
+    { header: "Quantité", dataIndex: "quantite" },
+    { header: "Statut Pattern", dataIndex: "statusMouvement" },
+  ];
 
-  const fetchData = async () => {
-    try {
-      const res = await fetch("/cms.json");
-      const json = await res.json();
-      setData(json);
-
-      const resSites = await get_sites();
-      setSites(resSites?.resData?.data);
-    } catch (err) {
-      console.error("Failed to fetch:", err);
-    }
-  };
-
-  const exportToExcel = () => {
-    if (!allStockMouvement || allStockMouvement.length === 0) {
+  const exportToExcel = (data) => {
+    if (!data || data.length === 0) {
       openNotification(api, "Aucune donnée à exporter !");
       return;
     }
 
-    // Filter by date range
-    let filteredData = allStockMouvement;
+    let filteredData = data;
+    const [start, end] = exportDateRange;
+
     if (exportDateRange && exportDateRange.length === 2) {
-      const [start, end] = exportDateRange;
-      filteredData = allStockMouvement.filter((item) => {
+      filteredData = data.filter((item) => {
         const itemDate = dayjs(item.date_creation, "YYYY-MM-DD");
         return (
           itemDate.isSame(start, "day") ||
@@ -125,61 +134,44 @@ const GestionStock = () => {
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const formattedData = filteredData.map((record) => {
+      return exportSchema.reduce((obj, column) => {
+        const key = column.dataIndex;
+        obj[key] = record[key] || "";
+        return obj;
+      }, {});
+    });
+
+    const headers = exportSchema.map((col) => col.header);
+    const headerKeys = exportSchema.map((col) => col.dataIndex);
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData, {
+      header: headerKeys,
+    });
+
+    XLSX.utils.sheet_add_aoa(worksheet, [headers], { origin: "A1" });
+
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "MouvementStock");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "StockMouvements");
+    let fileName = "";
+    if (!start || !end) {
+      const today = new Date();
+      const todayISO = today.toISOString().split("T")[0];
+      fileName = `Stock_Mouvements_${todayISO}.xlsx`;
+    } else {
+      fileName = `Stock_Mouvements_${start?.$D}/${start?.$M + 1}/${
+        start?.$y
+      } - ${end?.$D}/${end?.$M + 1}/${end?.$y}.xlsx`;
+    }
 
-    const date = new Date();
-    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
-
-    const fileName = `MouvementStock_${exportDateRange}.xlsx`;
     const dataBlob = new Blob(
       [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],
-      {
-        type: "application/octet-stream",
-      }
+      { type: "application/octet-stream" }
     );
     saveAs(dataBlob, fileName);
   };
 
-  const getPatterns = async (e) => {
-    formCheck.setFieldsValue({
-      patternNumb: undefined,
-    });
-    setPatterns([]);
-    setStock("");
-    const partNumber = e.target.value;
-    if (e.target.value.length >= 15) {
-      console.log('"partNumber"');
-      console.log(partNumber);
-
-      const resPatterns = await get_patterns_stock_api(partNumber, token);
-      console.log(resPatterns.resData);
-
-      if (resPatterns.resData) {
-        console.log(resPatterns.resData.data);
-
-        setPatterns(resPatterns.resData.data);
-      }
-    }
-  };
-  const checkStock = async (patternNumb) => {
-    const partNumber = formCheck.getFieldValue("partNumber");
-
-    try {
-      const res = await check_stock_api(partNumber, patternNumb, token);
-      if (res.resData) {
-        setStock(res.resData.data);
-        console.log(res.resData);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
   const showModal = () => {
-    fetchData();
     setIsModalOpen(true);
   };
 
@@ -299,15 +291,15 @@ const GestionStock = () => {
   const onSubmit = async (values) => {
     dispatch(set_loading(true));
     const piece = {
+      id_userMUS,
       projetNom: projetNom,
       sequence: values.sequence,
+
       partNumber: values.partNumber,
       patternNumb: values.patternNumb,
       partNumberMaterial: values.materialPartNumber,
       quantiteAjouter: values.quantite,
     };
-    console.log("-------------------piece ---------------------------------");
-    console.log(piece);
 
     const resAjout = await ajout_stock_api(piece, token);
     if (resAjout.resData) {
@@ -321,6 +313,7 @@ const GestionStock = () => {
     setAvailablePatterns([]);
     setMaterialPartNumber("");
     setIsModalOpen(false);
+    fetchStockAllQte();
     fetchStock();
   };
 
@@ -404,6 +397,7 @@ const GestionStock = () => {
         );
       },
     },
+    { title: "Créateur de mvt", dataIndex: "mvt_create" },
     { title: "Heure", dataIndex: "heure" },
     { title: "Séquence", dataIndex: "sequence" },
     {
@@ -455,9 +449,7 @@ const GestionStock = () => {
       children: (
         <>
           <div style={{ width: "100%" }}>
-            {data.length === 0 || sites.length === 0 ? (
-              <LoadingComponent height={true} header={true} />
-            ) : (
+            {
               <Form layout="vertical" form={form} onFinish={onSubmit}>
                 {/* Sequence */}
                 <Form.Item
@@ -571,7 +563,7 @@ const GestionStock = () => {
                   />
                 </div>
               </Form>
-            )}
+            }
           </div>
         </>
       ),
@@ -582,9 +574,7 @@ const GestionStock = () => {
       children: (
         <>
           <div style={{ width: "100%" }}>
-            {data.length === 0 || sites.length === 0 ? (
-              <LoadingComponent height={true} header={true} />
-            ) : (
+            {
               <Form layout="vertical" form={formAdmin} onFinish={onSubmitAdmin}>
                 {/* Part Number */}
                 <Form.Item
@@ -658,332 +648,251 @@ const GestionStock = () => {
                   />
                 </div>
               </Form>
-            )}
+            }
           </div>
         </>
       ),
     },
   ];
-
+  const options = ["Mouvement Stock", "Check Stock"];
   return (
-    <div className="dashboard">
-      {contextHolder}
+    <div>
+      <div className="dashboard">
+        {contextHolder}
 
-      <Modal
-        title="Ajout Pattern"
-        closable={{ "aria-label": "Custom Close Button" }}
-        open={isModalOpen}
-        onCancel={() => {
-          setIsModalOpen(false);
-          form.resetFields();
-          formAdmin.resetFields();
-        }}
-        footer={[]}
-      >
-        {roleList.includes("Admin") ? (
-          <Tabs defaultActiveKey="1" items={items} />
-        ) : (
-          <>
-            <div style={{ width: "100%" }}>
-              {data.length === 0 || sites.length === 0 ? (
-                <LoadingComponent height={true} header={true} />
-              ) : (
-                <Form layout="vertical" form={form} onFinish={onSubmit}>
-                  {/* Sequence */}
-                  <Form.Item
-                    label="Séquence"
-                    name="sequence"
-                    required={false}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Le champ sequence est obligatoire !",
-                      },
-                      {
-                        len: 12,
-                        message: "La sequence doit contenir 12 chiffres !",
-                      },
-                    ]}
-                  >
-                    <Input
-                      style={{ height: "34px" }}
-                      // value={sequence}
-                      onChange={(e) => handleSequenceChange(e.target.value)}
-                      maxLength={12}
-                    />
-                  </Form.Item>
-
-                  {/* Part Number */}
-
-                  <Form.Item
-                    label="Part Number"
-                    name="partNumber"
-                    required={false}
-                    rules={[
-                      { required: true, message: "Choisir part Number!" },
-                    ]}
-                  >
-                    <Select
-                      showSearch
-                      placeholder="Select Part Number"
-                      onChange={(val) => handlePartNumberChange(val)}
+        <Modal
+          title="Ajout Pattern"
+          closable={{ "aria-label": "Custom Close Button" }}
+          open={isModalOpen}
+          onCancel={() => {
+            setIsModalOpen(false);
+            form.resetFields();
+            formAdmin.resetFields();
+          }}
+          footer={[]}
+        >
+          {roleList.includes("Admin") ? (
+            <Tabs defaultActiveKey="1" items={items} />
+          ) : (
+            <>
+              <div style={{ width: "100%" }}>
+                {
+                  <Form layout="vertical" form={form} onFinish={onSubmit}>
+                    {/* Sequence */}
+                    <Form.Item
+                      label="Séquence"
+                      name="sequence"
+                      required={false}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Le champ sequence est obligatoire !",
+                        },
+                        {
+                          len: 12,
+                          message: "La sequence doit contenir 12 chiffres !",
+                        },
+                      ]}
                     >
-                      {partNumbers.map((p) => (
-                        <Option
-                          key={p.cover_part_number}
-                          value={p.cover_part_number}
-                        >
-                          {p.cover_part_number}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
+                      <Input
+                        style={{ height: "34px" }}
+                        // value={sequence}
+                        onChange={(e) => handleSequenceChange(e.target.value)}
+                        maxLength={12}
+                      />
+                    </Form.Item>
 
-                  {/* Pattern */}
-                  <Form.Item
-                    required={false}
-                    label="Pattern"
-                    name="patternNumb"
-                    rules={[{ required: true, message: "Choisir pattern!" }]}
-                  >
-                    <Select
-                      showSearch
-                      placeholder="Select Pattern"
-                      onChange={(val) => handlePatternChange(val)}
-                      disabled={availablePatterns.length === 0}
+                    {/* Part Number */}
+
+                    <Form.Item
+                      label="Part Number"
+                      name="partNumber"
+                      required={false}
+                      rules={[
+                        { required: true, message: "Choisir part Number!" },
+                      ]}
                     >
-                      {availablePatterns.map((pat, i) => (
-                        <Option key={i} value={pat.panel_number}>
-                          {pat.panel_number}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
+                      <Select
+                        showSearch
+                        placeholder="Select Part Number"
+                        onChange={(val) => handlePartNumberChange(val)}
+                      >
+                        {partNumbers.map((p) => (
+                          <Option
+                            key={p.cover_part_number}
+                            value={p.cover_part_number}
+                          >
+                            {p.cover_part_number}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
 
-                  {/* Material */}
-                  <Form.Item label="Material" name="materialPartNumber">
-                    <Input value={materialPartNumber} readOnly />
-                  </Form.Item>
-
-                  {/* Quantité */}
-                  <Form.Item
-                    required={false}
-                    label="Quantité"
-                    name="quantite"
-                    rules={[{ required: true, message: "Saisie quantité!" }]}
-                  >
-                    <InputNumber
-                      min={1}
-                      max={999}
-                      style={{ width: "100%", height: "34px" }}
-                    />
-                  </Form.Item>
-
-                  <div style={{ display: "flex", justifyContent: "end" }}>
-                    <Button
-                      key="cancel"
-                      onClick={() => {
-                        form.resetFields();
-                        setIsModalOpen(false);
-                      }}
+                    {/* Pattern */}
+                    <Form.Item
+                      required={false}
+                      label="Pattern"
+                      name="patternNumb"
+                      rules={[{ required: true, message: "Choisir pattern!" }]}
                     >
-                      Annuler
-                    </Button>
-                    <span
-                      style={{
-                        paddingLeft: "8px",
-                      }}
-                    ></span>
-                    <SharedButton
-                      loading={isLoading}
-                      type="primary"
-                      name="Enregistrer"
-                      color={COLORS.LearRed}
-                      htmlType="submit"
-                    />
-                  </div>
-                </Form>
-              )}
-            </div>
-          </>
-        )}
-      </Modal>
+                      <Select
+                        showSearch
+                        placeholder="Select Pattern"
+                        onChange={(val) => handlePatternChange(val)}
+                        disabled={availablePatterns.length === 0}
+                      >
+                        {availablePatterns.map((pat, i) => (
+                          <Option key={i} value={pat.panel_number}>
+                            {pat.panel_number}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
 
-      <div style={{ padding: "0px 0 13px 0px" }}>
-        <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
-        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
-          Consultez, filtrez et gérez les mouvements de stock en temps réel
-        </p> */}
-      </div>
-      <div
-        style={{
-          paddingBottom: "13px",
-        }}
-      >
-        <Button onClick={showModal} color="danger" variant="outlined">
-          Ajouter Pattern
-        </Button>
-      </div>
-      <div style={{ paddingBottom: "7px", paddingTop: "7px" }}>
-        <h6 style={{ margin: "0px" }}>Check Stock</h6>
-        {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
-          Consultez en un clic le stock de chaque Pattern associé à un Part
-          Number.
-        </p> */}
-      </div>
-      <Form
-        style={{
-          display: "flex",
-          alignItems: "center",
-        }}
-        layout="vertical"
-        form={formCheck}
-      >
-        <Card
+                    {/* Material */}
+                    <Form.Item label="Material" name="materialPartNumber">
+                      <Input value={materialPartNumber} readOnly />
+                    </Form.Item>
+
+                    {/* Quantité */}
+                    <Form.Item
+                      required={false}
+                      label="Quantité"
+                      name="quantite"
+                      rules={[{ required: true, message: "Saisie quantité!" }]}
+                    >
+                      <InputNumber
+                        min={1}
+                        max={999}
+                        style={{ width: "100%", height: "34px" }}
+                      />
+                    </Form.Item>
+
+                    <div style={{ display: "flex", justifyContent: "end" }}>
+                      <Button
+                        key="cancel"
+                        onClick={() => {
+                          form.resetFields();
+                          setIsModalOpen(false);
+                        }}
+                      >
+                        Annuler
+                      </Button>
+                      <span
+                        style={{
+                          paddingLeft: "8px",
+                        }}
+                      ></span>
+                      <SharedButton
+                        loading={isLoading}
+                        type="primary"
+                        name="Enregistrer"
+                        color={COLORS.LearRed}
+                        htmlType="submit"
+                      />
+                    </div>
+                  </Form>
+                }
+              </div>
+            </>
+          )}
+        </Modal>
+
+        <div style={{ padding: "0px 0 20px 0px" }}>
+          <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
+          {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
+            Consultez, filtrez et gérez les mouvements de stock en temps réel.
+          </p> */}
+        </div>
+        <div
           style={{
-            width: "100%",
-            padding: "17px",
+            paddingBottom: "13px",
           }}
         >
-          {" "}
-          {/* Part Number */}
-          <Row gutter={24} justify={"space-around"}>
-            <Col xs={24} sm={12} md={4}>
-              <Form.Item
-                style={{
-                  marginBottom: "0px",
-                }}
-                name="partNumber"
-                rules={[
-                  { required: true, message: "Saisie part number!" },
-                  {
-                    max: 19,
-                    message: "Part number incorrect",
-                  },
-                ]}
-              >
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <span style={{ paddingRight: "5px" }}>PN: </span>
-
-                  <Input
-                    placeholder="Part Number"
-                    onChange={getPatterns}
-                    style={{ height: "34px" }}
-                    maxLength={19}
-                  />
-                </div>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={4}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <span style={{ paddingRight: "5px" }}>Pattern: </span>
-
-                <Form.Item
-                  required={false}
-                  name="patternNumb"
-                  rules={[{ required: true, message: "Choisir Pattern!" }]}
-                  style={{
-                    margin: 0,
-                    width: "100%",
-                  }}
-                >
-                  <Select
-                    showSearch
-                    placeholder="Select Pattern"
-                    onChange={(val) => checkStock(val)}
-                    disabled={patterns.length === 0}
-                  >
-                    {patterns?.map((pat, i) => (
-                      <Option key={i} value={pat.patternNumb}>
-                        {pat.patternNumb}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </div>
-            </Col>
-            <Col xs={24} sm={12} md={4}>
-              <Form.Item
-                name="stock"
-                style={{
-                  marginBottom: "0px",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <span style={{ paddingRight: "5px" }}>Stock: </span>
-                  <Input
-                    placeholder="Qte en stock"
-                    style={{ height: "34px" }}
-                    value={stock}
-                    readOnly
-                  />
-                </div>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Card>
-      </Form>
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "end",
-          padding: "10px 0",
-        }}
-      >
-        <div>
-          <h6 style={{ margin: "0px" }}>Mouvement Stock</h6>
-          {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
-          Consultez l’historique et le statut des mouvements de Patterns :
-          Introduits ou livrés.
-        </p> */}
+          <Button onClick={showModal} color="danger" variant="outlined">
+            Ajouter Pattern
+          </Button>
         </div>
-        <Button
-          // icon={<MdOutlineFileDownload size={ICONSIZE.XSMALL} />}
-          type="primary"
-          onClick={() => setIsExportModalOpen(true)}
+        <div
+          style={{
+            textAlign: "center",
+          }}
         >
-          Export Excel <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
-        </Button>
+          <Segmented
+            style={{
+              float: "left",
+            }}
+            options={options}
+            onChange={(value) => setCurrentView(value)}
+            value={currentView.charAt(0).toUpperCase() + currentView.slice(1)}
+          />
+          {currentView === "Mouvement Stock" && (
+            <div>
+              <div>
+                <Button
+                  type="primary"
+                  style={{
+                    float: "right",
+                  }}
+                  onClick={() => setIsExportModalOpen(true)}
+                >
+                  Export mvt stock{" "}
+                  <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
+                </Button>
+              </div>
+
+              <Table
+                style={{
+                  padding: "13px 0 0 0",
+                }}
+                rowClassName={() => "ant-row-no-hover"}
+                bordered
+                dataSource={allStockMouvement}
+                columns={columns}
+                pagination={{
+                  position: ["bottomCenter"],
+                  showSizeChanger: true,
+                  defaultPageSize: "10",
+                  pageSizeOptions: ["5", "10", "25", "50", "100"],
+                }}
+                locale={{
+                  emptyText: (
+                    <Empty
+                      description="Aucune donnée trouvée"
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    />
+                  ),
+                }}
+                size="small"
+              />
+            </div>
+          )}
+          {currentView === "Check Stock" && (
+            <>
+              <CheckStock
+                stockDATA={stockDATA}
+                refreshData={fetchStockAllQte}
+              />
+            </>
+          )}
+        </div>
+
+        <Modal
+          title="Exporter Mouvement Stock"
+          open={isExportModalOpen}
+          onCancel={() => setIsExportModalOpen(false)}
+          onOk={() => exportToExcel(allStockMouvement)}
+          okText="Exporter"
+          cancelText="Annuler"
+        >
+          <RangePicker
+            format="YYYY-MM-DD"
+            value={exportDateRange}
+            onChange={(dates) => setExportDateRange(dates)}
+            style={{ width: "100%" }}
+          />
+        </Modal>
       </div>
-      {/* Table */}
-      <Table
-        rowClassName={() => "ant-row-no-hover"}
-        bordered
-        dataSource={allStockMouvement}
-        columns={columns}
-        pagination={{
-          position: ["bottomCenter"],
-          showSizeChanger: true,
-          defaultPageSize: "5",
-          pageSizeOptions: ["5", "10", "25", "50", "100"],
-        }}
-        locale={{
-          emptyText: (
-            <Empty
-              description="Aucune donnée trouvée"
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-            />
-          ),
-        }}
-        size="small"
-      />
-      <Modal
-        title="Exporter Mouvement Stock"
-        open={isExportModalOpen}
-        onCancel={() => setIsExportModalOpen(false)}
-        onOk={() => exportToExcel()}
-        okText="Exporter"
-        cancelText="Annuler"
-      >
-        <RangePicker
-          format="YYYY-MM-DD"
-          value={exportDateRange}
-          onChange={(dates) => setExportDateRange(dates)}
-          style={{ width: "100%" }}
-        />
-      </Modal>
     </div>
   );
 };

@@ -41,8 +41,6 @@ const DetailsDemande = () => {
   const isLoading = useSelector((state) => state.app.isLoading);
   const dispatch = useDispatch();
   const [api, contextHolder] = notification.useNotification();
-  const [editingRowKey, setEditingRowKey] = useState(null);
-  const [editedRow, setEditedRow] = useState({});
   const { id } = useParams();
 
   const getDemandeById = async () => {
@@ -59,43 +57,6 @@ const DetailsDemande = () => {
     getDemandeById();
     console.log(id);
   }, []);
-
-  const handleInputChange = (key, field, value) => {
-    setEditedRow((prev) => ({
-      ...prev,
-      id,
-      [field]: value,
-    }));
-  };
-
-  // const confirmEdit = async (record) => {
-  //   try {
-  //     dispatch(set_loading(true));
-  //     const { quantite } = editedRow;
-  //     if (record.quantite !== quantite) {
-  //       const resEdit = await update_subDemande_api(
-  //         record.id,
-  //         id,
-  //         quantite,
-  //         token
-  //       );
-  //       if (resEdit.resData) {
-  //         const updated = subDemandes.map((item) =>
-  //           item.id === record.id ? { ...item, quantite } : item
-  //         );
-  //         setSubDemandes(updated);
-  //         openNotificationSuccess(api, resEdit.resData.message);
-  //         setEditingRowKey(null);
-  //         setEditedRow({});
-  //         getDemandeById();
-  //       }
-  //     }
-
-  //     dispatch(set_loading(false));
-  //   } catch (error) {
-  //     console.error("Failed to update:", error);
-  //   }
-  // };
 
   const changeStatus = async () => {
     dispatch(set_loading(true));
@@ -198,22 +159,13 @@ const DetailsDemande = () => {
       title: "Quantité",
       dataIndex: "quantite",
       key: "quantite",
-      render: (text, record) =>
-        editingRowKey === record.id ? (
-          <InputNumber
-            min={1}
-            max={999}
-            style={{ width: "100%", height: "34px" }}
-            value={editedRow.quantite ?? record.quantite}
-            onChange={(val) => handleInputChange(record.key, "quantite", val)}
-          />
-        ) : (
-          <InputNumber
-            value={record.quantite}
-            readOnly
-            style={{ width: "100%", height: "34px" }}
-          />
-        ),
+      render: (text, record) => (
+        <InputNumber
+          value={record.quantite}
+          readOnly
+          style={{ width: "100%", height: "34px" }}
+        />
+      ),
     },
     {
       width: 150,
@@ -237,67 +189,6 @@ const DetailsDemande = () => {
       render: (text, record) => <div>{record.statusSubDemande}</div>,
     },
   ];
-  // if (
-  //   demandeMUS?.statusDemande === "Demande initié" &&
-  //   (roleList.includes("Admin") || roleList.includes("DEMANDEUR"))
-  // ) {
-  //   columns.push({
-  //     align: "center",
-  //     title: "Action",
-  //     key: "action",
-  //     render: (text, record) =>
-  //       editingRowKey === record.id ? (
-  //         <div
-  //           style={{
-  //             display: "flex",
-  //             alignItems: "center",
-  //             justifyContent: "center",
-  //           }}
-  //         >
-  //           <div
-  //             style={{
-  //               paddingRight: "5px",
-  //             }}
-  //           >
-  //             <Button
-  //               style={{
-  //                 padding: "10px",
-  //                 border: "none",
-  //                 background: COLORS.LearRed,
-  //                 color: COLORS.WHITE,
-  //               }}
-  //               onClick={() => setEditingRowKey(null)}
-  //             >
-  //               <IoCloseCircleOutline size={ICONSIZE.SMALL} />
-  //             </Button>
-  //           </div>
-  //           <div>
-  //             <Button
-  //               style={{
-  //                 padding: "10px",
-  //                 border: "none",
-  //                 background: COLORS.GREEN,
-  //                 color: COLORS.WHITE,
-  //               }}
-  //               onClick={() => confirmEdit(record)}
-  //               loading={isLoading}
-  //             >
-  //               <RxCheckCircled size={ICONSIZE.SMALL} />
-  //             </Button>
-  //           </div>
-  //         </div>
-  //       ) : (
-  //         <FiEdit
-  //           onClick={() => {
-  //             setEditingRowKey(record.id);
-  //             setEditedRow(record);
-  //           }}
-  //           style={{ cursor: "pointer" }}
-  //           size={ICONSIZE.SMALL}
-  //         />
-  //       ),
-  //   });
-  // }
 
   return (
     subDemandes &&
@@ -323,7 +214,7 @@ const DetailsDemande = () => {
               padding: "17px",
             }}
           >
-            <Row align={"middle"} justify={"space-evenly"} gutter={24}>
+            <Row align={"middle"} gutter={24}>
               <Col xs={24} sm={12} md={4}>
                 <Form.Item style={{ marginBottom: "0" }}>
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -337,18 +228,7 @@ const DetailsDemande = () => {
                   </div>
                 </Form.Item>
               </Col>
-              <Col xs={24} sm={12} md={4}>
-                <Form.Item style={{ marginBottom: "0" }}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <span style={{ paddingRight: "5px" }}>Site: </span>
-                    <Input
-                      style={{ width: "100%", height: "34px" }}
-                      value={demandeMUS.siteNom}
-                      readOnly
-                    />
-                  </div>
-                </Form.Item>
-              </Col>
+
               <Col xs={24} sm={12} md={4}>
                 <Form.Item style={{ marginBottom: "0" }}>
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -385,6 +265,56 @@ const DetailsDemande = () => {
                   </div>
                 </Form.Item>
               </Col>
+              {demandeMUS.statusDemande === "Demande annulé" && (
+                <Col xs={24} sm={12} md={4}>
+                  <Form.Item style={{ marginBottom: "0" }}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <span style={{ paddingRight: "5px" }}>Annulée par: </span>
+                      <Input
+                        style={{ width: "100%", height: "34px" }}
+                        value={demandeMUS.annulerPar}
+                        readOnly
+                      />
+                    </div>
+                  </Form.Item>
+                </Col>
+              )}
+              {(demandeMUS.statusDemande == "Demande livrée" ||
+                demandeMUS.statusDemande == "Demande partiellement livrée" ||
+                demandeMUS.statusDemande == "Préparation en cours") && (
+                <>
+                  <Col ol xs={24} sm={12} md={4}>
+                    <Form.Item style={{ marginBottom: "0" }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <span style={{ paddingRight: "5px" }}>
+                          Acceptée par:
+                        </span>
+                        <Input
+                          style={{ width: "100%", height: "34px" }}
+                          value={demandeMUS.accepterPar}
+                          readOnly
+                        />
+                      </div>
+                    </Form.Item>
+                  </Col>
+                  {demandeMUS.statusDemande !== "Préparation en cours" && (
+                    <Col xs={24} sm={12} md={4}>
+                      <Form.Item style={{ marginBottom: "0" }}>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <span style={{ paddingRight: "5px" }}>
+                            Livrée par:{" "}
+                          </span>
+                          <Input
+                            style={{ width: "100%", height: "34px" }}
+                            value={demandeMUS.livreePar}
+                            readOnly
+                          />
+                        </div>
+                      </Form.Item>
+                    </Col>
+                  )}
+                </>
+              )}
             </Row>
           </Card>
 
@@ -441,7 +371,9 @@ const DetailsDemande = () => {
           </div>
 
           {demandeMUS.statusDemande === "Demande initié" &&
-            (roleList.includes("Admin") || roleList.includes("AGENT_MUS")) && (
+            (roleList.includes("Admin") ||
+              roleList.includes("AGENT_MUS") ||
+              roleList.includes("GESTIONNEUR_STOCK")) && (
               //  Backend Check status before change in db
 
               <Button
@@ -457,7 +389,9 @@ const DetailsDemande = () => {
               </Button>
             )}
           {demandeMUS.statusDemande === "Préparation en cours" &&
-            (roleList.includes("Admin") || roleList.includes("AGENT_MUS")) && (
+            (roleList.includes("Admin") ||
+              roleList.includes("AGENT_MUS") ||
+              roleList.includes("GESTIONNEUR_STOCK")) && (
               /* Backend Check status before change in db */
 
               <Button

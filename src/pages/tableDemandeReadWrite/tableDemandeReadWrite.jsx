@@ -16,6 +16,7 @@ import { saveAs } from "file-saver";
 import { COLORS } from "../../constant/colors";
 import { ICONSIZE } from "../../constant/FontSizes";
 import "./tableDemandeReadWrite.css";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 import { TbHistory } from "react-icons/tb";
 import {
@@ -192,7 +193,18 @@ const TableDemandeReadWrite = ({ data }) => {
 
           "Demande annulé": {
             icon: (
-              <IoCloseCircleOutline color={COLORS.Blue} size={ICONSIZE.SMALL} />
+              <IoCloseCircleOutline
+                color={COLORS.LearRed}
+                size={ICONSIZE.SMALL}
+              />
+            ),
+          },
+          "Demande annulée (Délai 48h)": {
+            icon: (
+              <IoCloseCircleOutline
+                color={COLORS.LearRed}
+                size={ICONSIZE.SMALL}
+              />
             ),
           },
           "Préparation en cours": {
@@ -245,17 +257,35 @@ const TableDemandeReadWrite = ({ data }) => {
     },
   ];
 
+  dayjs.extend(customParseFormat);
+
   const exportToExcel = () => {
+    const exportSchema = [
+      { header: "Id", dataIndex: "id" },
+      { header: "Numéro de demande", dataIndex: "numDemande" },
+      { header: "Demandeur", dataIndex: "demandeur" },
+      { header: "Séquence", dataIndex: "sequence" },
+      { header: "Site", dataIndex: "siteNom" },
+      { header: "Projet", dataIndex: "projetNom" },
+      { header: "Heure", dataIndex: "heure" },
+      { header: "Date création", dataIndex: "date_creation" },
+      { header: "Statut", dataIndex: "statusDemande" },
+    ];
+
     if (!data || data.length === 0) {
       openNotification(api, "Aucune donnée à exporter !");
       return;
     }
 
     let filteredData = data;
+    const [start, end] = exportDateRange;
+
     if (exportDateRange && exportDateRange.length === 2) {
-      const [start, end] = exportDateRange;
+      console.log(exportDateRange);
+
       filteredData = data.filter((item) => {
         const itemDate = dayjs(item.date_creation, "YYYY-MM-DD");
+
         return (
           itemDate.isSame(start, "day") ||
           itemDate.isSame(end, "day") ||
@@ -268,17 +298,34 @@ const TableDemandeReadWrite = ({ data }) => {
       openNotification(api, "Aucune donnée trouvée pour cette période !");
       return;
     }
+    const formattedData = filteredData.map((record) => {
+      return exportSchema.reduce((obj, column) => {
+        const key = column.dataIndex;
+        obj[key] = record[key] || "";
+        return obj;
+      }, {});
+    });
+    const headers = exportSchema.map((col) => col.header);
+    const headerKeys = exportSchema.map((col) => col.dataIndex);
 
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const worksheet = XLSX.utils.json_to_sheet(formattedData, {
+      header: headerKeys,
+    });
+    XLSX.utils.sheet_add_aoa(worksheet, [headers], { origin: "A1" });
+
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Demandes");
+    let fileName = "";
+    if (!start || !end) {
+      const today = new Date();
+      const todayISO = today.toISOString().split("T")[0];
+      fileName = `Demandes_MUS_${todayISO}.xlsx`;
+    } else {
+      fileName = `Demandes_MUS_${start?.$D}/${start?.$M + 1}/${start?.$y} - ${
+        end?.$D
+      }/${end?.$M + 1}/${end?.$y}.xlsx`;
+    }
 
-    const date = new Date();
-    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1) // Todelete
-      .toString()
-      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
-
-    const fileName = `Demandes_MUS_${exportDateRange}.xlsx`;
     const dataBlob = new Blob(
       [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],
       {

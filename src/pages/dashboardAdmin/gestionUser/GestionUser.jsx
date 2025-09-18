@@ -21,10 +21,11 @@ import { update_password_api } from "../../../api/update_password_api";
 import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { openNotificationSuccess } from "../../../components/notificationComponent/openNotification";
-import { MdDelete, MdOutlinePassword } from "react-icons/md";
+import { MdDelete, MdEditDocument, MdOutlinePassword } from "react-icons/md";
 import { delete_user_api } from "../../../api/delete_user_api";
-import {} from "react-icons/bi";
-import { RiEditFill } from "react-icons/ri";
+import { BiSolidEditAlt } from "react-icons/bi";
+import { RiEdit2Fill, RiEditFill } from "react-icons/ri";
+import { FiEdit } from "react-icons/fi";
 
 const { Option } = Select;
 
@@ -100,6 +101,7 @@ const GestionUser = () => {
         if (!roleList) return null;
 
         const roleLabels = {
+          GESTIONNEUR_STOCK: "Gestionneur stock",
           DEMANDEUR: "Demandeur",
           AGENT_MUS: "Agent stock",
           Admin: "Admin",
@@ -117,20 +119,19 @@ const GestionUser = () => {
       title: "Actions",
       key: "actions",
       width: 80,
-      align: "center",
+
       render: (_, record) => (
         <div
           style={{
             display: "flex",
-            justifyContent: "space-evenly",
           }}
         >
-          <RiEditFill
+          <RiEdit2Fill
             color={COLORS.Blue}
             onClick={() => {
               openPasswordModal(record);
             }}
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer", marginRight: "5px" }}
             size={ICONSIZE.SMALL}
           />
           <MdDelete
@@ -147,7 +148,7 @@ const GestionUser = () => {
     1: ["Admin"], // Admin
     2: ["DEMANDEUR"], // Chef de Ligne
     3: ["AGENT_MUS"], // Agent Make-Up
-    4: ["AGENT_MUS"], // Analyste des flux
+    4: ["GESTIONNEUR_STOCK"], // Analyste des flux
     5: ["DEMANDEUR"], // Superviseur de Production
   };
   const showModalDelete = (user) => {
@@ -178,9 +179,6 @@ const GestionUser = () => {
   };
   const isAdminSelected = selectedRoles.includes("Admin");
   const handlePasswordUpdate = async () => {
-    console.log("====================================");
-    console.log(selectedUser.id);
-    console.log("====================================");
     try {
       const values = await passwordForm.validateFields();
       setLoading(true);
@@ -450,6 +448,14 @@ const GestionUser = () => {
                         Agent Stock
                       </Checkbox>
                     </Col>
+                    <Col span={24}>
+                      <Checkbox
+                        value="GESTIONNEUR_STOCK"
+                        style={{ lineHeight: "32px" }}
+                      >
+                        GESTIONNEUR STOCK
+                      </Checkbox>
+                    </Col>
                   </>
                 )}
               </Row>
@@ -469,14 +475,14 @@ const GestionUser = () => {
           </Form.Item>
         </Form>
       </Modal>
-      <div style={{ paddingBottom: "13px" }}>
+      <div style={{ paddingBottom: "20px" }}>
         <h4 style={{ margin: "0px" }}>Gestion des comptes</h4>
       </div>
 
       <Button onClick={openModal} color="danger" variant="outlined">
         Ajouter Utilisateur
       </Button>
-      <div style={{ padding: "20px 0" }}>
+      <div style={{ padding: "13px 0" }}>
         <Table
           size="small"
           rowClassName={() => "ant-row-no-hover"}

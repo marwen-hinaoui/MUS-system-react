@@ -96,9 +96,9 @@ const Dashboard = () => {
           <StatisticsComponent
             icon={<RxCheckCircled size={ICONSIZE.XLARGE} />}
             status="Demande livrée"
-            valuePercent={((livree / (enCours + initie)) * 100).toFixed(0)}
+            valuePercent={((livree / total) * 100).toFixed(0)}
             chiffre={livree}
-            total={enCours + initie}
+            total={total}
           />
         </div>
         <div style={{ padding: "17px 0 0 0" }}>
