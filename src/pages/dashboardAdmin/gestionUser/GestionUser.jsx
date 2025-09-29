@@ -475,7 +475,7 @@ const GestionUser = () => {
           </Form.Item>
         </Form>
       </Modal>
-      <div style={{ paddingBottom: "20px" }}>
+      <div style={{ paddingBottom: "16px" }}>
         <h4 style={{ margin: "0px" }}>Gestion des comptes</h4>
       </div>
 

@@ -11,6 +11,7 @@ const appSlices = createSlice({
     isLoading: false,
     errorMsg: "",
     isAuthenticated: null,
+    redirect: "",
     redirection: "",
     collapsedSidebar: true,
     openDrawer: false,
@@ -56,6 +57,9 @@ const appSlices = createSlice({
     set_redirection: (state, action) => {
       state.redirection = action.payload;
     },
+    set_redirect: (state, action) => {
+      state.redirect = action.payload;
+    },
     set_collapsedSidebar: (state, action) => {
       state.collapsedSidebar = action.payload;
     },
@@ -98,6 +102,7 @@ export const {
   set_patterns,
   set_cover_pn,
   set_fonction,
+  set_redirect,
 } = appSlices.actions;
 
 export default appSlices.reducer;

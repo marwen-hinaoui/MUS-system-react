@@ -31,6 +31,7 @@ import { RxCheckCircled } from "react-icons/rx";
 import { FiEdit } from "react-icons/fi";
 import { annuler_demande_api } from "../../api/annuler_demande_api";
 import { update_subDemande_api } from "../../api/update_subDemande_api";
+import CardComponent from "../../components/card/cardComponent";
 
 const DetailsDemande = () => {
   const [subDemandes, setSubDemandes] = useState([]);
@@ -39,9 +40,11 @@ const DetailsDemande = () => {
   const token = useSelector((state) => state.app.tokenValue);
   const userId = useSelector((state) => state.app.userId);
   const isLoading = useSelector((state) => state.app.isLoading);
+  const redirect = useSelector((state) => state.app.redirect);
   const dispatch = useDispatch();
   const [api, contextHolder] = notification.useNotification();
   const { id } = useParams();
+  console.log(redirect);
 
   const getDemandeById = async () => {
     dispatch(set_loading(true));
@@ -83,7 +86,7 @@ const DetailsDemande = () => {
 
   const breadcrumb = [
     {
-      title: <Link to={"/"}>Suivi des demandes</Link>,
+      title: <Link to={redirect}>Suivi des demandes</Link>,
     },
 
     {
@@ -209,11 +212,7 @@ const DetailsDemande = () => {
               {demandeMUS.statusDemande}
             </p>
           </div>
-          <Card
-            style={{
-              padding: "17px",
-            }}
-          >
+          <CardComponent padding={"17px"}>
             <Row align={"middle"} gutter={24}>
               <Col xs={24} sm={12} md={4}>
                 <Form.Item style={{ marginBottom: "0" }}>
@@ -316,7 +315,7 @@ const DetailsDemande = () => {
                 </>
               )}
             </Row>
-          </Card>
+          </CardComponent>
 
           {/* {sequenceValid && ( */}
           <div

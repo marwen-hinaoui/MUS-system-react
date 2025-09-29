@@ -10,6 +10,7 @@ import {
   set_fullname,
   set_userId,
   set_fonction,
+  set_redirect,
 } from "../../redux/slices";
 
 export const useRefreshAccessToken = () => {
@@ -24,7 +25,7 @@ export const useRefreshAccessToken = () => {
           "Content-Type": "application/json",
         },
       });
-      if (res.status === 200) {
+      if (res?.status === 200) {
         console.log(res);
 
         dispatch(set_authenticated(true));
@@ -33,6 +34,7 @@ export const useRefreshAccessToken = () => {
         dispatch(set_role(res.data.roleList));
         dispatch(set_userId(res.data.id));
         dispatch(set_redirection(res.data.redirection));
+        dispatch(set_redirect(res.data.redirection));
         dispatch(set_fullname(`${res.data.firstName} ${res.data.lastName}`));
 
         if (location.pathname == "/" || location.pathname == "/")
@@ -40,6 +42,8 @@ export const useRefreshAccessToken = () => {
         else dispatch(set_redirection(location.pathname), { replace: true });
       }
     } catch (error) {
+      console.log(error);
+
       if (error.status === 400 || error.status === 401) {
         dispatch(clear_auth());
         dispatch(set_authenticated(false));

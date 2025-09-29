@@ -798,7 +798,7 @@ const GestionStock = () => {
           )}
         </Modal>
 
-        <div style={{ padding: "0px 0 20px 0px" }}>
+        <div style={{ padding: "0px 0 16px 0px" }}>
           <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
           {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
             Consultez, filtrez et gérez les mouvements de stock en temps réel.

@@ -11,6 +11,7 @@ import {
   set_fonction,
   set_fullname,
   set_loading,
+  set_redirect,
   set_redirection,
   set_role,
   set_token,
@@ -51,10 +52,9 @@ const Login = () => {
     const res = await login_api(formData);
 
     if (res.resData) {
-      console.log(res.resData);
-
       navigate(res.resData.redirect, { replace: true });
       dispatch(set_redirection(res.resData.redirect));
+      dispatch(set_redirect(res.resData.redirect));
       dispatch(set_fonction(res.resData.fonction));
       dispatch(set_role(res.resData.roleList));
       dispatch(set_token(res.resData.accessToken));

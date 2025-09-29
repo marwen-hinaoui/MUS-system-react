@@ -515,16 +515,14 @@ const CreeDemande = () => {
   return (
     <div className="dashboard">
       {contextHolder}
-      <div style={{ paddingBottom: "20px" }}>
+      <div style={{ paddingBottom: "16px" }}>
         {" "}
         <h4 style={{ margin: "0px" }}>Nouvelle demande</h4>
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSubmit}>
-        <Card
-          style={{
-            padding: "17px",
-          }}
+        <CardComponent
+          padding={'17px'}
         >
           <Row gutter={24} align={"middle"}>
             <Col xs={24} sm={12} md={4}>
@@ -636,7 +634,7 @@ const CreeDemande = () => {
               </Form.Item>
             </Col>
           </Row>
-        </Card>
+        </CardComponent>
 
         <div
           style={{

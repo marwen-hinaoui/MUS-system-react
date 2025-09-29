@@ -7,7 +7,7 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 
-import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
+import { MdBuild, MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
 import { IoLayers } from "react-icons/io5";
 
 const { Sider } = Layout;
@@ -18,6 +18,12 @@ const commonNavItems = [
     label: "Suivi des demandes",
     route: "/user",
   },
+  // {
+  //   key: "rebuild",
+  //   icon: <MdBuild size={ICONSIZE.SMALL} />,
+  //   label: "Reconstruction Coiff",
+  //   route: "/user/rebuild",
+  // },
 ];
 const roleBasedNavItems = {
   demandeur: [
@@ -74,6 +80,7 @@ const UserSidebar = ({ roleList }) => {
     icon: item.icon,
     label: (
       <a
+        
         href={item.route}
         target="_blank"
         rel="noopener noreferrer"

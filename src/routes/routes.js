@@ -8,6 +8,7 @@ import DetailsDemande from "../pages/detailsDemande/detailsDemandes";
 import GestionStock from "../pages/gestionStock/gestionStock";
 import GestionUser from "../pages/dashboardAdmin/gestionUser/GestionUser";
 import Dashboard from "../pages/dashboardAdmin/dashboard/dashboard";
+import RebuildGamme from "../pages/rebuildGamme/RebuildGamme";
 
 const AppRoutes = () => {
   return (
@@ -59,6 +60,16 @@ const AppRoutes = () => {
                 </ProtectedRoutes>
               }
             />
+            {/* <Route
+              path="rebuild"
+              element={
+                <ProtectedRoutes
+                  allowedRoles={["DEMANDEUR", "AGENT_MUS", "GESTIONNEUR_STOCK",]}
+                >
+                  <RebuildGamme />
+                </ProtectedRoutes>
+              }
+            /> */}
           </Route>
 
           {/* Admin Dashboard */}
@@ -100,6 +111,14 @@ const AppRoutes = () => {
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <GestionUser />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="rebuild"
+              element={
+                <ProtectedRoutes allowedRoles={["Admin"]}>
+                  <RebuildGamme />
                 </ProtectedRoutes>
               }
             />

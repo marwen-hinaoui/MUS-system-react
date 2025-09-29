@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
+import { MdBuild, MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
 
 import { IoLayers } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
@@ -32,6 +32,12 @@ const navItems = [
     label: "Gestion stock",
     route: "/admin/stock",
   },
+  // {
+  //   key: "rebuild",
+  //   icon: <MdBuild size={ICONSIZE.SMALL} />,
+  //   label: "Reconstruction Coiff",
+  //   route: "/admin/rebuild",
+  // },
   {
     key: "gestion_user",
     icon: <IoMdSettings size={ICONSIZE.SMALL} />,
