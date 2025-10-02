@@ -1,7 +1,6 @@
 import {
   Breadcrumb,
   Button,
-  Card,
   Col,
   Empty,
   Form,
@@ -28,14 +27,19 @@ import {
   openNotificationSuccess,
 } from "../../components/notificationComponent/openNotification";
 import { RxCheckCircled } from "react-icons/rx";
-import { FiEdit } from "react-icons/fi";
+// import { FiEdit } from "react-icons/fi";
 import { annuler_demande_api } from "../../api/annuler_demande_api";
-import { update_subDemande_api } from "../../api/update_subDemande_api";
+// import { update_subDemande_api } from "../../api/update_subDemande_api";
 import CardComponent from "../../components/card/cardComponent";
+import { SharedModal } from "./sharedModal";
+import "./details.css";
 
 const DetailsDemande = () => {
   const [subDemandes, setSubDemandes] = useState([]);
   const [demandeMUS, setDemandeMUS] = useState([]);
+  const [modalLivree, setModalLivree] = useState(false);
+  const [modalAnnuler, setModalAnnuler] = useState(false);
+  const [accepter, setAccepter] = useState(false);
   const roleList = useSelector((state) => state.app.roleList);
   const token = useSelector((state) => state.app.tokenValue);
   const userId = useSelector((state) => state.app.userId);
@@ -61,12 +65,18 @@ const DetailsDemande = () => {
     console.log(id);
   }, []);
 
-  const changeStatus = async () => {
+  const changeStatus = async (type) => {
     dispatch(set_loading(true));
-    const resStatus = await status_change_api(id, token);
+    const resStatus = await status_change_api(id, token, type);
     if (resStatus.resData) {
       openNotificationSuccess(api, resStatus?.resData?.message);
       getDemandeById();
+      if (type === "Accepter") {
+        setAccepter(false);
+      }
+      if (type === "Livree") {
+        setModalLivree(false);
+      }
     } else {
       openNotification(api, resStatus?.resError?.response?.data?.message);
       console.log(resStatus?.resError);
@@ -79,6 +89,7 @@ const DetailsDemande = () => {
     if (resStatus?.resData) {
       openNotificationSuccess(api, resStatus?.resData?.message);
       getDemandeById();
+      setModalAnnuler(false);
     } else {
       console.log(resStatus?.resError);
     }
@@ -243,7 +254,7 @@ const DetailsDemande = () => {
               <Col xs={24} sm={12} md={4}>
                 <Form.Item style={{ marginBottom: "0" }}>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <span style={{ paddingRight: "5px" }}>Lieu detection:</span>
+                    <span className="text-detail-wrap">Lieu detection:</span>
                     <Input
                       style={{ width: "100%", height: "34px" }}
                       value={demandeMUS.nomDetection}
@@ -255,7 +266,7 @@ const DetailsDemande = () => {
               <Col xs={24} sm={12} md={4}>
                 <Form.Item style={{ marginBottom: "0" }}>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <span style={{ paddingRight: "5px" }}>Demandeur:</span>
+                    <span className="text-detail-wrap">Demandeur:</span>
                     <Input
                       style={{ width: "100%", height: "34px" }}
                       value={demandeMUS.demandeur}
@@ -268,7 +279,7 @@ const DetailsDemande = () => {
                 <Col xs={24} sm={12} md={4}>
                   <Form.Item style={{ marginBottom: "0" }}>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <span style={{ paddingRight: "5px" }}>Annulée par: </span>
+                      <span className="text-detail-wrap">Annulée par: </span>
                       <Input
                         style={{ width: "100%", height: "34px" }}
                         value={demandeMUS.annulerPar}
@@ -285,9 +296,7 @@ const DetailsDemande = () => {
                   <Col ol xs={24} sm={12} md={4}>
                     <Form.Item style={{ marginBottom: "0" }}>
                       <div style={{ display: "flex", alignItems: "center" }}>
-                        <span style={{ paddingRight: "5px" }}>
-                          Acceptée par:
-                        </span>
+                        <span className="text-detail-wrap">Acceptée par:</span>
                         <Input
                           style={{ width: "100%", height: "34px" }}
                           value={demandeMUS.accepterPar}
@@ -300,9 +309,7 @@ const DetailsDemande = () => {
                     <Col xs={24} sm={12} md={4}>
                       <Form.Item style={{ marginBottom: "0" }}>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          <span style={{ paddingRight: "5px" }}>
-                            Livrée par:{" "}
-                          </span>
+                          <span className="text-detail-wrap">Livrée par: </span>
                           <Input
                             style={{ width: "100%", height: "34px" }}
                             value={demandeMUS.livreePar}
@@ -349,7 +356,7 @@ const DetailsDemande = () => {
           className="d-flex justify-content-end"
         >
           <div className="pe-1">
-            {demandeMUS.statusDemande === "Demande initié" &&
+            {demandeMUS.statusDemande === "Demande initiée" &&
               (roleList.includes("Admin") ||
                 (roleList.includes("DEMANDEUR") &&
                   demandeMUS.id_userMUS === userId)) && (
@@ -361,7 +368,7 @@ const DetailsDemande = () => {
                       background: COLORS.LearRed,
                       color: COLORS.WHITE,
                     }}
-                    onClick={annulerDemamnde}
+                    onClick={() => setModalAnnuler(true)}
                   >
                     <IoCloseCircleOutline size={ICONSIZE.SMALL} /> Annuler
                   </Button>
@@ -369,7 +376,7 @@ const DetailsDemande = () => {
               )}
           </div>
 
-          {demandeMUS.statusDemande === "Demande initié" &&
+          {demandeMUS.statusDemande === "Demande initiée" &&
             (roleList.includes("Admin") ||
               roleList.includes("AGENT_MUS") ||
               roleList.includes("GESTIONNEUR_STOCK")) && (
@@ -382,7 +389,7 @@ const DetailsDemande = () => {
                   background: COLORS.Blue,
                   color: COLORS.WHITE,
                 }}
-                onClick={changeStatus}
+                onClick={() => setAccepter(true)}
               >
                 <IoCheckmarkCircleOutline size={ICONSIZE.SMALL} /> Accepter
               </Button>
@@ -400,13 +407,33 @@ const DetailsDemande = () => {
                   background: COLORS.GREEN,
                   color: COLORS.WHITE,
                 }}
-                onClick={changeStatus}
-                loading={isLoading}
+                onClick={() => setModalLivree(true)}
               >
                 <RxCheckCircled size={ICONSIZE.SMALL} /> Livrée
               </Button>
             )}
         </div>
+        <SharedModal
+          callback={() => setAccepter(false)}
+          message={"Voulez vous accepter cette demande ?"}
+          modalState={accepter}
+          isLoading={isLoading}
+          changeStatus={() => changeStatus("Accepter")}
+        />
+        <SharedModal
+          callback={() => setModalLivree(false)}
+          message={"Voulez vous livrer cette demande ?"}
+          modalState={modalLivree}
+          isLoading={isLoading}
+          changeStatus={() => changeStatus("Livree")}
+        />
+        <SharedModal
+          callback={() => setModalAnnuler(false)}
+          message={"Voulez-vous annuler cette demande ?"}
+          modalState={modalAnnuler}
+          isLoading={isLoading}
+          changeStatus={annulerDemamnde}
+        />
       </div>
     )
   );

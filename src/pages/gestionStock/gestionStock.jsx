@@ -42,6 +42,7 @@ import { get_material_api } from "../../api/plt/get_material_api";
 import { get_projet_api } from "../../api/plt/get_projet_api";
 import { CheckStock } from "./checkStock/checkStock";
 import { get_stock_api } from "../../api/get_stock_api";
+import { ExportExcel } from "./exportExcel/exportExcel";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -397,9 +398,31 @@ const GestionStock = () => {
         );
       },
     },
-    { title: "Créateur de mvt", dataIndex: "mvt_create" },
+    {
+      title: "Créateur de mvt",
+      dataIndex: "mvt_create",
+      filters: [...new Set(allStockMouvement?.map((d) => d.mvt_create))].map(
+        (mvt) => ({
+          text: mvt,
+          value: mvt,
+        })
+      ),
+      onFilter: (value, record) => record.mvt_create === value,
+      filterSearch: true,
+    },
     { title: "Heure", dataIndex: "heure" },
-    { title: "Séquence", dataIndex: "sequence" },
+    {
+      title: "Séquence",
+      dataIndex: "sequence",
+      filters: [...new Set(allStockMouvement?.map((d) => d.sequence))].map(
+        (seq) => ({
+          text: seq,
+          value: seq,
+        })
+      ),
+      onFilter: (value, record) => record.sequence === value,
+      filterSearch: true,
+    },
     {
       title: "Projet",
       dataIndex: "projetNom",
@@ -411,13 +434,41 @@ const GestionStock = () => {
       ),
       onFilter: (value, record) => record.projetNom === value,
     },
-    { title: "Part Number", dataIndex: "partNumber" },
-    { title: "Pattern", dataIndex: "patternNumb" },
+    {
+      title: "Part Number",
+      dataIndex: "partNumber",
+      filters: [...new Set(allStockMouvement?.map((d) => d.partNumber))].map(
+        (pn) => ({
+          text: pn,
+          value: pn,
+        })
+      ),
+      onFilter: (value, record) => record.partNumber === value,
+      filterSearch: true,
+    },
+    {
+      title: "Pattern",
+      dataIndex: "patternNumb",
+      filters: [...new Set(allStockMouvement?.map((d) => d.patternNumb))].map(
+        (pattern) => ({
+          text: pattern,
+          value: pattern,
+        })
+      ),
+      onFilter: (value, record) => record.patternNumb === value,
+    },
     { title: "Matière", dataIndex: "partNumberMaterial" },
     { title: "Quantité", dataIndex: "quantite" },
     {
       title: "Statut Pattern",
       dataIndex: "statusMouvement",
+      filters: [
+        ...new Set(allStockMouvement?.map((d) => d.statusMouvement)),
+      ].map((status) => ({
+        text: status,
+        value: status,
+      })),
+      onFilter: (value, record) => record.statusMouvement === value,
       render: (text, record) => (
         <div
           style={{
@@ -800,47 +851,41 @@ const GestionStock = () => {
 
         <div style={{ padding: "0px 0 16px 0px" }}>
           <h4 style={{ margin: "0px" }}>Gestion Stock</h4>
-          {/* <p style={{ margin: "0px", color: COLORS.Gray4 }}>
-            Consultez, filtrez et gérez les mouvements de stock en temps réel.
-          </p> */}
         </div>
         <div
           style={{
-            paddingBottom: "13px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <Button onClick={showModal} color="danger" variant="outlined">
-            Ajouter Pattern
-          </Button>
-        </div>
-        <div
-          style={{
-            textAlign: "center",
-          }}
-        >
-          <Segmented
+          <div
             style={{
-              float: "left",
+              paddingBottom: "13px",
             }}
+          >
+            <Button onClick={showModal} color="danger" variant="outlined">
+              Ajouter Pattern
+            </Button>
+          </div>
+          <Segmented
             options={options}
             onChange={(value) => setCurrentView(value)}
             value={currentView.charAt(0).toUpperCase() + currentView.slice(1)}
           />
+          {currentView === "Check Stock" && (
+            <ExportExcel stockDATA={stockDATA} />
+          )}
+          {currentView === "Mouvement Stock" && (
+            <Button type="primary" onClick={() => setIsExportModalOpen(true)}>
+              Export mvt stock <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
+            </Button>
+          )}
+        </div>
+
+        <div>
           {currentView === "Mouvement Stock" && (
             <div>
-              <div>
-                <Button
-                  type="primary"
-                  style={{
-                    float: "right",
-                  }}
-                  onClick={() => setIsExportModalOpen(true)}
-                >
-                  Export mvt stock{" "}
-                  <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
-                </Button>
-              </div>
-
               <Table
                 style={{
                   padding: "13px 0 0 0",

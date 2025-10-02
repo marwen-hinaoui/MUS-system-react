@@ -31,10 +31,8 @@ const SearchComponent = () => {
     <div>
       <div style={{ padding: "6px" }}>
         <label class="searchLabelWrap">
-          <span class="visually-hidden">Search</span>
           <MdSearch size={ICONSIZE.PRIMARY} />
           <input
-            type="search"
             placeholder="Numéro demande"
             className="searchInput"
             onChange={(e) => {

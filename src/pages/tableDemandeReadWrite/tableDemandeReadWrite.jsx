@@ -50,21 +50,32 @@ const TableDemandeReadWrite = ({ data }) => {
       width: 60,
     },
     {
-      title: () => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <SearchComponent />
-          </div>
-        );
-      },
+      title: "Numéro demande",
       dataIndex: "numDemande",
-      sorter: (a, b) => a.numDemande.localeCompare(b.numDemande),
+      filters: [...new Set(data?.map((d) => d.numDemande))].map(
+        (_numDemande) => ({
+          text: _numDemande,
+          value: _numDemande,
+        })
+      ),
+      onFilter: (value, record) => record.numDemande === value,
+      filterSearch: true,
     },
+    // {
+    //   title: () => {
+    //     return (
+    //       <div
+    //         style={{
+    //           display: "flex",
+    //           alignItems: "center",
+    //         }}
+    //       >
+    //         <SearchComponent />
+    //       </div>
+    //     );
+    //   },
+    //   dataIndex: "numDemande",
+    // },
 
     // {
     //   title: "Demandeur",
@@ -77,10 +88,24 @@ const TableDemandeReadWrite = ({ data }) => {
     {
       title: "Demandeur",
       dataIndex: "demandeur",
+      filters: [...new Set(data?.map((d) => d.demandeur))].map(
+        (_demandeur) => ({
+          text: _demandeur,
+          value: _demandeur,
+        })
+      ),
+      onFilter: (value, record) => record.demandeur === value,
+      filterSearch: true,
     },
     {
       title: "Séquence",
       dataIndex: "sequence",
+      filters: [...new Set(data?.map((d) => d.sequence))].map((_sequence) => ({
+        text: _sequence,
+        value: _sequence,
+      })),
+      onFilter: (value, record) => record.sequence === value,
+      filterSearch: true,
     },
 
     {

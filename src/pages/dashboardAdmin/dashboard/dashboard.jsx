@@ -43,7 +43,7 @@ const Dashboard = () => {
       );
       setInitie(
         resDemandes.resData.data.filter(
-          (d) => d.statusDemande === "Demande initié"
+          (d) => d.statusDemande === "Demande initiée"
         ).length
       );
       setLivree(

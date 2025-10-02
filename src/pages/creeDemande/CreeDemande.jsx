@@ -690,7 +690,7 @@ const CreeDemande = () => {
         </div>
       </Form>
       <Modal
-        title="Comfirmation de la demande"
+        title="Confirmation de la demande"
         open={modalVisible}
         // closable={false}
         onCancel={() => setModalVisible(false)}

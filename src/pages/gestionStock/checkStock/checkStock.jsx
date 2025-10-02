@@ -1,6 +1,5 @@
 import { Button, Empty, InputNumber, Modal, notification, Table } from "antd";
 import React, { useState } from "react";
-import dayjs from "dayjs";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
@@ -14,6 +13,8 @@ import {
 } from "../../../components/notificationComponent/openNotification";
 import { RiEdit2Fill } from "react-icons/ri";
 import { update_stock_api } from "../../../api/update_stock_api";
+import { ExportExcel } from "../exportExcel/exportExcel";
+
 export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
   const roleList = useSelector((state) => state.app.roleList);
   const token = useSelector((state) => state.app.tokenValue);
@@ -55,8 +56,28 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       ),
       onFilter: (value, record) => record.projetNom === value,
     },
-    { title: "Part Number", dataIndex: "partNumber" },
-    { title: "Pattern", dataIndex: "patternNumb" },
+    {
+      title: "Part Number",
+      dataIndex: "partNumber",
+      filters: [...new Set(stockDATA?.map((d) => d.partNumber))].map((pn) => ({
+        text: pn,
+        value: pn,
+      })),
+      onFilter: (value, record) => record.partNumber === value,
+      filterSearch: true,
+    },
+    {
+      title: "Pattern",
+      dataIndex: "patternNumb",
+      filters: [...new Set(stockDATA?.map((d) => d.patternNumb))].map(
+        (pattern) => ({
+          text: pattern,
+          value: pattern,
+        })
+      ),
+      onFilter: (value, record) => record.patternNumb === value,
+      filterSearch: true,
+    },
     { title: "Matière", dataIndex: "partNumberMaterial" },
     { title: "Qte en stock", dataIndex: "quantite", width: 150 },
   ];
@@ -81,59 +102,10 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
     });
   }
 
-  const exportToExcel = (data) => {
-    const exportSchema = [
-      { header: "Id", dataIndex: "id" },
-      { header: "Projet", dataIndex: "projetNom" },
-      { header: "Part Number", dataIndex: "partNumber" },
-      { header: "Pattern", dataIndex: "patternNumb" },
-      { header: "Matière", dataIndex: "partNumberMaterial" },
-      { header: "Qte en stock", dataIndex: "quantite" },
-    ];
-
-    if (!data || data.length === 0) {
-      openNotification(api, "Aucune donnée à exporter !");
-      return;
-    }
-
-    const headerKeys = exportSchema.map((col) => col.dataIndex);
-    const customHeaders = exportSchema.map((col) => col.header);
-
-    const worksheet = XLSX.utils.json_to_sheet(data, {
-      header: headerKeys,
-    });
-
-    XLSX.utils.sheet_add_aoa(worksheet, [customHeaders], { origin: "A1" });
-
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "MouvementStock");
-
-    const today = new Date();
-    const todayISO = today.toISOString().split("T")[0];
-    const fileName = `qte_stock_hopital_${todayISO}.xlsx`;
-
-    const dataBlob = new Blob(
-      [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],
-      {
-        type: "application/octet-stream",
-      }
-    );
-    saveAs(dataBlob, fileName);
-  };
   return (
     <div>
       {contextHolder}
-      <div>
-        <Button
-          type="primary"
-          style={{
-            float: "right",
-          }}
-          onClick={() => exportToExcel(stockDATA)}
-        >
-          Export qte stock <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
-        </Button>
-      </div>
+
       <Table
         style={{
           padding: "13px 0 0 0",
@@ -160,7 +132,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       />
 
       <Modal
-        title="Modifier qte stock"
+        title={<p style={{ margin: 0 }}>Modifier qte stock</p>}
         closable={{ "aria-label": "Custom Close Button" }}
         open={editingModal}
         onCancel={() => {
@@ -175,10 +147,18 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
             onClick={() => updateQteStock()}
             loading={laodingComfirmation}
           >
-            Comfirmer
+            Confirmer
           </Button>,
         ]}
       >
+        <p
+          style={{
+            marginBottom: "8px",
+            marginTop: "-8px",
+          }}
+        >
+          Veuillez indiquer la quantité que vous souhaitez intégrer en stock:
+        </p>
         <InputNumber
           onChange={(value) => {
             setQteAjour(value);
