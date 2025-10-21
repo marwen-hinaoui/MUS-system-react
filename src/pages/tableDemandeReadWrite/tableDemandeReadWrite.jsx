@@ -49,41 +49,22 @@ const TableDemandeReadWrite = ({ data }) => {
       dataIndex: "id",
       width: 60,
     },
-    {
-      title: "Numéro demande",
-      dataIndex: "numDemande",
-      filters: [...new Set(data?.map((d) => d.numDemande))].map(
-        (_numDemande) => ({
-          text: _numDemande,
-          value: _numDemande,
-        })
-      ),
-      onFilter: (value, record) => record.numDemande === value,
-      filterSearch: true,
-    },
-    // {
-    //   title: () => {
-    //     return (
-    //       <div
-    //         style={{
-    //           display: "flex",
-    //           alignItems: "center",
-    //         }}
-    //       >
-    //         <SearchComponent />
-    //       </div>
-    //     );
-    //   },
-    //   dataIndex: "numDemande",
-    // },
 
-    // {
-    //   title: "Demandeur",
-    //   dataIndex: "userFullName",
-    //   render: (value, record) => {
-    //     return <p>{`${record.firstName} ${record.lastName}`}</p>;
-    //   },
-    // },
+    {
+      title: () => {
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <SearchComponent data={data} searchFor={'numDemande'} placeholder={"Numéro demande"} />
+          </div>
+        );
+      },
+      dataIndex: "numDemande",
+    },
 
     {
       title: "Demandeur",
@@ -398,7 +379,6 @@ const TableDemandeReadWrite = ({ data }) => {
       </div>
 
       <Table
-        rowClassName={() => "ant-row-no-hover"}
         bordered
         columns={columns}
         dataSource={searchingData}
@@ -410,10 +390,11 @@ const TableDemandeReadWrite = ({ data }) => {
         }}
         locale={{
           emptyText: (
-            <Empty
-              description="Aucune donnée trouvée"
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-            />
+            // <Empty
+            //   description="Aucune donnée trouvée"
+            //   image={Empty.PRESENTED_IMAGE_SIMPLE}
+            // />
+            <p>Aucune donnée trouvée</p>
           ),
         }}
         size="small"

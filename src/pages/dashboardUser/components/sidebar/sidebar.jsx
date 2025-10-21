@@ -7,8 +7,8 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 
-import { MdBuild, MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
-import { IoLayers } from "react-icons/io5";
+import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
+import { IoLayers, IoReloadCircleSharp } from "react-icons/io5";
 
 const { Sider } = Layout;
 const commonNavItems = [
@@ -18,12 +18,6 @@ const commonNavItems = [
     label: "Suivi des demandes",
     route: "/user",
   },
-  // {
-  //   key: "rebuild",
-  //   icon: <MdBuild size={ICONSIZE.SMALL} />,
-  //   label: "Reconstruction Coiff",
-  //   route: "/user/rebuild",
-  // },
 ];
 const roleBasedNavItems = {
   demandeur: [
@@ -40,6 +34,12 @@ const roleBasedNavItems = {
       icon: <IoLayers size={ICONSIZE.SMALL} />,
       label: "Gestion stock",
       route: "/user/stock",
+    },
+    {
+      key: "rebuild",
+      icon: <IoReloadCircleSharp size={ICONSIZE.SMALL} />,
+      label: "Reconstruction Coiffe",
+      route: "/user/rec",
     },
   ],
 };
@@ -80,7 +80,6 @@ const UserSidebar = ({ roleList }) => {
     icon: item.icon,
     label: (
       <a
-        
         href={item.route}
         target="_blank"
         rel="noopener noreferrer"

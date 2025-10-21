@@ -14,18 +14,16 @@ import {
   set_role,
   set_token,
 } from "../../redux/slices";
+import { useState } from "react";
 
 const DashboardHeader = ({ role, fullname, token }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const fonction = useSelector((state) => state.app.fonction);
-
-  const roleLabels = {
-    DEMANDEUR: "Demandeur",
-    AGENT_MUS: "Agent Stock",
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   const logout = async () => {
+    setIsLoading(true);
     const res = await logout_api(token);
     if (res.resData) {
       dispatch(set_redirection("/"));
@@ -35,6 +33,7 @@ const DashboardHeader = ({ role, fullname, token }) => {
       dispatch(set_fullname(null));
       dispatch(set_authenticated(false));
     }
+    setIsLoading(false);
   };
 
   return (
@@ -64,6 +63,7 @@ const DashboardHeader = ({ role, fullname, token }) => {
       {/* Logout */}
       <p onClick={logout}>
         <ClickingIcon
+          isLoading={isLoading}
           color={COLORS.LearRed}
           name={"Déconnexion"}
           icon={<IoLogOut color={COLORS.LearRed} size={ICONSIZE.SMALL} />}

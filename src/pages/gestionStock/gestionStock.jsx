@@ -2,7 +2,6 @@ import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import {
   Button,
   DatePicker,
-  Empty,
   Form,
   Input,
   InputNumber,
@@ -40,9 +39,10 @@ import "./gestionStock.css";
 import { get_seq_api } from "../../api/plt/get_seq_api";
 import { get_material_api } from "../../api/plt/get_material_api";
 import { get_projet_api } from "../../api/plt/get_projet_api";
-import { CheckStock } from "./checkStock/checkStock";
+import { CheckStock } from "../../components/checkStock/checkStock";
 import { get_stock_api } from "../../api/get_stock_api";
-import { ExportExcel } from "./exportExcel/exportExcel";
+import { ExportExcel } from "../../components/checkStock/components/exportExcel";
+import { ExcelReader } from "../../components/excelReader/excelReader";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -77,7 +77,6 @@ const GestionStock = () => {
     try {
       const resStock = await get_stock_api(token);
       if (resStock.resData) {
-        console.log(resStock.resData.data);
         setStockDATA(resStock.resData.data);
       }
     } catch (error) {
@@ -722,7 +721,9 @@ const GestionStock = () => {
           }}
           footer={[]}
         >
-          {roleList.includes("Admin") ? (
+          {roleList.includes("Admin") ||
+          roleList.includes("GESTIONNAIRE_STOCK") ||
+          roleList.includes("AGENT_MUS") ? (
             <Tabs defaultActiveKey="1" items={items} />
           ) : (
             <>
@@ -874,7 +875,18 @@ const GestionStock = () => {
             value={currentView.charAt(0).toUpperCase() + currentView.slice(1)}
           />
           {currentView === "Check Stock" && (
-            <ExportExcel stockDATA={stockDATA} />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <ExcelReader
+                fetchFunction={fetchStockAllQte}
+                stockDATA={[...stockDATA]}
+              />
+              <ExportExcel stockDATA={[...stockDATA]} />
+            </div>
           )}
           {currentView === "Mouvement Stock" && (
             <Button type="primary" onClick={() => setIsExportModalOpen(true)}>
@@ -890,7 +902,6 @@ const GestionStock = () => {
                 style={{
                   padding: "13px 0 0 0",
                 }}
-                rowClassName={() => "ant-row-no-hover"}
                 bordered
                 dataSource={allStockMouvement}
                 columns={columns}
@@ -902,10 +913,11 @@ const GestionStock = () => {
                 }}
                 locale={{
                   emptyText: (
-                    <Empty
-                      description="Aucune donnée trouvée"
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    />
+                    // <Empty
+                    //   description="Aucune donnée trouvée"
+                    //   image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    // />
+                    <p>Aucune donnée trouvée</p>
                   ),
                 }}
                 size="small"

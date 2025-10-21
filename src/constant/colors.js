@@ -9,7 +9,7 @@ export const COLORS = {
   Gray3: "#9d9d9dff",
   Gray4: "#535353ff",
   Blue: "#307FE2",
-  REDWHITE: "#FFCDD2",
+  REDWHITE: "#fddcdfff",
   RED_ALERT: "#FFCDD2",
   GREEN_ALERT: "#F6FFED",
   WARNIGN_ALERT: "#FFFBE6",

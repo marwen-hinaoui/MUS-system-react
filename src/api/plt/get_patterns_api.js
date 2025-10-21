@@ -5,7 +5,6 @@ export const get_patterns_api = async (cover_pn, token) => {
     const res = await apiInstance.get(`cms/patterns/${cover_pn}`, {
       headers: {
         Authorization: `Bearer ${token}`,
-
         "Content-Type": "application/json",
       },
     });

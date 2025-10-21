@@ -81,6 +81,12 @@ const Dashboard = () => {
           />
           <StatisticsComponent
             icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
+            status="Demande initiée"
+            chiffre={initie}
+            total={total}
+          />
+          <StatisticsComponent
+            icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
             status="Préparation en cours"
             valuePercent={((enCours / total) * 100).toFixed(0)}
             chiffre={enCours}

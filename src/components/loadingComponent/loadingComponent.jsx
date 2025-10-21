@@ -12,7 +12,7 @@ const LoadingComponent = ({ header, height }) => {
           alignItems: "center",
         }}
       >
-        <Spin />
+        <Spin size="small" />
       </div>
     );
   } else {
@@ -26,7 +26,7 @@ const LoadingComponent = ({ header, height }) => {
           alignItems: "center",
         }}
       >
-        <Spin />
+        <Spin size="small" />
       </div>
     );
   }

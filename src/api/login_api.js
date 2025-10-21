@@ -6,6 +6,7 @@ export const login_api = async (userData) => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
     return { resData: res.data, resError: null };
   } catch (error) {

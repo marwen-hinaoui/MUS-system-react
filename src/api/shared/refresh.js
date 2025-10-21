@@ -1,5 +1,5 @@
 import apiInstance from "../axios";
-import { useLocation, useNavigate } from "react-router";
+import { redirect, useLocation, useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import {
   clear_auth,
@@ -43,8 +43,13 @@ export const useRefreshAccessToken = () => {
       }
     } catch (error) {
       console.log(error);
+      // if (!error?.response) {
+      //   window.location.href = "http://tnbzt-sql01:3000/";
+      //   console.log("CORS Error");
+      // }
+      if (error?.status === 400 || error.status === 401) {
+        console.log("Status Error");
 
-      if (error.status === 400 || error.status === 401) {
         dispatch(clear_auth());
         dispatch(set_authenticated(false));
         navigate("/", { replace: true });

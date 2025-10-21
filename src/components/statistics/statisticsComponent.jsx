@@ -51,31 +51,15 @@ const StatisticsComponent = ({
   };
 
   return (
-    <CardComponent
-      // style={{
-      //   borderRadius: "4px",
-      //   height: "100px",
-      //   padding: "12px",
-      //   width: "25%",
-      // }}
-      height={"100px"}
-      padding={"12px"}
-      width={"25%"}
-      hoverable
-    >
+    <CardComponent height={"100px"} padding={"12px"} width={"25%"} hoverable>
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: 15,
           height: "100%",
-          // position: "absolute",
-          // top: "50%",
-          // left: "50%",
-          // transform: "translate(-50%, -50%)",
         }}
       >
-        {/* Text */}
         <div style={{ flex: 1 }}>
           <div style={{ gap: 4 }}>
             <span
@@ -87,7 +71,7 @@ const StatisticsComponent = ({
             >
               {chiffre}
             </span>
-            {status !== "Total" && (
+            {status !== "Total" && status !== "Demande initiée" && (
               <span
                 style={{
                   fontSize: FONTSIZE.XPRIMARY,
@@ -109,8 +93,7 @@ const StatisticsComponent = ({
           </div>
         </div>
 
-        {/* Progress */}
-        {status !== "Total" && (
+        {status !== "Total" && status !== "Demande initiée" && (
           <Progress
             type="circle"
             percent={animatedPercent}
@@ -122,15 +105,6 @@ const StatisticsComponent = ({
             )}
           />
         )}
-        {/* {status === "Total" && (
-          <Tooltip title="Voir courbes">
-            <IoStatsChartOutline
-              onClick={() => navigate("/admin/statistics")}
-              style={{ cursor: "pointer" }}
-              size={ICONSIZE.PRIMARY}
-            />
-          </Tooltip>
-        )} */}
       </div>
     </CardComponent>
   );

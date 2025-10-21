@@ -7,13 +7,17 @@ const CardComponent = ({
   className,
   margin,
   height,
+  cursor,
+  callback,
 }) => {
   return (
     <Card
       bordered={false}
+      onClick={callback}
       variant="borderless"
       className={className}
       style={{
+        cursor: cursor && "pointer",
         borderRadius: "4px",
         width: width,
         padding: padding,

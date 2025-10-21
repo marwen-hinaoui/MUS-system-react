@@ -154,3 +154,23 @@ h4 {
 .ant-modal-content {
   border-radius: 4px !important;
 }
+.ant-row {
+  margin: 0 !important;
+}
+.ant-col {
+  padding-left: 0px !important;
+  padding-left: 0px !important;
+}
+
+.ant-menu-submenu-popup > .ant-menu {
+  border-radius: 4px !important;
+}
+
+.ant-menu-submenu-popup .ant-menu-vertical .ant-menu-submenu-title {
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.red-row {
+  background: rgb(251, 217, 219);
+}

@@ -174,13 +174,13 @@ const Login = () => {
       </Flex>
       <div
         style={{
-          position: "absolute",
+          position: "fixed",
           bottom: "20px",
           right: "20px",
           fontSize: FONTSIZE.PRIMARY,
         }}
       >
-        v1.0
+        V2.0
       </div>
     </Flex>
   ) : (

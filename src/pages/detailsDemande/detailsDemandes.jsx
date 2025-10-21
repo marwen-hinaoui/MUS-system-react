@@ -85,14 +85,19 @@ const DetailsDemande = () => {
   };
 
   const annulerDemamnde = async () => {
+    dispatch(set_loading(true));
+
     const resStatus = await annuler_demande_api(id, token);
     if (resStatus?.resData) {
       openNotificationSuccess(api, resStatus?.resData?.message);
       getDemandeById();
       setModalAnnuler(false);
     } else {
+      openNotification(api, resStatus?.resError?.response?.data?.message);
+
       console.log(resStatus?.resError);
     }
+    dispatch(set_loading(false));
   };
 
   const breadcrumb = [
@@ -331,7 +336,6 @@ const DetailsDemande = () => {
             }}
           >
             <Table
-              rowClassName={() => "ant-row-no-hover"}
               bordered
               dataSource={subDemandes}
               columns={columns}
@@ -340,10 +344,11 @@ const DetailsDemande = () => {
               size="small"
               locale={{
                 emptyText: (
-                  <Empty
-                    description="Aucune donnée trouvée"
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  />
+                  // <Empty
+                  //   description="Aucune donnée trouvée"
+                  //   image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  // />
+                  <p>Aucune donnée trouvée</p>
                 ),
               }}
             />
@@ -379,9 +384,7 @@ const DetailsDemande = () => {
           {demandeMUS.statusDemande === "Demande initiée" &&
             (roleList.includes("Admin") ||
               roleList.includes("AGENT_MUS") ||
-              roleList.includes("GESTIONNEUR_STOCK")) && (
-              //  Backend Check status before change in db
-
+              roleList.includes("GESTIONNAIRE_STOCK")) && (
               <Button
                 style={{
                   padding: "10px",
@@ -397,9 +400,7 @@ const DetailsDemande = () => {
           {demandeMUS.statusDemande === "Préparation en cours" &&
             (roleList.includes("Admin") ||
               roleList.includes("AGENT_MUS") ||
-              roleList.includes("GESTIONNEUR_STOCK")) && (
-              /* Backend Check status before change in db */
-
+              roleList.includes("GESTIONNAIRE_STOCK")) && (
               <Button
                 style={{
                   padding: "10px",

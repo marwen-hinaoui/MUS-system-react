@@ -8,6 +8,7 @@ import DashboardSidebarAdmin from "../pages/dashboardAdmin/components/sidebar/si
 import { Navigate } from "react-router-dom";
 import { set_loading } from "../redux/slices";
 import { COLORS } from "../constant/colors";
+import { FONTSIZE } from "../constant/FontSizes";
 
 const bgStyles = {
   backgroundColor: COLORS.BG,
@@ -43,7 +44,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
   if (
     roleList.includes("AGENT_MUS") ||
     roleList.includes("DEMANDEUR") ||
-    roleList.includes("GESTIONNEUR_STOCK")
+    roleList.includes("GESTIONNAIRE_STOCK")
   ) {
     return (
       <div className="d-flex">
@@ -51,6 +52,16 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
         <div style={bgStyles} className="d-flex flex-column w-100">
           <DashboardHeader token={token} role={roleList} fullname={fullname} />
           <div style={{ marginTop: "63px" }}>{children}</div>
+          <div
+            style={{
+              position: "absolute",
+              bottom: "20px",
+              right: "20px",
+              fontSize: FONTSIZE.PRIMARY,
+            }}
+          >
+            V2.0
+          </div>
         </div>
       </div>
     );
@@ -62,6 +73,16 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
         <div style={bgStyles} className="d-flex flex-column w-100">
           <DashboardHeader token={token} role={["Admin"]} fullname={fullname} />
           <div style={{ marginTop: "63px" }}>{children}</div>
+          <div
+            style={{
+              position: "fixed",
+              bottom: "20px",
+              right: "20px",
+              fontSize: FONTSIZE.PRIMARY,
+            }}
+          >
+            V2.0
+          </div>
         </div>
       </div>
     );

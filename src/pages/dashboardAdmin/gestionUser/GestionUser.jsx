@@ -21,11 +21,10 @@ import { update_password_api } from "../../../api/update_password_api";
 import { useSelector } from "react-redux";
 import { FONTSIZE, ICONSIZE } from "../../../constant/FontSizes";
 import { openNotificationSuccess } from "../../../components/notificationComponent/openNotification";
-import { MdDelete, MdEditDocument, MdOutlinePassword } from "react-icons/md";
+import { MdDelete, MdOutlinePassword } from "react-icons/md";
 import { delete_user_api } from "../../../api/delete_user_api";
-import { BiSolidEditAlt } from "react-icons/bi";
-import { RiEdit2Fill, RiEditFill } from "react-icons/ri";
-import { FiEdit } from "react-icons/fi";
+import { RiEdit2Fill } from "react-icons/ri";
+import { get_projet_api } from "../../../api/get_projet_api";
 
 const { Option } = Select;
 
@@ -41,12 +40,14 @@ const GestionUser = () => {
   const [selectedUser, setSelectedUser] = useState([]);
   const [passwordForm] = Form.useForm();
   const [fonctionList, setFonctionList] = useState([]);
+  const [projets, setProjets] = useState([]);
   const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
   const [selectedUserDelete, setSelectedUserDelete] = useState({});
   const token = useSelector((state) => state.app.tokenValue);
   useEffect(() => {
     getAllUsers();
     getFonctions();
+    getProjets();
   }, []);
 
   const openPasswordModal = (user) => {
@@ -89,6 +90,15 @@ const GestionUser = () => {
       key: "username",
     },
     {
+      title: "Projet",
+      dataIndex: "projetList",
+      key: "projetList",
+      render: (projetList) => {
+        if (!projetList) return null;
+        return projetList.map((role) => role).join(", ");
+      },
+    },
+    {
       title: "Fonction",
       dataIndex: "fonctioNom",
       key: "fonctioNom",
@@ -101,7 +111,7 @@ const GestionUser = () => {
         if (!roleList) return null;
 
         const roleLabels = {
-          GESTIONNEUR_STOCK: "Gestionneur stock",
+          GESTIONNAIRE_STOCK: "Gestionnaire stock",
           DEMANDEUR: "Demandeur",
           AGENT_MUS: "Agent stock",
           Admin: "Admin",
@@ -145,18 +155,17 @@ const GestionUser = () => {
     },
   ];
   const fonctionRoleMapping = {
-    1: ["Admin"], // Admin
-    2: ["DEMANDEUR"], // Chef de Ligne
-    3: ["AGENT_MUS"], // Agent Make-Up
-    4: ["GESTIONNEUR_STOCK"], // Analyste des flux
-    5: ["DEMANDEUR"], // Superviseur de Production
+    1: ["Admin"],
+    2: ["DEMANDEUR"],
+    3: ["AGENT_MUS"],
+    4: ["GESTIONNAIRE_STOCK"],
+    5: ["DEMANDEUR"],
   };
   const showModalDelete = (user) => {
     setSelectedUserDelete(user);
     setModalDeleteVisible(true);
   };
 
-  // Close modal
   const closeModalDelete = () => {
     setSelectedUserDelete(null);
     setModalDeleteVisible(false);
@@ -224,6 +233,8 @@ const GestionUser = () => {
   const getAllUsers = async () => {
     try {
       const res = await get_all_users_api(token);
+      console.log(res.resData);
+
       setUsers(res?.resData?.data);
     } catch (error) {
       console.log("Error fetching users:", error);
@@ -241,11 +252,25 @@ const GestionUser = () => {
       console.log(error);
     }
   };
+  const getProjets = async () => {
+    try {
+      const res = await get_projet_api();
+      if (res.resData) {
+        console.log(res.resData);
+        setProjets(res.resData.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       setLoading(true);
+      console.log("---- values -----");
+
+      console.log(values);
 
       const resUser = await gestion_user_api(values, token);
       if (resUser.resData) {
@@ -422,7 +447,28 @@ const GestionUser = () => {
             rules={[{ required: true, message: "Saisie role!" }]}
             required={false}
           >
-            <Checkbox.Group value={selectedRoles} onChange={handleChange}>
+            <Select
+              mode="multiple"
+              value={selectedRoles}
+              onChange={handleChange}
+              placeholder="Select roles"
+              style={{ flex: 1 }}
+              options={[
+                { value: "Admin", label: "Admin" },
+
+                ...(!isAdminSelected
+                  ? [
+                      { value: "DEMANDEUR", label: "Demandeur" },
+                      { value: "AGENT_MUS", label: "Agent Stock" },
+                      {
+                        value: "GESTIONNAIRE_STOCK",
+                        label: "Gestionnaire Stock",
+                      },
+                    ]
+                  : []),
+              ]}
+            />
+            {/* <Checkbox.Group value={selectedRoles} onChange={handleChange}>
               {" "}
               <Row>
                 <Col span={24}>
@@ -450,18 +496,34 @@ const GestionUser = () => {
                     </Col>
                     <Col span={24}>
                       <Checkbox
-                        value="GESTIONNEUR_STOCK"
+                        value="GESTIONNAIRE_STOCK"
                         style={{ lineHeight: "32px" }}
                       >
-                        GESTIONNEUR STOCK
+                        Gestionnaire Stock
                       </Checkbox>
                     </Col>
                   </>
                 )}
               </Row>
-            </Checkbox.Group>
+            </Checkbox.Group> */}
           </Form.Item>
 
+          <Form.Item
+            name="id_projet"
+            label="Projet: "
+            required={false}
+            rules={[{ required: true, message: "Sélectionnez projet!" }]}
+          >
+            <Select
+              mode="multiple"
+              placeholder="Select projets"
+              style={{ flex: 1 }}
+              options={projets.map((f) => ({
+                value: f.id,
+                label: f.nom,
+              }))}
+            />
+          </Form.Item>
           <Form.Item
             name="id_site"
             label="Site: "
@@ -485,7 +547,6 @@ const GestionUser = () => {
       <div style={{ padding: "13px 0" }}>
         <Table
           size="small"
-          rowClassName={() => "ant-row-no-hover"}
           bordered
           columns={columns}
           dataSource={users}
@@ -498,10 +559,11 @@ const GestionUser = () => {
           }}
           locale={{
             emptyText: (
-              <Empty
-                description="Aucune donnée trouvée"
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
+              // <Empty
+              //   description="Aucune donnée trouvée"
+              //   image={Empty.PRESENTED_IMAGE_SIMPLE}
+              // />
+              <p>Aucune donnée trouvée</p>
             ),
           }}
         />

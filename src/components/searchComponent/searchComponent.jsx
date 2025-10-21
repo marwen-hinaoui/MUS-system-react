@@ -2,38 +2,36 @@ import "./searchComponent.css";
 import { MdSearch } from "react-icons/md";
 import { ICONSIZE } from "../../constant/FontSizes";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { set_data_searching, set_loading } from "../../redux/slices";
-import LoadingComponent from "../loadingComponent/loadingComponent";
-const SearchComponent = () => {
+const SearchComponent = ({ placeholder, data, searchFor }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
-  const demandeData = useSelector((state) => state.app.demandeData);
-  const isLoading = useSelector((state) => state.app.isLoading);
   useEffect(() => {
-    if (demandeData) {
+    if (data && searchFor) {
       dispatch(set_loading(true));
 
       const term = searchTerm.toLowerCase();
-      const filtered = demandeData.filter((item) =>
-        Object.values(item.numDemande).some((val) =>
-          String(item.numDemande).toLowerCase().includes(term)
-        )
-      );
+
+      const filtered = data.filter((item) => {
+        const value = item?.[searchFor];
+
+        return value && String(value).toLowerCase().includes(term);
+      });
+      console.log(filtered);
+
       dispatch(set_data_searching(filtered));
       dispatch(set_loading(false));
     }
-  }, [searchTerm, demandeData, dispatch]);
-  if (isLoading) {
-    return <LoadingComponent header={true} />;
-  }
+  }, [searchTerm, data, searchFor, dispatch]);
+
   return (
     <div>
-      <div style={{ padding: "6px" }}>
+      <div>
         <label class="searchLabelWrap">
           <MdSearch size={ICONSIZE.PRIMARY} />
           <input
-            placeholder="Numéro demande"
+            placeholder={placeholder}
             className="searchInput"
             onChange={(e) => {
               setSearchTerm(e.target.value);

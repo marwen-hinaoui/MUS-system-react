@@ -3,6 +3,7 @@ import AppRoutes from "./routes/routes";
 import "@fontsource/inter";
 import { COLORS } from "./constant/colors";
 import { useEffect, useState } from "react";
+// import 'antd/dist/reset.css';
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -51,7 +52,7 @@ const App = () => {
               alignItems: "center",
             }}
           >
-            <Spin />
+            <Spin size="small" />
           </div>
         ) : (
           <AppRoutes />

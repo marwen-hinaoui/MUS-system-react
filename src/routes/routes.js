@@ -9,7 +9,7 @@ import GestionStock from "../pages/gestionStock/gestionStock";
 import GestionUser from "../pages/dashboardAdmin/gestionUser/GestionUser";
 import Dashboard from "../pages/dashboardAdmin/dashboard/dashboard";
 import RebuildGamme from "../pages/rebuildGamme/RebuildGamme";
-
+import { HpglViewerPage } from "../components/patternViewer/patternViewer";
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -19,6 +19,7 @@ const AppRoutes = () => {
           <Route path="/" element={<Login />} />
           <Route path="*" element={<>404</>} />
           <Route path="/unauthorized" element={<>unauthorized</>} />
+          <Route path="testPLT" element={<HpglViewerPage />} />
 
           {/* User Dashboard (Demandeur + Agent) */}
           <Route path="/user">
@@ -26,7 +27,11 @@ const AppRoutes = () => {
               index
               element={
                 <ProtectedRoutes
-                  allowedRoles={["DEMANDEUR", "AGENT_MUS", "GESTIONNEUR_STOCK"]}
+                  allowedRoles={[
+                    "DEMANDEUR",
+                    "AGENT_MUS",
+                    "GESTIONNAIRE_STOCK",
+                  ]}
                 >
                   <Dashboard />
                 </ProtectedRoutes>
@@ -36,7 +41,11 @@ const AppRoutes = () => {
               path="details/:id"
               element={
                 <ProtectedRoutes
-                  allowedRoles={["DEMANDEUR", "AGENT_MUS", "GESTIONNEUR_STOCK"]}
+                  allowedRoles={[
+                    "DEMANDEUR",
+                    "AGENT_MUS",
+                    "GESTIONNAIRE_STOCK",
+                  ]}
                 >
                   <DetailsDemande />
                 </ProtectedRoutes>
@@ -54,22 +63,26 @@ const AppRoutes = () => {
               path="stock"
               element={
                 <ProtectedRoutes
-                  allowedRoles={["AGENT_MUS", "GESTIONNEUR_STOCK"]}
+                  allowedRoles={["AGENT_MUS", "GESTIONNAIRE_STOCK"]}
                 >
                   <GestionStock />
                 </ProtectedRoutes>
               }
             />
-            {/* <Route
-              path="rebuild"
+            <Route
+              path="rec"
               element={
                 <ProtectedRoutes
-                  allowedRoles={["DEMANDEUR", "AGENT_MUS", "GESTIONNEUR_STOCK",]}
+                  allowedRoles={[
+                    "DEMANDEUR",
+                    "AGENT_MUS",
+                    "GESTIONNAIRE_STOCK",
+                  ]}
                 >
                   <RebuildGamme />
                 </ProtectedRoutes>
               }
-            /> */}
+            />
           </Route>
 
           {/* Admin Dashboard */}
@@ -115,7 +128,7 @@ const AppRoutes = () => {
               }
             />
             <Route
-              path="rebuild"
+              path="rec"
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <RebuildGamme />

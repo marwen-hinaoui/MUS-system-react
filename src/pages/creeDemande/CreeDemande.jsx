@@ -521,9 +521,7 @@ const CreeDemande = () => {
       </div>
 
       <Form form={form} layout="vertical" onFinish={onSubmit}>
-        <CardComponent
-          padding={'17px'}
-        >
+        <CardComponent padding={"17px"}>
           <Row gutter={24} align={"middle"}>
             <Col xs={24} sm={12} md={4}>
               {" "}
@@ -646,7 +644,6 @@ const CreeDemande = () => {
 
         <div>
           <Table
-            rowClassName={() => "ant-row-no-hover"}
             bordered
             dataSource={subDemandes}
             columns={columns}
@@ -655,10 +652,11 @@ const CreeDemande = () => {
             size="small"
             locale={{
               emptyText: (
-                <Empty
-                  description="Ajouter sub demande"
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                />
+                // <Empty
+                //   description="Ajouter sub demande"
+                //   image={Empty.PRESENTED_IMAGE_SIMPLE}
+                // />
+                <p>Ajouter sub demande</p>
               ),
             }}
           />
@@ -719,7 +717,6 @@ const CreeDemande = () => {
           </p>
 
           <Table
-            rowClassName={() => "ant-row-no-hover"}
             size="small"
             bordered
             dataSource={subDemandesModalComfirm}
@@ -856,7 +853,6 @@ const CustomModal = ({ open, onCancel, status, message, data }) => {
       />
       <Table
         bordered
-        rowClassName={() => "ant-row-no-hover"}
         size="small"
         rowKey="key"
         dataSource={data}

@@ -7,11 +7,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { App as AntdApp } from "antd";
 import "./index.css";
+import { LoadingBarContainer } from "react-top-loading-bar";
+import { COLORS } from "./constant/colors";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
     <AntdApp>
-      <App />
+      <LoadingBarContainer
+        props={{
+          color: COLORS.LearRed,
+        }}
+      >
+        <App />
+      </LoadingBarContainer>
     </AntdApp>
   </Provider>
 );
