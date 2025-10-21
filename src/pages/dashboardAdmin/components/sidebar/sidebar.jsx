@@ -33,10 +33,10 @@ const navItems = [
     route: "/admin/stock",
   },
   {
-    key: "reconstruction",
+    key: "Reconstitution",
     icon: <IoReloadCircleSharp size={ICONSIZE.SMALL} />,
-    label: "Reconstruction Coiffe",
-    route: "/admin/reconstruction",
+    label: "Reconstitution Coiffe",
+    route: "/admin/reconstitution",
   },
   {
     key: "gestion_user",

@@ -11,7 +11,7 @@ const RebuildGamme = () => {
   return (
     <div className="dashboard">
       <div style={{ paddingBottom: "16px" }}>
-        <h4 style={{ margin: "0px" }}>Reconstruction Coiffes</h4>
+        <h4 style={{ margin: "0px" }}>Reconstitution Coiffes</h4>
       </div>
       <div>
         <div

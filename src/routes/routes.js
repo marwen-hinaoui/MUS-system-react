@@ -69,7 +69,7 @@ const AppRoutes = () => {
               }
             />
             <Route
-              path="reconstruction"
+              path="reconstitution"
               element={
                 <ProtectedRoutes
                   allowedRoles={[
@@ -127,7 +127,7 @@ const AppRoutes = () => {
               }
             />
             <Route
-              path="reconstruction"
+              path="reconstitution"
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <RebuildGamme />

@@ -438,9 +438,11 @@ export const GammeQte = () => {
               <Col
                 key={index}
                 span={6}
-                style={{
-                  paddingBottom: "16px",
-                }}
+                style={
+                  {
+                    // paddingBottom: "16px",
+                  }
+                }
               >
                 <CardComponent
                   callback={() => {
@@ -521,7 +523,7 @@ export const GammeQte = () => {
       <div
         style={{
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "start",
         }}
       >
         <Segmented
