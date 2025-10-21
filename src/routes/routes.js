@@ -21,7 +21,6 @@ const AppRoutes = () => {
           <Route path="/unauthorized" element={<>unauthorized</>} />
           <Route path="testPLT" element={<HpglViewerPage />} />
 
-          {/* User Dashboard (Demandeur + Agent) */}
           <Route path="/user">
             <Route
               index
@@ -70,7 +69,7 @@ const AppRoutes = () => {
               }
             />
             <Route
-              path="rec"
+              path="reconstruction"
               element={
                 <ProtectedRoutes
                   allowedRoles={[
@@ -128,7 +127,7 @@ const AppRoutes = () => {
               }
             />
             <Route
-              path="rec"
+              path="reconstruction"
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <RebuildGamme />

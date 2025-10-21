@@ -1,5 +1,5 @@
 import apiInstance from "../axios";
-import { redirect, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import {
   clear_auth,
@@ -49,6 +49,7 @@ export const useRefreshAccessToken = () => {
       // }
       if (error?.status === 400 || error.status === 401) {
         console.log("Status Error");
+        console.log(error);
 
         dispatch(clear_auth());
         dispatch(set_authenticated(false));

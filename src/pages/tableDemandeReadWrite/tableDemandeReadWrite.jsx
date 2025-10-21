@@ -59,7 +59,12 @@ const TableDemandeReadWrite = ({ data }) => {
               alignItems: "center",
             }}
           >
-            <SearchComponent data={data} searchFor={'numDemande'} placeholder={"Numéro demande"} />
+            <SearchComponent
+              table={true}
+              data={data}
+              searchFor={"numDemande"}
+              placeholder={"Numéro demande"}
+            />
           </div>
         );
       },
@@ -213,10 +218,19 @@ const TableDemandeReadWrite = ({ data }) => {
               />
             ),
           },
-          "Préparation en cours": {
+          "Demande initiée": {
             icon: (
               <TbHistory
                 color={COLORS.Blue}
+                strokeWidth={1.7}
+                size={ICONSIZE.SMALL}
+              />
+            ),
+          },
+          "Préparation en cours": {
+            icon: (
+              <TbHistory
+                color={COLORS.GREEN}
                 strokeWidth={1.7}
                 size={ICONSIZE.SMALL}
               />

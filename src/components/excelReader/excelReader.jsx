@@ -272,7 +272,7 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
               pagination={{
                 position: ["bottomCenter"],
                 showSizeChanger: true,
-                defaultPageSize: "10",
+                defaultPageSize: "5",
                 pageSizeOptions: ["5", "10", "25", "50", "100"],
               }}
               locale={{

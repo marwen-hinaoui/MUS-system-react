@@ -82,7 +82,7 @@ export const GammeTaux = React.memo(() => {
           </Button>
         </div>
         <div>
-          <CardComponent padding={"4px"}>
+          <CardComponent>
             <SearchComponent
               searchFor={"_pn"}
               data={rebuilData}

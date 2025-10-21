@@ -417,7 +417,7 @@ export const GammeQte = () => {
             Actualiser
           </Button>
         </div>
-        <CardComponent padding={"4px"}>
+        <CardComponent>
           <SearchComponent
             searchFor={"_pn"}
             data={rebuilData}

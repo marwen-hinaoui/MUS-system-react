@@ -36,10 +36,10 @@ const roleBasedNavItems = {
       route: "/user/stock",
     },
     {
-      key: "rebuild",
+      key: "reconstruction",
       icon: <IoReloadCircleSharp size={ICONSIZE.SMALL} />,
       label: "Reconstruction Coiffe",
-      route: "/user/rec",
+      route: "/user/reconstruction",
     },
   ],
 };

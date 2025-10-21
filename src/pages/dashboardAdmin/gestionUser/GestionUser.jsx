@@ -468,44 +468,6 @@ const GestionUser = () => {
                   : []),
               ]}
             />
-            {/* <Checkbox.Group value={selectedRoles} onChange={handleChange}>
-              {" "}
-              <Row>
-                <Col span={24}>
-                  <Checkbox value="Admin" style={{ lineHeight: "32px" }}>
-                    Admin
-                  </Checkbox>
-                </Col>
-                {!isAdminSelected && (
-                  <>
-                    <Col span={24}>
-                      <Checkbox
-                        value="DEMANDEUR"
-                        style={{ lineHeight: "32px" }}
-                      >
-                        Demandeur
-                      </Checkbox>
-                    </Col>
-                    <Col span={24}>
-                      <Checkbox
-                        value="AGENT_MUS"
-                        style={{ lineHeight: "32px" }}
-                      >
-                        Agent Stock
-                      </Checkbox>
-                    </Col>
-                    <Col span={24}>
-                      <Checkbox
-                        value="GESTIONNAIRE_STOCK"
-                        style={{ lineHeight: "32px" }}
-                      >
-                        Gestionnaire Stock
-                      </Checkbox>
-                    </Col>
-                  </>
-                )}
-              </Row>
-            </Checkbox.Group> */}
           </Form.Item>
 
           <Form.Item

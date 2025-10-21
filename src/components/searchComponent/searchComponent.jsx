@@ -4,7 +4,9 @@ import { ICONSIZE } from "../../constant/FontSizes";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { set_data_searching, set_loading } from "../../redux/slices";
-const SearchComponent = ({ placeholder, data, searchFor }) => {
+import { Input } from "antd";
+import Search from "antd/es/transfer/search";
+const SearchComponent = ({ placeholder, data, searchFor, table }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
@@ -28,16 +30,28 @@ const SearchComponent = ({ placeholder, data, searchFor }) => {
   return (
     <div>
       <div>
-        <label class="searchLabelWrap">
-          <MdSearch size={ICONSIZE.PRIMARY} />
-          <input
-            placeholder={placeholder}
-            className="searchInput"
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-            }}
-          />
-        </label>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ padding: "5px" }}>
+            <MdSearch size={ICONSIZE.PRIMARY} />
+          </div>
+          {!table ? (
+            <Input
+              placeholder={placeholder}
+              className="searchInput"
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+            />
+          ) : (
+            <input
+              placeholder={placeholder}
+              className="searchInput"
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
