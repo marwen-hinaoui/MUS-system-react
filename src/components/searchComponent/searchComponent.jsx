@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { set_data_searching, set_loading } from "../../redux/slices";
 import { Input } from "antd";
-import Search from "antd/es/transfer/search";
+
 const SearchComponent = ({ placeholder, data, searchFor, table }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();

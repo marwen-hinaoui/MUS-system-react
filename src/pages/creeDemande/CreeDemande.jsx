@@ -191,6 +191,7 @@ const CreeDemande = () => {
       setSelectedPnCover("");
 
       const resPatterns = await get_patterns_api(value, token);
+
       setSelectedPnCover(value);
 
       try {
@@ -816,7 +817,7 @@ const CustomModal = ({ open, onCancel, status, message, data }) => {
         return {
           icon: <CheckCircleOutlined style={{ color: "green" }} />,
           status: "success",
-          title: "Demande en stock",
+          title: "Demande initiée",
           subTitle: message || "Toutes les pièces sont disponibles en stock.",
         };
       case "LIMITE":

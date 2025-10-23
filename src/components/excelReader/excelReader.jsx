@@ -12,7 +12,6 @@ import {
 } from "../notificationComponent/openNotification";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { ICONSIZE } from "../../constant/FontSizes";
-import { COLORS } from "../../constant/colors";
 
 const columns = [
   { title: "Projet", dataIndex: "projetNom" },
@@ -118,9 +117,10 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
             });
 
             const rowError = validateRow(rowData);
+
             if (rowError) {
               return reject(
-                `Erreur de validation sur la ligne ${i + 1}: ${rowError}`
+                "La structure du fichier Excel utilisée est incorrecte."
               );
             }
 
@@ -145,21 +145,29 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
     const resCheck = await check_massive_stock_api(processedData, token);
     if (resCheck.resData) {
       if (resCheck?.resData?.updated > 0) {
-        console.log("-----------------------");
-        console.log(resCheck.resData);
-
         setCheckMassive(resCheck.resData.details);
       } else {
         openNotification(api, "Aucune mise à jour de quantité effectuée");
+        setFileList([]);
       }
     }
     setLoadingCheck(false);
   };
   const handleBeforeUpload = async (file) => {
     setFileList([file]);
-    const processedData = await parseExcelFile([file][0]);
-
-    await checkMassive(processedData);
+    try {
+      const processedData = await parseExcelFile(file);
+      await checkMassive(processedData);
+    } catch (err) {
+      openNotification(api, String(err));
+      if (
+        String(err).includes(
+          "La structure du fichier Excel utilisée est incorrecte."
+        )
+      ) {
+        setFileList([]);
+      }
+    }
     return false;
   };
 
@@ -183,15 +191,14 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
       } else {
         openNotification(api, "Aucune mise à jour de quantité effectuée");
       }
-
-      console.log("Mise à jour", res);
-      setModalVisible(false);
-      setFileList([]);
     } catch (err) {
       openNotification(api, String(err));
       console.error(err);
     } finally {
       setLoadingConfirm(false);
+      setFileList([]);
+      setModalVisible(false);
+      setCheckMassive([]);
     }
   };
 

@@ -9,7 +9,9 @@ const appSlices = createSlice({
     fullname: "",
     fonction: "",
     isLoading: false,
+    isLoadingRefresh: false,
     errorMsg: "",
+    NetworkErrorMsg: "",
     isAuthenticated: null,
     redirect: "",
     redirection: "",
@@ -47,6 +49,9 @@ const appSlices = createSlice({
     set_loading: (state, action) => {
       state.isLoading = action.payload;
     },
+    set_loading_refresh: (state, action) => {
+      state.isLoadingRefresh = action.payload;
+    },
     set_error: (state, action) => {
       state.errorMsg = action.payload;
       state.isLoading = false;
@@ -81,6 +86,9 @@ const appSlices = createSlice({
     set_sequenceData: (state, action) => {
       state.sequenceData = action.payload;
     },
+    set_network_error: (state, action) => {
+      state.NetworkErrorMsg = action.payload;
+    },
   },
 });
 
@@ -103,6 +111,8 @@ export const {
   set_cover_pn,
   set_fonction,
   set_redirect,
+  set_loading_refresh,
+  set_network_error,
 } = appSlices.actions;
 
 export default appSlices.reducer;

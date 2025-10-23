@@ -17,7 +17,7 @@ const RebuildGamme = () => {
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "start",
           }}
         >
           <Segmented

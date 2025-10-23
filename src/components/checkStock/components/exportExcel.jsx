@@ -61,7 +61,7 @@ export const ExportExcel = ({ stockDATA, fetchFunction }) => {
     <div>
       {contextHolder}
       <Button type="primary" onClick={() => exportToExcel(stockDATA)}>
-        Export qte stock <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
+        Excel Export <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
       </Button>
     </div>
   );

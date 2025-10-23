@@ -7,7 +7,12 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 
-import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
+import {
+  MdLibraryAdd,
+  MdReplayCircleFilled,
+  MdRestorePage,
+  MdSpaceDashboard,
+} from "react-icons/md";
 import { IoLayers, IoReloadCircleSharp } from "react-icons/io5";
 
 const { Sider } = Layout;
@@ -37,7 +42,7 @@ const roleBasedNavItems = {
     },
     {
       key: "Reconstitution",
-      icon: <IoReloadCircleSharp size={ICONSIZE.SMALL} />,
+      icon: <MdRestorePage layCircleFilled size={ICONSIZE.SMALL} />,
       label: "Reconstitution Coiffe",
       route: "/user/Reconstitution",
     },

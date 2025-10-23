@@ -11,6 +11,8 @@ import {
   set_userId,
   set_fonction,
   set_redirect,
+  set_loading_refresh,
+  set_network_error,
 } from "../../redux/slices";
 
 export const useRefreshAccessToken = () => {
@@ -19,6 +21,7 @@ export const useRefreshAccessToken = () => {
   const location = useLocation();
 
   const refreshToken = async () => {
+    dispatch(set_loading_refresh(true));
     try {
       const res = await apiInstance.post("/auth/ref", {
         headers: {
@@ -47,6 +50,9 @@ export const useRefreshAccessToken = () => {
       //   window.location.href = "http://tnbzt-sql01:3000/";
       //   console.log("CORS Error");
       // }
+      if (error?.code === "ERR_NETWORK") {
+        dispatch(set_network_error("Erreur connexion!"));
+      }
       if (error?.status === 400 || error.status === 401) {
         console.log("Status Error");
         console.log(error);
@@ -56,6 +62,7 @@ export const useRefreshAccessToken = () => {
         navigate("/", { replace: true });
       }
     }
+    dispatch(set_loading_refresh(false));
   };
 
   return refreshToken;

@@ -477,6 +477,20 @@ export const GammeQte = () => {
                         alignItems: "center",
                       }}
                     >
+                      <p style={{ fontSize: 13, color: "#6b7280", margin: 0 }}>
+                        Qte
+                      </p>
+
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: "#6b7280",
+                          margin: 0,
+                          padding: "0 5px",
+                        }}
+                      >
+                        {"->"}
+                      </p>
                       <p
                         style={{
                           fontSize: 15,
@@ -485,11 +499,7 @@ export const GammeQte = () => {
                           paddingRight: "5px",
                         }}
                       >
-                        Qte
-                      </p>
-
-                      <p style={{ fontSize: 13, color: "#6b7280", margin: 0 }}>
-                        {"->"} {item.resultFromRebuilService.totalGammePossbile}
+                        {item.resultFromRebuilService.totalGammePossbile}
                       </p>
                     </div>
                   </div>
@@ -523,7 +533,7 @@ export const GammeQte = () => {
       <div
         style={{
           display: "flex",
-          justifyContent: "start",
+          justifyContent: "center",
         }}
       >
         <Segmented

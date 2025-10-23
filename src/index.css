@@ -174,3 +174,28 @@ h4 {
 .red-row {
   background: rgb(251, 217, 219);
 }
+/* 
+.ant-segmented-item {
+  background-color: #ee3124;
+  color: #000;
+}
+.ant-segmented-item-selected {
+  background-color: #ee3124 !important;
+  color: #fff !important;
+} */
+
+/* .ant-checkbox-inner {
+  border-color: #309933ff !important;
+  background-color: #309933ff !important;
+} */
+
+.ant-checkbox-checked .ant-checkbox-inner::after {
+  border-color: #fff; /* Your desired checkmark color */
+}
+
+/* Example CSS to change the background color of the checkbox when checked */
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #309933ff !important; /* Your desired background color */
+  border-color: rgb(170, 170, 170); /* Match border color for a solid look */
+  color: #309933ff !important;
+}

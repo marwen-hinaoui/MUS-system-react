@@ -14,8 +14,8 @@ export const COLORS = {
   GREEN_ALERT: "#F6FFED",
   WARNIGN_ALERT: "#FFFBE6",
   RED_ALERT_TABLE_COLUMN: "#ab1c1eff",
-  GREEN_ALERT_TABLE_COLUMN: "#307d0aff",
-  WARNIGN_ALERT_TABLE_COLUMN: "#e0990c",
+  GREEN_ALERT_TABLE_COLUMN: "#a8ffabDemande en stock",
+  WARNIGN_ALERT_TABLE_COLUMN: "#FFE082",
   GREEN: "#309933ff",
-  Warning: "#e0990c",
+  Warning: "rgba(245, 173, 29, 1)",
 };

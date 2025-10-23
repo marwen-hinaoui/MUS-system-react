@@ -17,9 +17,36 @@ const AppRoutes = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Login />} />
-          <Route path="*" element={<>404</>} />
-          <Route path="/unauthorized" element={<>unauthorized</>} />
-          <Route path="testPLT" element={<HpglViewerPage />} />
+          <Route
+            path="*"
+            element={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  height: "100vh",
+                  alignItems: "center",
+                }}
+              >
+                <h1>404</h1>
+              </div>
+            }
+          />
+          <Route
+            path="/unauthorized"
+            element={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  height: "100vh",
+                  alignItems: "center",
+                }}
+              >
+                <h1>unauthorized 403</h1>
+              </div>
+            }
+          />
 
           <Route path="/user">
             <Route

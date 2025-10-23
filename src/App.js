@@ -17,24 +17,30 @@ const App = () => {
       <ConfigProvider
         theme={{
           components: {
-            // Segmented: {
-            //   itemSelectedBg: COLORS.LearRed,
-            //   itemSelectedColor: COLORS.WHITE,
-            // },
             Typography: {
               linkDecoration: "underline",
               linkHoverColor: "inherit",
             },
-
+            Checkbox: {
+              colorPrimaryBg: COLORS.GREEN,
+            },
             Table: {
               borderRadius: "4px",
               headerBorderRadius: "4px",
               cellBorderRadius: 0,
               headerColor: COLORS.BLACK,
             },
+            // Segmented: {
+            //   itemSelectedBg: "#EE3124",
+            //   itemSelectedColor: "#FFFFFF",
+            //   // motionDurationMid: "0s",
+            //   itemHoverColor: "none",
+            //   itemHoverBg: "none",
+            //   colorBgBase: "#000",
+            //   // motionEaseOut: "0s",
+            // },
           },
           token: {
-            // motion: false,
             fontFamily: "Inter, sans-serif",
             colorPrimary: "#EE3124",
             colorInfo: "#EE3124",

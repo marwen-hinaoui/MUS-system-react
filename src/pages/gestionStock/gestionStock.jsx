@@ -118,7 +118,7 @@ const GestionStock = () => {
     let filteredData = data;
     const [start, end] = exportDateRange;
 
-    if (exportDateRange && exportDateRange.length === 2) {
+    if (exportDateRange && exportDateRange?.length === 2) {
       filteredData = data.filter((item) => {
         const itemDate = dayjs(item.date_creation, "YYYY-MM-DD");
         return (
@@ -321,7 +321,7 @@ const GestionStock = () => {
     dispatch(set_loading(true));
     const piece = {
       projetNom: projetNom,
-      sequence: "x",
+      sequence: "-",
       partNumber: values.partNumber,
       patternNumb: values.patternNumb,
       partNumberMaterial: values.materialPartNumber,
@@ -421,6 +421,17 @@ const GestionStock = () => {
       ),
       onFilter: (value, record) => record.sequence === value,
       filterSearch: true,
+      render: (text, record) => {
+        return (
+          <div>
+            {text === "-" ? (
+              <p style={{ textAlign: "center" }}>{text}</p>
+            ) : (
+              <p>{text}</p>
+            )}
+          </div>
+        );
+      },
     },
     {
       title: "Projet",
@@ -711,7 +722,29 @@ const GestionStock = () => {
         {contextHolder}
 
         <Modal
-          title="Ajout Pattern"
+          // title="Ajout Pattern"
+          title={
+            <div>
+              <p
+                style={{
+                  fontSize: FONTSIZE.PRIMARY,
+                }}
+              >
+                Ajout Pattern
+              </p>
+
+              <p
+                style={{
+                  paddingTop: "15px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                }}
+              >
+                Veuillez choisir si vous désirez insérer le Pattern par séquence
+                ou par PN :
+              </p>
+            </div>
+          }
           closable={{ "aria-label": "Custom Close Button" }}
           open={isModalOpen}
           onCancel={() => {
@@ -890,7 +923,7 @@ const GestionStock = () => {
           )}
           {currentView === "Mouvement Stock" && (
             <Button type="primary" onClick={() => setIsExportModalOpen(true)}>
-              Export mvt stock <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
+              Excel Export <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
             </Button>
           )}
         </div>

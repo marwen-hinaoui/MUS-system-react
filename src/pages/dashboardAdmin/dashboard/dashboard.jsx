@@ -81,27 +81,27 @@ const Dashboard = () => {
           />
           <StatisticsComponent
             icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
-            status="Demande initiée"
+            status="Demandes initiées"
             chiffre={initie}
             total={total}
           />
           <StatisticsComponent
             icon={<TbHistory strokeWidth={1.7} size={ICONSIZE.XLARGE} />}
-            status="Préparation en cours"
+            status="En cours de préparation"
             valuePercent={((enCours / total) * 100).toFixed(0)}
             chiffre={enCours}
             total={total}
           />
           <StatisticsComponent
             icon={<IoCloseCircleOutline size={ICONSIZE.XLARGE} />}
-            status="Hors stock"
+            status="Demandes hors stock"
             valuePercent={((horsStock / total) * 100).toFixed(0)}
             chiffre={horsStock}
             total={total}
           />
           <StatisticsComponent
             icon={<RxCheckCircled size={ICONSIZE.XLARGE} />}
-            status="Demande livrée"
+            status="Demandes livrées"
             valuePercent={((livree / total) * 100).toFixed(0)}
             chiffre={livree}
             total={total}

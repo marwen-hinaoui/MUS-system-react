@@ -6,13 +6,7 @@ import CardComponent from "../card/cardComponent";
 import { useNavigate } from "react-router-dom";
 import "./statisticsComponent.css";
 
-const StatisticsComponent = ({
-  icon,
-  status,
-  total,
-  chiffre,
-  valuePercent,
-}) => {
+const StatisticsComponent = ({ status, total, chiffre, valuePercent }) => {
   const navigate = useNavigate();
   const [animatedPercent, setAnimatedPercent] = useState(0);
 
@@ -38,11 +32,11 @@ const StatisticsComponent = ({
   }, [valuePercent]);
 
   const getProgressColor = () => {
-    if (status === "Préparation en cours" || status === "Demande livrée") {
+    if (status === "En cours de préparation" || status === "Demandes livrées") {
       if (valuePercent >= 80) return COLORS.GREEN;
       if (valuePercent >= 60) return COLORS.Warning;
       return COLORS.LearRed;
-    } else if (status === "Hors stock") {
+    } else if (status === "Demandes hors stock") {
       if (valuePercent <= 20) return COLORS.GREEN;
       if (valuePercent <= 40) return COLORS.Warning;
       return COLORS.LearRed;
@@ -71,7 +65,7 @@ const StatisticsComponent = ({
             >
               {chiffre}
             </span>
-            {status !== "Total" && status !== "Demande initiée" && (
+            {status !== "Total" && status !== "Demandes initiées" && (
               <span
                 style={{
                   fontSize: FONTSIZE.XPRIMARY,
@@ -93,7 +87,7 @@ const StatisticsComponent = ({
           </div>
         </div>
 
-        {status !== "Total" && status !== "Demande initiée" && (
+        {status !== "Total" && status !== "Demandes initiées" && (
           <Progress
             type="circle"
             percent={animatedPercent}

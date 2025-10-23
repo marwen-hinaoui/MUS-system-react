@@ -6,7 +6,12 @@ import { useSelector } from "react-redux";
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
+import {
+  MdLibraryAdd,
+  MdReplayCircleFilled,
+  MdRestorePage,
+  MdSpaceDashboard,
+} from "react-icons/md";
 
 import { IoLayers, IoReloadCircleSharp } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
@@ -34,7 +39,7 @@ const navItems = [
   },
   {
     key: "Reconstitution",
-    icon: <IoReloadCircleSharp size={ICONSIZE.SMALL} />,
+    icon: <MdRestorePage size={ICONSIZE.SMALL} />,
     label: "Reconstitution Coiffe",
     route: "/admin/reconstitution",
   },

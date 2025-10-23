@@ -9,6 +9,7 @@ import { Navigate } from "react-router-dom";
 import { set_loading } from "../redux/slices";
 import { COLORS } from "../constant/colors";
 import { FONTSIZE } from "../constant/FontSizes";
+import { Spin } from "antd";
 
 const bgStyles = {
   backgroundColor: COLORS.BG,
@@ -16,6 +17,7 @@ const bgStyles = {
 
 export const ProtectedRoutes = ({ children, allowedRoles }) => {
   const isAuthenticated = useSelector((state) => state.app.isAuthenticated);
+  const isLoadingRefresh = useSelector((state) => state.app.isLoadingRefresh);
   const token = useSelector((state) => state.app.tokenValue);
   const roleList = useSelector((state) => state.app.roleList);
   const fullname = useSelector((state) => state.app.fullname);
