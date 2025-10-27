@@ -4,6 +4,7 @@ import {
   Card,
   Col,
   DatePicker,
+  Form,
   InputNumber,
   Modal,
   notification,
@@ -34,7 +35,10 @@ import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { ModalDetailsGamme } from "../../pages/rebuildGamme/components/modalDetailsGamme";
 import { set_data_searching } from "../../redux/slices";
 import { RxCheckCircled } from "react-icons/rx";
-import { openNotificationSuccess } from "../notificationComponent/openNotification";
+import {
+  openNotification,
+  openNotificationSuccess,
+} from "../notificationComponent/openNotification";
 const options = ["Préparation en cours", "Mouvement Coiffes"];
 const { RangePicker } = DatePicker;
 
@@ -56,9 +60,10 @@ export const GammeQte = () => {
   const [detailsModalAnnuler, setDetailsModalAnnuler] = useState(false);
   const [detailsModalLivree, setDetailsModalLivree] = useState(false);
   const [selectedItem, setSelectedItem] = useState({});
+  const [pn_, setPN] = useState("");
   const searchingData = useSelector((state) => state.app.searchingData);
   const [api, contextHolder] = notification.useNotification();
-
+  const [form] = Form.useForm();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -102,6 +107,7 @@ export const GammeQte = () => {
         return item;
       });
       setSelectedItem(updatedRows);
+      setPN(pn);
     }
     setLoadingComfimation(false);
   };
@@ -127,8 +133,13 @@ export const GammeQte = () => {
       fetchRebuilPreparation();
       fetchRebuilLivree();
       openNotificationSuccess(api, res.resData.message);
+    } else if (res?.resError?.status === 400) {
+      console.log(res);
+
+      openNotification(api, res?.resError?.response?.data?.message);
     }
     setLoadingComfimation(false);
+
     statusRebuild === "Préparation en cours"
       ? setDetailsModal(false)
       : setDetailsModalLivree(false);
@@ -429,7 +440,9 @@ export const GammeQte = () => {
         <div>
           <Row
             style={{
+              maxHeight: "50vh",
               paddingBottom: "16px",
+              overflowY: "scroll",
             }}
             gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
             // justify={rebuilData?.length <= 3 && "center"}
@@ -438,11 +451,10 @@ export const GammeQte = () => {
               <Col
                 key={index}
                 span={6}
-                style={
-                  {
-                    // paddingBottom: "16px",
-                  }
-                }
+                style={{
+                  paddingBottom: "8px",
+                  paddingRight: "8px",
+                }}
               >
                 <CardComponent
                   callback={() => {
@@ -477,19 +489,19 @@ export const GammeQte = () => {
                         alignItems: "center",
                       }}
                     >
-                      <p style={{ fontSize: 13, color: "#6b7280", margin: 0 }}>
+                      <p style={{ fontSize: 15, color: "#6b7280", margin: 0 }}>
                         Qte
                       </p>
 
                       <p
                         style={{
-                          fontSize: 13,
+                          fontSize: 15,
                           color: "#6b7280",
                           margin: 0,
-                          padding: "0 5px",
+                          padding: "0 5px 0 0",
                         }}
                       >
-                        {"->"}
+                        {":"}
                       </p>
                       <p
                         style={{
@@ -542,47 +554,86 @@ export const GammeQte = () => {
           value={currentView.charAt(0).toUpperCase() + currentView.slice(1)}
         />
       </div>
+
       <Modal
         title={<p style={{ margin: 0 }}>Confirmation</p>}
         open={detailsModal}
         onCancel={() => setDetailsModal(false)}
-        footer={[
-          <Button key="cancel" danger onClick={() => setDetailsModal(false)}>
-            Annuler
-          </Button>,
-          <Button
-            key="confirm"
-            type="primary"
-            onClick={() =>
-              changeStatus(
-                {},
-                "Préparation en cours",
-                activeModalIndex?.resultFromRebuilService?.pn,
-                activeModalIndex?.resultFromRebuilService?.totalGammePossbile,
-                qteRequest,
-                activeModalIndex?.projet
-              )
-            }
-            loading={laodingComfirmation}
-          >
-            Confirmer
-          </Button>,
-        ]}
+        footer={[]}
       >
-        <p
-          style={{
-            marginBottom: "8px",
-            marginTop: "-8px",
-          }}
-        >
+        <p style={{ marginBottom: 8, marginTop: -8 }}>
           Veuillez indiquer la quantité que vous souhaitez reconstituer :
         </p>
-        <InputNumber
-          onChange={(value) => setQteRequest(value)}
-          value={qteRequest}
-          max={activeModalIndex?.resultFromRebuilService?.totalGammePossbile}
-          min={1}
-        />
+
+        <Form
+          onFinish={() =>
+            changeStatus(
+              {},
+              "Préparation en cours",
+              activeModalIndex?.resultFromRebuilService?.pn,
+              activeModalIndex?.resultFromRebuilService?.totalGammePossbile,
+              qteRequest,
+              activeModalIndex?.projet
+            )
+          }
+          form={form}
+        >
+          <Form.Item
+            name="quantity"
+            initialValue={qteRequest}
+            rules={[
+              { required: true, message: "Veuillez saisir une quantité." },
+              {
+                validator: (_, value) =>
+                  value >
+                  activeModalIndex?.resultFromRebuilService?.totalGammePossbile
+                    ? Promise.reject(
+                        new Error(
+                          `La quantité maximale est ${activeModalIndex?.resultFromRebuilService?.totalGammePossbile}.`
+                        )
+                      )
+                    : Promise.resolve(),
+              },
+            ]}
+          >
+            <InputNumber
+              onChange={(value) => setQteRequest(value)}
+              value={
+                activeModalIndex?.resultFromRebuilService?.totalGammePossbile
+              }
+              min={1}
+              style={{
+                width: "100%",
+              }}
+            />
+          </Form.Item>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+            }}
+          >
+            <Form.Item style={{ margin: 0, paddingRight: "8px" }}>
+              <Button
+                key="cancel"
+                danger
+                onClick={() => setDetailsModal(false)}
+              >
+                Annuler
+              </Button>
+            </Form.Item>
+            <Form.Item style={{ margin: 0 }}>
+              <Button
+                key="confirm"
+                type="primary"
+                htmlType="submit"
+                loading={laodingComfirmation}
+              >
+                Confirmer
+              </Button>
+            </Form.Item>
+          </div>
+        </Form>
       </Modal>
       <Modal
         title={<p style={{ margin: 0 }}>Confirmation</p>}
@@ -649,6 +700,7 @@ export const GammeQte = () => {
       {currentView === "Préparation en cours" && (
         <>
           <ModalDetailsGamme
+            pn={pn_}
             action={
               <div
                 style={{

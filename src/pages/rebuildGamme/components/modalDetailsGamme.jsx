@@ -1,8 +1,12 @@
-import { Checkbox, Modal, Spin, Table } from "antd";
+import { Button, Checkbox, Modal, Spin, Table } from "antd";
 import { useState, useEffect } from "react";
 import { HpglViewer } from "../../../components/patternViewer/patternViewer";
 import { pattern_image_api } from "../../../api/plt/pattern_image_api";
+import { IoClose } from "react-icons/io5";
+import { ICONSIZE } from "../../../constant/FontSizes";
+import { COLORS } from "../../../constant/colors";
 export const ModalDetailsGamme = ({
+  pn,
   detailsModal,
   setDetailsModal,
   isLoading,
@@ -13,13 +17,35 @@ export const ModalDetailsGamme = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [paternImageModal, setPaternImageModal] = useState(false);
   const [patternPNNumberCode, setPatterPNCode] = useState({});
+  const [patternsData, setPatternsData] = useState([]);
+  const [detailsModalClose, setDetailsCloseModal] = useState(false);
+  useEffect(() => {
+    if (Array.isArray(patterns)) {
+      setPatternsData(patterns);
+    } else {
+      setPatternsData([]);
+    }
+  }, [patterns]);
+
   const handleModalOpenImage = async (patternPN) => {
     const res = await pattern_image_api(patternPN);
     setPatterPNCode(res?.resData?.hpglCode);
     setPaternImageModal(true);
   };
   const columns = [
-    { title: "Pattern PN", dataIndex: "patternPN", width: 300 },
+    {
+      title: "Pattern PN",
+      dataIndex: "patternPN",
+      width: 300,
+      filters: Array.isArray(patternsData)
+        ? [...new Set(patternsData.map((d) => d.patternPN))].map((pn) => ({
+            text: pn,
+            value: pn,
+          }))
+        : [],
+      onFilter: (value, record) => record.patternPN === value,
+      filterSearch: true,
+    },
     { title: "Pattern N°", dataIndex: "pattern", width: 100 },
     { title: "Qte par Coiffe", dataIndex: "quantity", width: 100 },
     { title: "Qte en stock", dataIndex: "available", width: 100 },
@@ -49,7 +75,17 @@ export const ModalDetailsGamme = ({
   ];
 
   const columns_2 = [
-    { title: "Pattern PN", dataIndex: "pattern" },
+    {
+      title: "Pattern PN",
+      dataIndex: "pattern",
+      width: 300,
+      filters: [...new Set(patternsData.map((d) => d.pattern))].map((pn) => ({
+        text: pn,
+        value: pn,
+      })),
+      onFilter: (value, record) => record.pattern === value,
+      filterSearch: true,
+    },
     { title: "Pattern N°", dataIndex: "panel_number" },
     {
       title: "Quantité",
@@ -103,8 +139,41 @@ export const ModalDetailsGamme = ({
   return (
     <>
       <Modal
+        title={<p style={{ margin: 0 }}>Confirmation</p>}
+        open={detailsModalClose}
+        onCancel={() => setDetailsCloseModal(false)}
+        footer={[
+          <Button
+            key="cancel"
+            danger
+            onClick={() => setDetailsCloseModal(false)}
+          >
+            Annuler
+          </Button>,
+          <Button
+            key="confirm"
+            type="primary"
+            onClick={() => {
+              setDetailsModal();
+              setDetailsCloseModal(false);
+            }}
+          >
+            Confirmer
+          </Button>,
+        ]}
+      >
+        <p
+          style={{
+            marginBottom: "8px",
+            marginTop: "-8px",
+          }}
+        >
+          Voulez-vous fermer cette fenêtre ?
+        </p>
+      </Modal>
+      <Modal
         width={800}
-        title={<p style={{ margin: 0 }}>Détails coiffe</p>}
+        title={<p style={{ margin: 0 }}>Image pattern</p>}
         open={paternImageModal}
         onCancel={() => setPaternImageModal(false)}
         footer={[]}
@@ -113,9 +182,27 @@ export const ModalDetailsGamme = ({
       </Modal>
       <Modal
         width={800}
-        title={<p style={{ margin: 0 }}>Détails coiffe</p>}
+        closable={false}
+        title={
+          <div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <p style={{ margin: 0 }}>Détails coiffe</p>
+              <IoClose
+                cursor={"pointer"}
+                onClick={() => setDetailsCloseModal(true)}
+                color={COLORS.Gray3}
+                size={ICONSIZE.PRIMARY}
+              />
+            </div>
+            <p style={{ fontWeight: 500, margin: 0 }}>{pn}</p>
+          </div>
+        }
         open={detailsModal}
-        onCancel={() => setDetailsModal()}
         footer={[]}
       >
         {isLoading ? (

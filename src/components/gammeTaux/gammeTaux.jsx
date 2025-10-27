@@ -16,6 +16,7 @@ export const GammeTaux = React.memo(() => {
   const [emptyData, setEmptyData] = useState(true);
   const [selectedItem, setSelectedItem] = useState({});
   const [detailsModal, setDetailsModal] = useState(false);
+  const [pn, setSelectedPN] = useState("");
   const token = useSelector((state) => state.app.tokenValue);
   const dispatch = useDispatch();
   const searchingData = useSelector((state) => state.app.searchingData);
@@ -43,9 +44,10 @@ export const GammeTaux = React.memo(() => {
     return COLORS.LearRed;
   };
 
-  const handleOpenModal = (item) => {
+  const handleOpenModal = (item, _pn) => {
     setSelectedItem(item);
     setDetailsModal(true);
+    setSelectedPN(_pn);
   };
 
   const handleCloseModal = () => {
@@ -107,7 +109,10 @@ export const GammeTaux = React.memo(() => {
                 paddingBottom: "16px",
               }}
               onClick={() =>
-                handleOpenModal(item.resultFromRebuilService.results)
+                handleOpenModal(
+                  item.resultFromRebuilService.results,
+                  item.resultFromRebuilService.pn
+                )
               }
             >
               <CardComponent padding={"8px"}>
@@ -169,6 +174,7 @@ export const GammeTaux = React.memo(() => {
       )}
 
       <ModalDetailsGamme
+        pn={pn}
         isChangeStatusPage={false}
         patterns={selectedItem}
         detailsModal={detailsModal}

@@ -141,18 +141,11 @@ const DetailsDemande = () => {
       key: "patternNumb",
       render: (text, record) => {
         return (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Input
-              style={{ width: "100%", height: "34px" }}
-              value={record.patternNumb}
-              readOnly
-            />
-            <div
-              style={{ cursor: "pointer", fontWeight: 500, paddingLeft: "5px" }}
-            >
-              Voir
-            </div>
-          </div>
+          <Input
+            style={{ width: "100%", height: "34px" }}
+            value={record.patternNumb}
+            readOnly
+          />
         );
       },
     },
