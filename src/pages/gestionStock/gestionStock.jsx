@@ -735,13 +735,12 @@ const GestionStock = () => {
 
               <p
                 style={{
-                  paddingTop: "15px",
                   fontSize: "14px",
                   fontWeight: "500",
                 }}
               >
-                Veuillez choisir si vous désirez insérer le Pattern par séquence
-                ou par PN :
+                Veuillez choisir si vous désirez insérer le Pattern par{" "}
+                <b>Seq</b> ou par <b>PN</b>:
               </p>
             </div>
           }

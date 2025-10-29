@@ -1,7 +1,5 @@
 import {
-  Badge,
   Button,
-  Card,
   Col,
   DatePicker,
   Form,
@@ -10,11 +8,9 @@ import {
   notification,
   Row,
   Segmented,
-  Skeleton,
   Space,
   Spin,
   Table,
-  Tag,
 } from "antd";
 import { useEffect, useState } from "react";
 import CardComponent from "../../components/card/cardComponent";
@@ -26,8 +22,9 @@ import { ICONSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 import { change_status_gamme_api } from "../../api/change_status_gamme_api";
 import { get_rebuild_prep_api } from "../../api/get_rebuild_prep_api";
-import dayjs from "dayjs";
-import { MdOutlineCancel } from "react-icons/md";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import { MdOutlineCancel, MdOutlineFileDownload } from "react-icons/md";
 import { annuler_rebuild_api } from "../../api/annuler_rebuild_api";
 import { get_rebuild_livree_api } from "../../api/get_rebuild_livree_api";
 import { get_patterns_api } from "../../api/plt/get_patterns_api";
@@ -39,6 +36,9 @@ import {
   openNotification,
   openNotificationSuccess,
 } from "../notificationComponent/openNotification";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import dayjs from "dayjs";
+
 const options = ["Préparation en cours", "Mouvement Coiffes"];
 const { RangePicker } = DatePicker;
 
@@ -61,7 +61,11 @@ export const GammeQte = () => {
   const [detailsModalLivree, setDetailsModalLivree] = useState(false);
   const [selectedItem, setSelectedItem] = useState({});
   const [pn_, setPN] = useState("");
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [exportDateRange, setExportDateRange] = useState([]);
+
   const searchingData = useSelector((state) => state.app.searchingData);
+  const isLoadingSlice = useSelector((state) => state.app.isLoading);
   const [api, contextHolder] = notification.useNotification();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -399,44 +403,107 @@ export const GammeQte = () => {
       },
     },
   ];
+
+  dayjs.extend(customParseFormat);
+
+  const exportToExcel = () => {
+    const exportSchema = [
+      { header: "Id", dataIndex: "id" },
+      { header: "Part Number", dataIndex: "pn" },
+      { header: "Projet", dataIndex: "projet" },
+      { header: "Quantité", dataIndex: "qte" },
+      { header: "Date", dataIndex: "date_creation" },
+      { header: "Projet", dataIndex: "projet" },
+      { header: "Heure", dataIndex: "heure_creation" },
+      { header: "Status", dataIndex: "status_rebuild" },
+    ];
+
+    if (!rebuilDataLivree || rebuilDataLivree.length === 0) {
+      openNotification(api, "Aucune donnée à exporter !");
+      return;
+    }
+
+    let filteredData = rebuilDataLivree;
+    const [start, end] = exportDateRange;
+
+    if (exportDateRange && exportDateRange.length === 2) {
+      console.log(exportDateRange);
+
+      filteredData = rebuilDataLivree.filter((item) => {
+        const itemDate = dayjs(item.date_creation, "YYYY-MM-DD");
+
+        return (
+          itemDate.isSame(start, "day") ||
+          itemDate.isSame(end, "day") ||
+          (itemDate.isAfter(start, "day") && itemDate.isBefore(end, "day"))
+        );
+      });
+    }
+
+    if (filteredData.length === 0) {
+      openNotification(api, "Aucune donnée trouvée pour cette période !");
+      return;
+    }
+    const formattedData = filteredData.map((record) => {
+      return exportSchema.reduce((obj, column) => {
+        const key = column.dataIndex;
+        obj[key] = record[key] || "";
+        return obj;
+      }, {});
+    });
+    const headers = exportSchema.map((col) => col.header);
+    const headerKeys = exportSchema.map((col) => col.dataIndex);
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData, {
+      header: headerKeys,
+    });
+    XLSX.utils.sheet_add_aoa(worksheet, [headers], { origin: "A1" });
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Demandes");
+    let fileName = "";
+    if (!start || !end) {
+      const today = new Date();
+      const todayISO = today.toISOString().split("T")[0];
+      fileName = `Demandes_MUS_${todayISO}.xlsx`;
+    } else {
+      fileName = `Mouvement_coiffes_${start?.$D}/${start?.$M + 1}/${
+        start?.$y
+      } - ${end?.$D}/${end?.$M + 1}/${end?.$y}.xlsx`;
+    }
+
+    const dataBlob = new Blob(
+      [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],
+      {
+        type: "application/octet-stream",
+      }
+    );
+    saveAs(dataBlob, fileName);
+  };
   return (
     <div>
       {contextHolder}
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          justifyContent: "start",
-          paddingBottom: "16px",
-        }}
+
+      <Modal
+        title="Exporter Mouvement Coiffes"
+        open={isExportModalOpen}
+        onCancel={() => setIsExportModalOpen(false)}
+        onOk={() => exportToExcel()}
+        okText="Exporter"
+        cancelText="Annuler"
       >
-        <div
-          style={{
-            paddingRight: "5px",
-          }}
-        >
-          <Button
-            style={{
-              lineHeight: 0,
-            }}
-            color="danger"
-            variant="outlined"
-            onClick={() => fetchRebuild()}
-            type="outlined"
-            icon={<TbRefresh size={ICONSIZE.SMALL} />}
-          >
-            Actualiser
-          </Button>
-        </div>
-        <CardComponent>
-          <SearchComponent
-            searchFor={"_pn"}
-            data={rebuilData}
-            placeholder={"Part Number"}
-          />
-        </CardComponent>
-      </div>
-      {!isLoading && !emptyCompeleted && searchingData?.length > 0 ? (
+        <RangePicker
+          format="YYYY-MM-DD"
+          value={exportDateRange}
+          onChange={(dates) => setExportDateRange(dates)}
+          style={{ width: "100%" }}
+        />
+      </Modal>
+
+      {!isLoading &&
+      !isLoadingSlice &&
+      !emptyCompeleted &&
+      searchingData?.length > 0 ? (
         <div>
           <Row
             style={{
@@ -521,7 +588,7 @@ export const GammeQte = () => {
             ))}
           </Row>
         </div>
-      ) : !isLoading ? (
+      ) : !isLoading && !isLoadingSlice ? (
         <div
           style={{
             display: "flex",
@@ -705,7 +772,7 @@ export const GammeQte = () => {
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "end",
+                  justifyContent: "center",
                   alignItems: "end",
                 }}
               >
@@ -718,7 +785,8 @@ export const GammeQte = () => {
                     handleCloseModal();
                   }}
                 >
-                  <MdOutlineCancel size={ICONSIZE.SMALL} /> Annuler
+                  <MdOutlineCancel size={ICONSIZE.SMALL} /> Annuler la
+                  reconstitution
                 </Button>
                 <div style={{ padding: "0 5px 0 0" }}></div>
                 <Button
@@ -734,7 +802,8 @@ export const GammeQte = () => {
                     handleCloseModal();
                   }}
                 >
-                  <RxCheckCircled size={ICONSIZE.SMALL - 1} /> Livrée
+                  <RxCheckCircled size={ICONSIZE.SMALL - 1} /> Confirmer la
+                  reconstitution
                 </Button>
               </div>
             }
@@ -766,6 +835,22 @@ export const GammeQte = () => {
       )}
       {currentView === "Mouvement Coiffes" && (
         <>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button
+              style={{
+                float: "right",
+              }}
+              type="primary"
+              onClick={() => setIsExportModalOpen(true)}
+            >
+              Export Excel <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
+            </Button>
+          </div>
           <Table
             style={{
               padding: "13px 0 0 0",

@@ -131,3 +131,7 @@
     gap: 12px;
   }
 }
+
+.ant-result-icon {
+  margin-bottom: 10px !important;
+}

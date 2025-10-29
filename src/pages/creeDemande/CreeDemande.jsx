@@ -815,7 +815,7 @@ const CustomModal = ({ open, onCancel, status, message, data }) => {
     switch (status) {
       case "ENSTOCK":
         return {
-          icon: <CheckCircleOutlined style={{ color: "green" }} />,
+          icon: <CheckCircleOutlined style={{ color: COLORS.GREEN }} />,
           status: "success",
           title: "Demande initiée",
           subTitle: message || "Toutes les pièces sont disponibles en stock.",
@@ -829,7 +829,7 @@ const CustomModal = ({ open, onCancel, status, message, data }) => {
         };
       case "Hors stock":
         return {
-          icon: <CloseCircleOutlined style={{ color: "red" }} />,
+          icon: <CloseCircleOutlined style={{ color: COLORS.LearRed }} />,
           status: "error",
           title: "Hors stock",
           subTitle: message || "Aucune pièce n’est disponible.",

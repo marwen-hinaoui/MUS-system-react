@@ -2,6 +2,8 @@ import { COLORS } from "../../constant/colors";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import ClickingIcon from "../clickingIcon/clickingIcon";
 import "./header.css";
+import CI_LOGO from "../../assets/img/CI_Logo.png";
+import CI_TEXT from "../../assets/img/ci_text.png";
 
 import { IoLogOut } from "react-icons/io5";
 import { logout_api } from "../../api/logout_api";
@@ -42,33 +44,37 @@ const DashboardHeader = ({ role, fullname, token }) => {
       className="header px-4 d-flex justify-content-between align-items-center"
     >
       {/* User info */}
-      <div className="user-info position-relative d-flex align-items-center">
-        <p style={{ fontSize: FONTSIZE.PRIMARY }}>{fullname || ""}</p>
-        <p style={{ fontSize: FONTSIZE.PRIMARY, paddingLeft: "15px" }}>
-          {fonction}
-        </p>
-
-        {/* Dropdown with roles */}
-        {/* {role && role.length > 0 && (
-          <div className="role-dropdown position-absolute">
-            {role?.map((r) => (
-              <div key={r} className="role-item">
-                {roleLabels[r] || r}
-              </div>
-            ))}
-          </div>
-        )} */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <img src={CI_LOGO} height={40} />
+        <div style={{ paddingLeft: "3px" }}></div>
+        <img src={CI_TEXT} />
       </div>
+      <div className="d-flex justify-content-between align-items-center">
+        <div
+          style={{ paddingRight: "20px" }}
+          className="user-info position-relative d-flex align-items-center"
+        >
+          <p style={{ fontSize: FONTSIZE.PRIMARY }}>{fullname || ""}</p>
+          <p style={{ fontSize: FONTSIZE.PRIMARY, paddingLeft: "15px" }}>
+            {fonction}
+          </p>
+        </div>
 
-      {/* Logout */}
-      <p onClick={logout}>
-        <ClickingIcon
-          isLoading={isLoading}
-          color={COLORS.LearRed}
-          name={"Déconnexion"}
-          icon={<IoLogOut color={COLORS.LearRed} size={ICONSIZE.SMALL} />}
-        />
-      </p>
+        {/* Déconnexion */}
+        <p onClick={logout}>
+          <ClickingIcon
+            isLoading={isLoading}
+            color={COLORS.LearRed}
+            name={"Déconnexion"}
+            icon={<IoLogOut color={COLORS.LearRed} size={ICONSIZE.SMALL} />}
+          />
+        </p>
+      </div>
     </div>
   );
 };

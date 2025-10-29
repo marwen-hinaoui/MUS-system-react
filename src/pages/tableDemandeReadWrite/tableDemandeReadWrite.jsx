@@ -1,13 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Empty,
-  DatePicker,
-  Button,
-  Space,
-  Modal,
-  notification,
-} from "antd";
+import { useEffect, useState } from "react";
+import { Table, DatePicker, Button, Space, Modal, notification } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { set_data_searching, set_demande_data_table } from "../../redux/slices";
 import * as XLSX from "xlsx";
@@ -403,13 +395,7 @@ const TableDemandeReadWrite = ({ data }) => {
           showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
         }}
         locale={{
-          emptyText: (
-            // <Empty
-            //   description="Aucune donnée trouvée"
-            //   image={Empty.PRESENTED_IMAGE_SIMPLE}
-            // />
-            <p>Aucune donnée trouvée</p>
-          ),
+          emptyText: <p>Aucune donnée trouvée</p>,
         }}
         size="small"
       />

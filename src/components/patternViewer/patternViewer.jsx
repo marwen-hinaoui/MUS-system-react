@@ -39,8 +39,8 @@ function hpglToSVG(hpgl, scale = 0.02) {
   `;
 }
 
-export const HpglViewer = ({ hpglCode }) => {
-  const svgString = hpglToSVG(hpglCode, 0.03);
+export const HpglViewer = ({ hpglCode, scale }) => {
+  const svgString = hpglToSVG(hpglCode, scale);
 
   return (
     <div

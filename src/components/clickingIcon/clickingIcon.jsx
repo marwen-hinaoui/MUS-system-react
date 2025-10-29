@@ -15,6 +15,7 @@ const ClickingIcon = ({ icon, hover, name, color, background, isLoading }) => {
         border: "none",
         boxShadow: "none",
         padding: 0,
+        gap: "0",
       }}
     >
       {!isLoading && icon}

@@ -199,3 +199,7 @@ h4 {
   border-color: rgb(170, 170, 170); /* Match border color for a solid look */
   color: #309933ff !important;
 }
+
+.ant-result-icon {
+  margin-bottom: 10px !important;
+}

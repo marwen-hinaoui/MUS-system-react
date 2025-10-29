@@ -20,6 +20,7 @@ export const GammeTaux = React.memo(() => {
   const token = useSelector((state) => state.app.tokenValue);
   const dispatch = useDispatch();
   const searchingData = useSelector((state) => state.app.searchingData);
+  const isLoadingSlice = useSelector((state) => state.app.isLoading);
 
   useEffect(() => {
     fetchRebuild();
@@ -57,43 +58,10 @@ export const GammeTaux = React.memo(() => {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          justifyContent: "start",
-          paddingBottom: "16px",
-        }}
-      >
-        <div
-          style={{
-            paddingRight: "5px",
-          }}
-        >
-          <Button
-            style={{
-              lineHeight: 0,
-            }}
-            color="danger"
-            variant="outlined"
-            onClick={() => fetchRebuild()}
-            type="outlined"
-            icon={<TbRefresh size={ICONSIZE.SMALL} />}
-          >
-            Actualiser
-          </Button>
-        </div>
-        <div>
-          <CardComponent>
-            <SearchComponent
-              searchFor={"_pn"}
-              data={rebuilData}
-              placeholder={"Part Number"}
-            />
-          </CardComponent>
-        </div>
-      </div>
-      {!isLoading && !emptyData && searchingData?.length > 0 ? (
+      {!isLoading &&
+      !isLoadingSlice &&
+      !emptyData &&
+      searchingData?.length > 0 ? (
         <Row
           style={{
             paddingBottom: "16px",
@@ -151,7 +119,7 @@ export const GammeTaux = React.memo(() => {
             </Col>
           ))}
         </Row>
-      ) : !isLoading ? (
+      ) : !isLoading && !isLoadingSlice ? (
         <div
           style={{
             display: "flex",

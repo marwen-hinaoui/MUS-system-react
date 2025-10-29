@@ -1,10 +1,11 @@
-import { Button, Checkbox, Modal, Spin, Table } from "antd";
+import { Button, Checkbox, Modal, Select, Spin, Table } from "antd";
 import { useState, useEffect } from "react";
 import { HpglViewer } from "../../../components/patternViewer/patternViewer";
 import { pattern_image_api } from "../../../api/plt/pattern_image_api";
 import { IoClose } from "react-icons/io5";
 import { ICONSIZE } from "../../../constant/FontSizes";
 import { COLORS } from "../../../constant/colors";
+const { Option } = Select;
 export const ModalDetailsGamme = ({
   pn,
   detailsModal,
@@ -19,6 +20,7 @@ export const ModalDetailsGamme = ({
   const [patternPNNumberCode, setPatterPNCode] = useState({});
   const [patternsData, setPatternsData] = useState([]);
   const [detailsModalClose, setDetailsCloseModal] = useState(false);
+  const [scaleValue, setScaleValue] = useState(0.03);
   useEffect(() => {
     if (Array.isArray(patterns)) {
       setPatternsData(patterns);
@@ -122,7 +124,9 @@ export const ModalDetailsGamme = ({
       ),
     },
   ];
-
+  const handleChange = (value) => {
+    setScaleValue(value);
+  };
   const getRowClassName = (record) => {
     if (record.missing > 0) {
       return "ant-row-no-hover red-row";
@@ -178,7 +182,34 @@ export const ModalDetailsGamme = ({
         onCancel={() => setPaternImageModal(false)}
         footer={[]}
       >
-        <HpglViewer hpglCode={patternPNNumberCode} />
+        <div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <p
+              style={{
+                paddingRight: "4px",
+              }}
+            >
+              Scale:
+            </p>
+            <Select onChange={handleChange} defaultValue={scaleValue}>
+              <Option value={0.02}>0.02</Option>
+              <Option value={0.03}>0.03</Option>
+              <Option value={0.04}>0.04</Option>
+              <Option value={0.05}>0.05</Option>
+              <Option value={0.06}>0.06</Option>
+              <Option value={0.07}>0.07</Option>
+              <Option value={0.09}>0.09</Option>
+            </Select>
+          </div>
+
+          <div style={{ paddingTop: "10px" }}></div>
+          <HpglViewer scale={scaleValue} hpglCode={patternPNNumberCode} />
+        </div>
       </Modal>
       <Modal
         width={800}
@@ -227,8 +258,8 @@ export const ModalDetailsGamme = ({
                 onChange: (page) => setCurrentPage(page),
                 position: ["bottomCenter"],
                 showSizeChanger: true,
-                defaultPageSize: 10,
-                pageSizeOptions: ["5", "10", "25", "50", "100"],
+                defaultPageSize: 150,
+                pageSizeOptions: ["5", "10", "25", "50", "150"],
               }}
               locale={{
                 emptyText: <p>Aucune donnée trouvée</p>,

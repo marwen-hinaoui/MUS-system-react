@@ -14,6 +14,7 @@ import {
   MdSpaceDashboard,
 } from "react-icons/md";
 import { IoLayers, IoReloadCircleSharp } from "react-icons/io5";
+import { IoMdRefreshCircle } from "react-icons/io";
 
 const { Sider } = Layout;
 const commonNavItems = [
@@ -42,7 +43,8 @@ const roleBasedNavItems = {
     },
     {
       key: "Reconstitution",
-      icon: <MdRestorePage layCircleFilled size={ICONSIZE.SMALL} />,
+      icon: <IoMdRefreshCircle size={ICONSIZE.SMALL} />,
+
       label: "Reconstitution Coiffe",
       route: "/user/Reconstitution",
     },
