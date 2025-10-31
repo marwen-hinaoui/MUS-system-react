@@ -161,6 +161,14 @@ const AppRoutes = () => {
                 </ProtectedRoutes>
               }
             />
+            <Route
+              path="bins"
+              element={
+                <ProtectedRoutes allowedRoles={["Admin"]}>
+                  <p>BINS</p>
+                </ProtectedRoutes>
+              }
+            />
             {/* <Route
               path="statistics"
               element={

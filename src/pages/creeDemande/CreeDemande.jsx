@@ -100,13 +100,23 @@ const CreeDemande = () => {
     });
     setPartNumbers([]);
     setSubDemandes([]);
-
+    setProjet("");
     try {
       if (val.length === 12) {
         const resPltSeq = await get_seq_api(val, token);
-        console.log(resPltSeq);
-        setSequence(val);
+        console.log("resPltSeq");
+        console.log(resPltSeq.resData[0].cover_part_number);
+        const _projet = await get_projet_api(
+          resPltSeq.resData[0].cover_part_number,
+          token
+        );
+        console.log("projet", _projet.resData.projet);
 
+        setSequence(val);
+        form.setFieldsValue({
+          projetNom: _projet.resData.projet,
+        });
+        setProjet(_projet.resData.projet);
         if (resPltSeq.resData?.length > 0) {
           setSubDemandes([
             {
@@ -194,15 +204,15 @@ const CreeDemande = () => {
 
       setSelectedPnCover(value);
 
-      try {
-        const resProjet = await get_projet_api(value, token);
-        console.log(resProjet.resData.projet);
+      // try {
+      //   const resProjet = await get_projet_api(value, token);
+      //   console.log(resProjet.resData.projet);
 
-        setProjet(resProjet.resData.projet);
-      } catch (error) {
-        console.error("Failed to fetch project name:", error);
-        setProjet("Erreur de chargement");
-      }
+      //   setProjet(resProjet.resData.projet);
+      // } catch (error) {
+      //   console.error("Failed to fetch project name:", error);
+      //   setProjet("Erreur de chargement");
+      // }
       setPatternsByRow((prev) => ({
         ...prev,
         [key]: resPatterns.resData,
@@ -553,7 +563,15 @@ const CreeDemande = () => {
                 </div>
               </Form.Item>
             </Col>
-
+            <Col xs={24} sm={12} md={4}>
+              {" "}
+              <Form.Item style={{ marginBottom: "0" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ paddingRight: "5px" }}>Projet:</span>
+                  <Input style={{ height: 34 }} value={projetNom} readOnly />
+                </div>
+              </Form.Item>
+            </Col>
             <Col xs={24} sm={12} md={4}>
               {" "}
               <Form.Item
@@ -620,15 +638,6 @@ const CreeDemande = () => {
                       </Option>
                     ))}
                   </Select>
-                </div>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={4}>
-              {" "}
-              <Form.Item style={{ marginBottom: "0" }}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <span style={{ paddingRight: "5px" }}>Projet:</span>
-                  <Input style={{ height: 34 }} value={projetNom} readOnly />
                 </div>
               </Form.Item>
             </Col>

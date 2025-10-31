@@ -130,7 +130,9 @@ const UserSidebar = ({ roleList }) => {
           borderBottom: "1px solid rgba(0,0,0,0.05)",
         }}
       >
-        <img src={LearLogo} alt="Logo" style={{ width: 40 }} />
+        <a href="/">
+          <img src={LearLogo} alt="Logo" style={{ width: 40 }} />
+        </a>
       </div>
 
       <Menu

@@ -7,6 +7,7 @@ import {
   InputNumber,
   Modal,
   notification,
+  Popover,
   Segmented,
   Select,
   Space,
@@ -34,6 +35,7 @@ import dayjs from "dayjs";
 import {
   IoArrowBackCircleOutline,
   IoArrowForwardCircleOutline,
+  IoInformationCircleSharp,
 } from "react-icons/io5";
 import "./gestionStock.css";
 import { get_seq_api } from "../../api/plt/get_seq_api";
@@ -43,12 +45,15 @@ import { CheckStock } from "../../components/checkStock/checkStock";
 import { get_stock_api } from "../../api/get_stock_api";
 import { ExportExcel } from "../../components/checkStock/components/exportExcel";
 import { ExcelReader } from "../../components/excelReader/excelReader";
+import { ajout_stock_admin_leather_api } from "../../api/ajout_stock_admin_leather_api";
+import { get_pn_from_kit_leather_api } from "../../api/plt/get_pn_from_kit_leather_api";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const GestionStock = () => {
   const [form] = Form.useForm();
   const [formAdmin] = Form.useForm();
+  const [formAdminKitLeather] = Form.useForm();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [allStockMouvement, setAllStockMouvement] = useState([]);
@@ -62,6 +67,8 @@ const GestionStock = () => {
   const isLoading = useSelector((state) => state.app.isLoading);
   const roleList = useSelector((state) => state.app.roleList);
   const [projetNom, setProjet] = useState("");
+  const [partNumberFrommKitLeather, setPartNumberFrommKitLeather] =
+    useState("");
   const [stockDATA, setStockDATA] = useState([]);
 
   const [exportDateRange, setExportDateRange] = useState([]);
@@ -88,8 +95,7 @@ const GestionStock = () => {
     try {
       const resStock = await get_all_mouvement_stock_api(token);
       if (resStock.resData) {
-        console.log(resStock.resData.data);
-        setAllStockMouvement(resStock.resData.data);
+        setAllStockMouvement(resStock?.resData?.data);
       }
     } catch (error) {
       console.log(error);
@@ -196,8 +202,8 @@ const GestionStock = () => {
         const resPltSeq = await get_seq_api(val, token);
         console.log(resPltSeq);
 
-        if (resPltSeq.resData?.length > 0) {
-          setPartNumbers(resPltSeq.resData);
+        if (resPltSeq?.resData?.length > 0) {
+          setPartNumbers(resPltSeq?.resData);
         }
       }
     } catch (error) {
@@ -209,18 +215,18 @@ const GestionStock = () => {
     console.log(value);
 
     const resPatterns = await get_patterns_api(value, token);
-    console.log(resPatterns.resData);
+    console.log(resPatterns?.resData);
     try {
       const resProjet = await get_projet_api(value, token);
-      console.log(resProjet.resData.projet);
+      console.log(resProjet?.resData?.projet);
 
-      setProjet(resProjet.resData.projet);
+      setProjet(resProjet?.resData?.projet);
     } catch (error) {
       console.error("Failed to fetch project name:", error);
       setProjet("Erreur de chargement");
     }
-    if (resPatterns.resData) {
-      setAvailablePatterns(resPatterns.resData);
+    if (resPatterns?.resData) {
+      setAvailablePatterns(resPatterns?.resData);
     }
     form.setFieldsValue({ patternNumb: undefined });
     setMaterialPartNumber("");
@@ -240,15 +246,15 @@ const GestionStock = () => {
 
     if (partNumber.length >= 15) {
       const resPatterns = await get_patterns_api(partNumber, token);
-      console.log(resPatterns.resData);
+      console.log(resPatterns?.resData);
 
       try {
         const resProjet = await get_projet_api(partNumber, token);
-        console.log(resProjet.resData.projet);
+        console.log(resProjet?.resData?.projet);
 
-        setProjet(resProjet.resData.projet);
-        if (resPatterns.resData) {
-          setAvailablePatterns(resPatterns.resData);
+        setProjet(resProjet?.resData?.projet);
+        if (resPatterns?.resData) {
+          setAvailablePatterns(resPatterns?.resData);
         }
       } catch (error) {
         console.error("Failed to fetch project name:", error);
@@ -258,6 +264,45 @@ const GestionStock = () => {
 
     form.setFieldsValue({});
   };
+  const handleKitLeatherPartNumberChangeAdmin = async (e) => {
+    formAdminKitLeather.setFieldsValue({
+      patternNumb: undefined,
+      materialPartNumber: undefined,
+      partNumberCoiff: undefined,
+    });
+    setPartNumbers([]);
+    setMaterialPartNumber([]);
+    setAvailablePatterns([]);
+    const kit_leather_pn = e.target.value;
+    console.log(kit_leather_pn);
+
+    try {
+      if (kit_leather_pn.length >= 15) {
+        const resPn = await get_pn_from_kit_leather_api(kit_leather_pn, token);
+        setPartNumberFrommKitLeather(resPn?.resData[0]?.part_number_cover);
+        formAdminKitLeather.setFieldsValue({
+          partNumberCoiff: resPn?.resData[0]?.part_number_cover,
+        });
+        const resProjet = await get_projet_api(
+          resPn?.resData[0]?.part_number_cover,
+          token
+        );
+        console.log(resProjet?.resData?.projet);
+
+        setProjet(resProjet?.resData?.projet);
+        const resPatterns = await get_patterns_api(
+          resPn?.resData[0]?.part_number_cover,
+          token
+        );
+        formAdminKitLeather.setFieldValue({
+          patternNumb: resPatterns?.resData,
+        });
+        setAvailablePatterns(resPatterns?.resData);
+      }
+    } catch (error) {
+      console.error("Failed to fetch Part Number from Kit Leather:", error);
+    }
+  };
 
   const handlePatternChange = async (pattern) => {
     const partNumber = form.getFieldValue("partNumber");
@@ -265,7 +310,7 @@ const GestionStock = () => {
     try {
       const resMaterial = await get_material_api(partNumber, pattern, token);
 
-      material = resMaterial.resData.part_number_material;
+      material = resMaterial?.resData?.part_number_material;
       setMaterialPartNumber(material);
     } catch (error) {
       console.log(error);
@@ -280,21 +325,36 @@ const GestionStock = () => {
 
     try {
       const resMaterial = await get_material_api(partNumber, pattern, token);
-      material = resMaterial.resData.part_number_material;
+      material = resMaterial?.resData?.part_number_material;
     } catch (error) {
       console.log(error);
     }
 
     formAdmin.setFieldsValue({ materialPartNumber: material });
   };
+  const handlePatternKitLeatherChangeAdmin = async (pattern) => {
+    const partNumber = formAdminKitLeather.getFieldValue("partNumberCoiff");
+    let material;
+
+    try {
+      const resMaterial = await get_material_api(partNumber, pattern, token);
+      material = resMaterial?.resData?.part_number_material;
+    } catch (error) {
+      console.log(error);
+    }
+
+    formAdminKitLeather.setFieldsValue({ materialPartNumber: material });
+  };
 
   const onSubmit = async (values) => {
+    formAdminKitLeather.resetFields();
+    formAdmin.resetFields();
+
     dispatch(set_loading(true));
     const piece = {
       id_userMUS,
       projetNom: projetNom,
       sequence: values.sequence,
-
       partNumber: values.partNumber,
       patternNumb: values.patternNumb,
       partNumberMaterial: values.materialPartNumber,
@@ -303,9 +363,9 @@ const GestionStock = () => {
 
     const resAjout = await ajout_stock_api(piece, token);
     if (resAjout.resData) {
-      openNotificationSuccess(api, resAjout.resData.message);
+      openNotificationSuccess(api, resAjout?.resData?.message);
     } else {
-      console.log(resAjout.resError.response.data.message);
+      console.log(resAjout?.resError?.response?.data?.message);
     }
     dispatch(set_loading(false));
     form.resetFields();
@@ -318,6 +378,8 @@ const GestionStock = () => {
   };
 
   const onSubmitAdmin = async (values) => {
+    formAdminKitLeather.resetFields();
+    form.resetFields();
     dispatch(set_loading(true));
     const piece = {
       projetNom: projetNom,
@@ -330,14 +392,44 @@ const GestionStock = () => {
 
     const resAjout = await ajout_stock_admin_api(piece, token);
     if (resAjout.resData) {
-      openNotificationSuccess(api, resAjout.resData.message);
+      openNotificationSuccess(api, resAjout?.resData?.message);
       setIsModalOpen(false);
       fetchStock();
     } else {
-      console.log(resAjout.resError.response.data.message);
+      console.log(resAjout?.resError?.response?.data?.message);
     }
     dispatch(set_loading(false));
     formAdmin.resetFields();
+    setPartNumbers([]);
+    setAvailablePatterns([]);
+    setMaterialPartNumber("");
+  };
+
+  const onSubmitAdminKitLeather = async (values) => {
+    dispatch(set_loading(true));
+    form.resetFields();
+    formAdmin.resetFields();
+    const piece = {
+      projetNom: projetNom,
+      sequence: "-",
+      partNumberCoiff: values.partNumberCoiff,
+      kitLeatherPartNumber: values.kitLeatherPartNumber,
+      patternNumb: values.patternNumb,
+      partNumberMaterial: values.materialPartNumber,
+      quantiteAjouter: values.quantite,
+    };
+    console.log(piece);
+
+    const resAjout = await ajout_stock_admin_leather_api(piece, token);
+    if (resAjout.resData) {
+      openNotificationSuccess(api, resAjout?.resData?.message);
+      setIsModalOpen(false);
+      fetchStock();
+    } else {
+      console.log(resAjout?.resError?.response?.data?.message);
+    }
+    dispatch(set_loading(false));
+    formAdminKitLeather.resetFields();
     setPartNumbers([]);
     setAvailablePatterns([]);
     setMaterialPartNumber("");
@@ -714,6 +806,103 @@ const GestionStock = () => {
         </>
       ),
     },
+    {
+      key: "3",
+      label: "Kit Leather PN",
+      children: (
+        <>
+          <div style={{ width: "100%" }}>
+            {
+              <Form
+                layout="vertical"
+                form={formAdminKitLeather}
+                onFinish={onSubmitAdminKitLeather}
+              >
+                {/* Part Number */}
+                <Form.Item
+                  label="Kit Leather PN"
+                  name="kitLeatherPartNumber"
+                  required={false}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Saisie part number kit leather!",
+                    },
+                  ]}
+                >
+                  <Input
+                    style={{ height: "34px" }}
+                    placeholder="Part Number Kit Leather"
+                    onChange={handleKitLeatherPartNumberChangeAdmin}
+                    maxLength={19}
+                  />
+                </Form.Item>
+                <Form.Item label="Coiffe PN" name="partNumberCoiff">
+                  <Input value={partNumberFrommKitLeather} readOnly />
+                </Form.Item>
+                {/* Pattern */}
+                <Form.Item
+                  required={false}
+                  label="Pattern"
+                  name="patternNumb"
+                  rules={[{ required: true, message: "Choisir Pattern!" }]}
+                >
+                  <Select
+                    showSearch
+                    placeholder="Select Pattern"
+                    onChange={(val) => handlePatternKitLeatherChangeAdmin(val)}
+                    disabled={availablePatterns.length === 0}
+                  >
+                    {availablePatterns.map((pat, i) => (
+                      <Option key={i} value={pat.panel_number}>
+                        {pat.panel_number}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+
+                {/* Material */}
+                <Form.Item label="Matière" name="materialPartNumber">
+                  <Input value={materialPartNumber} readOnly />
+                </Form.Item>
+
+                {/* Quantité */}
+                <Form.Item
+                  required={false}
+                  label="Quantité"
+                  name="quantite"
+                  rules={[{ required: true, message: "Saisie Quantité!" }]}
+                >
+                  <InputNumber
+                    min={1}
+                    max={999}
+                    style={{ width: "100%", height: "34px" }}
+                  />
+                </Form.Item>
+
+                <div style={{ display: "flex", justifyContent: "end" }}>
+                  <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+                    Annuler
+                  </Button>
+                  <span
+                    style={{
+                      paddingLeft: "8px",
+                    }}
+                  ></span>
+                  <SharedButton
+                    loading={isLoading}
+                    type="primary"
+                    name="Enregistrer"
+                    color={COLORS.LearRed}
+                    htmlType="submit"
+                  />
+                </div>
+              </Form>
+            }
+          </div>
+        </>
+      ),
+    },
   ];
   const options = ["Mouvement Stock", "Check Stock"];
   return (
@@ -731,6 +920,22 @@ const GestionStock = () => {
                 }}
               >
                 Ajout Pattern
+                <Popover
+                  placement="bottom"
+                  content={
+                    <div>
+                      Veuillez choisir si vous désirez insérer le Pattern par{" "}
+                      <b>Sequence</b>, par <b>Coiffe PN</b> ou par{" "}
+                      <b>Kit Leather PN</b>
+                    </div>
+                  }
+                >
+                  <IoInformationCircleSharp
+                    style={{
+                      cursor: "pointer",
+                    }}
+                  />
+                </Popover>
               </p>
 
               <p
@@ -738,10 +943,7 @@ const GestionStock = () => {
                   fontSize: "14px",
                   fontWeight: "500",
                 }}
-              >
-                Veuillez choisir si vous désirez insérer le Pattern par{" "}
-                <b>Seq</b> ou par <b>PN</b>:
-              </p>
+              ></p>
             </div>
           }
           closable={{ "aria-label": "Custom Close Button" }}
@@ -750,6 +952,7 @@ const GestionStock = () => {
             setIsModalOpen(false);
             form.resetFields();
             formAdmin.resetFields();
+            formAdminKitLeather.resetFields();
           }}
           footer={[]}
         >

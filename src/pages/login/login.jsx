@@ -180,7 +180,7 @@ const Login = () => {
           fontSize: FONTSIZE.PRIMARY,
         }}
       >
-        V2.0
+        V2.1
       </div>
     </Flex>
   ) : (

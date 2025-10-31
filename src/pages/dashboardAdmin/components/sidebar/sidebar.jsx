@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
-import { MdLibraryAdd, MdRestorePage, MdSpaceDashboard } from "react-icons/md";
+import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
+import { HiMiniUserCircle } from "react-icons/hi2";
 
 import { IoLayers } from "react-icons/io5";
 import { IoMdRefreshCircle, IoMdSettings } from "react-icons/io";
@@ -38,9 +39,16 @@ const navItems = [
     label: "Reconstitution Coiffe",
     route: "/admin/reconstitution",
   },
+
+  {
+    key: "paramétre",
+    icon: <IoMdSettings size={ICONSIZE.SMALL} />,
+    label: "Paramètre",
+    route: "/admin/bins",
+  },
   {
     key: "gestion_user",
-    icon: <IoMdSettings size={ICONSIZE.SMALL} />,
+    icon: <HiMiniUserCircle   size={ICONSIZE.SMALL} />,
     label: "Gestion des comptes",
     route: "/admin/users",
   },
@@ -110,7 +118,9 @@ const DashboardSidebarAdmin = () => {
           borderBottom: "1px solid rgba(0,0,0,0.05)",
         }}
       >
-        <img src={LearLogo} alt="Logo" style={{ width: 40 }} />
+        <a href="/">
+          <img src={LearLogo} alt="Logo" style={{ width: 40 }} />
+        </a>
       </div>
 
       <Menu
