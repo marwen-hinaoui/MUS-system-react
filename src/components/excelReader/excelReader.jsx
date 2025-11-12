@@ -18,11 +18,27 @@ const columns = [
   { title: "Part Number", dataIndex: "partNumber" },
   { title: "Pattern", dataIndex: "patternNumb" },
   { title: "Matière", dataIndex: "partNumberMaterial" },
+  { title: "Bin de stockage", dataIndex: "bin_code" },
   { title: "Qte en stock", dataIndex: "quantite" },
 ];
 const columns_check = [
   { title: "Part Number", dataIndex: "partNumber" },
   { title: "Pattern", dataIndex: "pattern" },
+  {
+    title: "Bin de stockage",
+    dataIndex: "binChangement",
+    render: (text, record) => {
+      return (
+        <div>
+          <p>
+            <span style={{ color: "#6b7280" }}>{record.binChangement[0]}</span>
+            {" -> "}
+            <span>{record.binChangement[1]} </span>
+          </p>
+        </div>
+      );
+    },
+  },
   {
     title: "Quantité",
     dataIndex: "qteChangement",
@@ -143,6 +159,8 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
     setLoadingCheck(true);
 
     const resCheck = await check_massive_stock_api(processedData, token);
+    console.log(resCheck);
+
     if (resCheck.resData) {
       if (resCheck?.resData?.updated > 0) {
         setCheckMassive(resCheck.resData.details);
@@ -222,7 +240,7 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
         open={modalVisible}
         onCancel={handleCloseModal}
         footer={[
-          <Button key="cancel" danger onClick={handleCloseModal}>
+          <Button key="cancel" onClick={handleCloseModal}>
             Annuler
           </Button>,
           <Button

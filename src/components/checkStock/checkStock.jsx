@@ -1,5 +1,5 @@
 import { Button, Empty, InputNumber, Modal, notification, Table } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ICONSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
@@ -8,6 +8,7 @@ import { openNotificationSuccess } from "../notificationComponent/openNotificati
 import { RiEdit2Fill } from "react-icons/ri";
 import { update_stock_api } from "../../api/update_stock_api";
 import { ExcelReader } from "../excelReader/excelReader";
+import { get_bin_from_pattern_api_livree } from "../../api/get_bin_from_pattern_api_livree";
 export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
   const roleList = useSelector((state) => state.app.roleList);
   const token = useSelector((state) => state.app.tokenValue);
@@ -16,6 +17,35 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
   const [editingModal, setEditingModal] = useState(false);
   const [laodingComfirmation, setLaodingComfirmation] = useState(false);
   const [api, contextHolder] = notification.useNotification();
+  const [mergedStock, setMergedStock] = useState([]);
+
+  useEffect(() => {
+    const fetchBinsForStocks = async () => {
+      if (!stockDATA || stockDATA.length === 0) return;
+
+      const updatedData = await Promise.all(
+        stockDATA.map(async (item) => {
+          try {
+            const res = await get_bin_from_pattern_api_livree(
+              item.partNumber,
+              item.patternNumb,
+              token
+            );
+            const binCodes =
+              res?.resData?.data?.map((b) => b.bin_code).join(", ") || "N/A";
+            return { ...item, bin_code: binCodes };
+          } catch (err) {
+            console.error("Error fetching bins:", err);
+            return { ...item, bin_code: "Error" };
+          }
+        })
+      );
+
+      setMergedStock(updatedData);
+    };
+
+    fetchBinsForStocks();
+  }, [stockDATA]);
 
   const updateQteStock = async () => {
     setLaodingComfirmation(true);
@@ -39,6 +69,16 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
     { title: "Id", dataIndex: "id", width: 60 },
 
     {
+      title: "Part Number",
+      dataIndex: "partNumber",
+      filters: [...new Set(stockDATA?.map((d) => d.partNumber))].map((pn) => ({
+        text: pn,
+        value: pn,
+      })),
+      onFilter: (value, record) => record.partNumber === value,
+      filterSearch: true,
+    },
+    {
       title: "Projet",
       dataIndex: "projetNom",
       filters: [...new Set(stockDATA?.map((d) => d.projetNom))].map(
@@ -49,16 +89,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       ),
       onFilter: (value, record) => record.projetNom === value,
     },
-    {
-      title: "Part Number",
-      dataIndex: "partNumber",
-      filters: [...new Set(stockDATA?.map((d) => d.partNumber))].map((pn) => ({
-        text: pn,
-        value: pn,
-      })),
-      onFilter: (value, record) => record.partNumber === value,
-      filterSearch: true,
-    },
+
     {
       title: "Pattern",
       dataIndex: "patternNumb",
@@ -71,29 +102,31 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       onFilter: (value, record) => record.patternNumb === value,
       filterSearch: true,
     },
+    { title: "Bin de stockage", dataIndex: "bin_code" },
+
     { title: "Matière", dataIndex: "partNumberMaterial" },
     { title: "Qte en stock", dataIndex: "quantite", width: 150 },
   ];
 
-  if (roleList.includes("Admin") || roleList.includes("GESTIONNAIRE_STOCK")) {
-    columns.push({
-      width: 70,
-      title: "Action",
-      key: "action",
-      render: (text, record) => (
-        <RiEdit2Fill
-          color={COLORS.Blue}
-          onClick={() => {
-            setIdStock(record.id);
-            setQteAjour(record.quantite);
-            setEditingModal(true);
-          }}
-          style={{ cursor: "pointer" }}
-          size={ICONSIZE.SMALL}
-        />
-      ),
-    });
-  }
+  // if (roleList.includes("Admin") || roleList.includes("GESTIONNAIRE_STOCK")) {
+  //   columns.push({
+  //     width: 70,
+  //     title: "Action",
+  //     key: "action",
+  //     render: (text, record) => (
+  //       <RiEdit2Fill
+  //         color={COLORS.Blue}
+  //         onClick={() => {
+  //           setIdStock(record.id);
+  //           setQteAjour(record.quantite);
+  //           setEditingModal(true);
+  //         }}
+  //         style={{ cursor: "pointer" }}
+  //         size={ICONSIZE.SMALL}
+  //       />
+  //     ),
+  //   });
+  // }
 
   return (
     <div>
@@ -104,7 +137,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
           padding: "13px 0 0 0",
         }}
         bordered
-        dataSource={stockDATA}
+        dataSource={mergedStock}
         columns={columns}
         pagination={{
           position: ["bottomCenter"],
@@ -126,9 +159,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
           setEditingModal(false);
         }}
         footer={[
-          <Button danger onClick={() => setEditingModal(false)}>
-            Annuler
-          </Button>,
+          <Button onClick={() => setEditingModal(false)}>Annuler</Button>,
           <Button
             type="primary"
             onClick={() => updateQteStock()}

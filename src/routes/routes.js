@@ -9,7 +9,7 @@ import GestionStock from "../pages/gestionStock/gestionStock";
 import GestionUser from "../pages/dashboardAdmin/gestionUser/GestionUser";
 import Dashboard from "../pages/dashboardAdmin/dashboard/dashboard";
 import RebuildGamme from "../pages/rebuildGamme/RebuildGamme";
-import { HpglViewerPage } from "../components/patternViewer/patternViewer";
+import BinsPage from "../pages/bins/BinsPage";
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -43,7 +43,7 @@ const AppRoutes = () => {
                   alignItems: "center",
                 }}
               >
-                <h1>unauthorized 403</h1>
+                <h1>Unauthorized 403</h1>
               </div>
             }
           />
@@ -165,7 +165,7 @@ const AppRoutes = () => {
               path="bins"
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
-                  <p>BINS</p>
+                  <BinsPage />
                 </ProtectedRoutes>
               }
             />

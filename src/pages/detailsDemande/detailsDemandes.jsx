@@ -8,13 +8,14 @@ import {
   InputNumber,
   notification,
   Row,
+  Select,
   Table,
 } from "antd";
 import { COLORS } from "../../constant/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IoCheckmarkCircleOutline,
   IoCloseCircleOutline,
@@ -33,12 +34,18 @@ import { annuler_demande_api } from "../../api/annuler_demande_api";
 import CardComponent from "../../components/card/cardComponent";
 import { SharedModal } from "./sharedModal";
 import "./details.css";
+import { get_bin_from_pattern_api } from "../../api/get_bin_from_pattern_api";
+import { get_bin_from_pattern_api_livree } from "../../api/get_bin_from_pattern_api_livree";
 
 const DetailsDemande = () => {
   const [subDemandes, setSubDemandes] = useState([]);
+  const [allBins, setAllBins] = useState([]);
   const [demandeMUS, setDemandeMUS] = useState([]);
+  const [validColumns, setValidColumns] = useState(0);
   const [modalLivree, setModalLivree] = useState(false);
   const [modalAnnuler, setModalAnnuler] = useState(false);
+  const [selectedBins, setSelectedBins] = useState([]);
+
   const [accepter, setAccepter] = useState(false);
   const roleList = useSelector((state) => state.app.roleList);
   const token = useSelector((state) => state.app.tokenValue);
@@ -48,7 +55,6 @@ const DetailsDemande = () => {
   const dispatch = useDispatch();
   const [api, contextHolder] = notification.useNotification();
   const { id } = useParams();
-  console.log(redirect);
 
   const getDemandeById = async () => {
     dispatch(set_loading(true));
@@ -57,17 +63,39 @@ const DetailsDemande = () => {
       console.log(res.resData.data.subDemandeMUS);
       setSubDemandes(res.resData.data.subDemandeMUS);
       setDemandeMUS(res.resData.data);
+      fetBinsFromSubDemande(res.resData.data.subDemandeMUS);
     }
     dispatch(set_loading(false));
   };
   useEffect(() => {
     getDemandeById();
-    console.log(id);
   }, []);
+
+  const fetBinsFromSubDemande = async (subDemandeMUS) => {
+    let binStorage = {};
+    let tmpArray = [];
+
+    for (const element of subDemandeMUS) {
+      let bins = await fetchBinsStorate(
+        element.partNumber,
+        element.patternNumb
+      );
+
+      binStorage[element.numSubDemande] = bins;
+      tmpArray.push(binStorage);
+    }
+
+    setAllBins(...tmpArray);
+  };
 
   const changeStatus = async (type) => {
     dispatch(set_loading(true));
-    const resStatus = await status_change_api(id, token, type);
+    const resStatus = await status_change_api(
+      id,
+      token,
+      type,
+      type === "Livree" ? selectedBins : []
+    );
     if (resStatus.resData) {
       openNotificationSuccess(api, resStatus?.resData?.message);
       getDemandeById();
@@ -82,6 +110,39 @@ const DetailsDemande = () => {
       console.log(resStatus?.resError);
     }
     dispatch(set_loading(false));
+  };
+
+  const handleBinChange = (numSubDemande, value) => {
+    setSelectedBins((prev) => {
+      const existingIndex = prev.findIndex(
+        (item) => item.numSubDemande === numSubDemande
+      );
+
+      if (existingIndex !== -1) {
+        const updated = [...prev];
+        updated[existingIndex].bin = value;
+        return updated;
+      }
+
+      return [...prev, { numSubDemande, bin: value }];
+    });
+  };
+
+  const fetchBinsStorate = async (partNumber, pattern) => {
+    try {
+      const resBinFromPattern = await get_bin_from_pattern_api_livree(
+        partNumber,
+        pattern,
+        token
+      );
+
+      console.log("resBinFromPattern?.resData?.data");
+      console.log(resBinFromPattern?.resData?.data);
+      return resBinFromPattern?.resData?.data;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
   };
 
   const annulerDemamnde = async () => {
@@ -109,6 +170,7 @@ const DetailsDemande = () => {
       title: `Détails ${demandeMUS && demandeMUS.numDemande}`,
     },
   ];
+
   const columns = [
     {
       title: "Sub demande",
@@ -149,6 +211,147 @@ const DetailsDemande = () => {
         );
       },
     },
+    {
+      title: "Bin de stockage",
+      dataIndex: "bin",
+      key: "bin",
+      render: (text, record) => {
+        const binOptions = allBins[record.numSubDemande]?.map((p) => ({
+          label: `${p.bin_code} -> ${p.status}`,
+          value: p.bin_code,
+          status: p.status,
+          style: {
+            marginBottom: 2,
+            marginTop: 2,
+            background:
+              p.status === "Vide"
+                ? COLORS.GREEN_ALERT
+                : p.status === "Plein"
+                ? COLORS.REDWHITE
+                : COLORS.WARNIGN_ALERT_TABLE_COLUMN,
+          },
+        }));
+
+        return (
+          <Select
+            placeholder="Select Bin de stockage"
+            disabled={binOptions?.length === 0}
+            style={{ width: "100%", height: "34px" }}
+            options={binOptions}
+            value={
+              selectedBins.find(
+                (item) => Object.keys(item)[0] === record.numSubDemande
+              )?.[record.numSubDemande]
+            }
+            onChange={(value) => {
+              handleBinChange(record.numSubDemande, value);
+              setValidColumns((prev) => prev + 1);
+            }}
+          />
+        );
+      },
+    },
+
+    {
+      title: "Matière",
+      dataIndex: "materialPartNumber",
+      key: "materialPartNumber",
+      render: (text, record) => (
+        <Input
+          style={{ width: "100%", height: "34px" }}
+          value={record.materialPartNumber}
+          readOnly
+        />
+      ),
+    },
+    {
+      title: "Defaut",
+      dataIndex: "defaut",
+      key: "defaut",
+      render: (text, record) => (
+        <Input
+          style={{ width: "100%", height: "34px" }}
+          value={`${record.code_defaut} (${record.typeDefaut})`}
+          readOnly
+        />
+      ),
+    },
+    {
+      width: 150,
+      title: "Quantité",
+      dataIndex: "quantite",
+      key: "quantite",
+      render: (text, record) => (
+        <InputNumber
+          value={record.quantite}
+          readOnly
+          style={{ width: "100%", height: "34px" }}
+        />
+      ),
+    },
+    {
+      width: 150,
+      title: "Quantité disponible",
+      dataIndex: "quantiteDisponible",
+      key: "quantiteDisponible",
+      render: (text, record) => (
+        <InputNumber
+          readOnly
+          min={1}
+          max={999}
+          style={{ width: "100%", height: "34px" }}
+          value={record.quantiteDisponible}
+        />
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "statusSubDemande",
+      key: "statusSubDemande",
+      render: (text, record) => <div>{record.statusSubDemande}</div>,
+    },
+  ];
+  const columnInit = [
+    {
+      title: "Sub demande",
+      dataIndex: "numSubDemande",
+      key: "numSubDemande",
+      render: (text, record) => (
+        <Input
+          style={{ width: "100%", height: "34px" }}
+          value={record.numSubDemande}
+          readOnly
+        />
+      ),
+    },
+    {
+      title: "Part number",
+      dataIndex: "partNumber",
+      key: "partNumber",
+      render: (text, record) => (
+        <Input
+          style={{ width: "100%", height: "34px" }}
+          value={record.partNumber}
+          readOnly
+        />
+      ),
+    },
+
+    {
+      title: "Pattern",
+      dataIndex: "patternNumb",
+      key: "patternNumb",
+      render: (text, record) => {
+        return (
+          <Input
+            style={{ width: "100%", height: "34px" }}
+            value={record.patternNumb}
+            readOnly
+          />
+        );
+      },
+    },
+
     {
       title: "Matière",
       dataIndex: "materialPartNumber",
@@ -338,7 +541,14 @@ const DetailsDemande = () => {
             <Table
               bordered
               dataSource={subDemandes}
-              columns={columns}
+              columns={
+                demandeMUS.statusDemande === "Préparation en cours" &&
+                (roleList.includes("Admin") ||
+                  roleList.includes("AGENT_MUS") ||
+                  roleList.includes("GESTIONNAIRE_STOCK"))
+                  ? columns
+                  : columnInit
+              }
               pagination={false}
               rowKey="id"
               size="small"
@@ -402,13 +612,21 @@ const DetailsDemande = () => {
               roleList.includes("AGENT_MUS") ||
               roleList.includes("GESTIONNAIRE_STOCK")) && (
               <Button
+                disabled={validColumns < subDemandes.length}
                 style={{
                   padding: "10px",
                   border: "none",
-                  background: COLORS.GREEN,
+                  background:
+                    validColumns < subDemandes.length
+                      ? "rgb(55 138 58 / 71%)"
+                      : COLORS.GREEN,
                   color: COLORS.WHITE,
                 }}
-                onClick={() => setModalLivree(true)}
+                onClick={() => {
+                  setModalLivree(true);
+                  console.log(selectedBins);
+                  console.log(typeof selectedBins);
+                }}
               >
                 <RxCheckCircled size={ICONSIZE.SMALL} /> Livrée
               </Button>

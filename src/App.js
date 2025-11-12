@@ -24,6 +24,9 @@ const App = () => {
             Checkbox: {
               colorPrimaryBg: COLORS.GREEN,
             },
+            DatePicker: {
+              borderRadius: "4px",
+            },
             Table: {
               borderRadius: "4px",
               headerBorderRadius: "4px",

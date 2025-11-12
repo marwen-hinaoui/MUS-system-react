@@ -5,7 +5,7 @@ import { openNotification } from "../../../components/notificationComponent/open
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
-export const ExportExcel = ({ stockDATA, fetchFunction }) => {
+export const ExportExcel = ({ stockDATA }) => {
   const [api, contextHolder] = notification.useNotification();
 
   const exportToExcel = (data) => {
@@ -14,6 +14,7 @@ export const ExportExcel = ({ stockDATA, fetchFunction }) => {
       { header: "Part Number", dataIndex: "partNumber" },
       { header: "Pattern", dataIndex: "patternNumb" },
       { header: "Matière", dataIndex: "partNumberMaterial" },
+      { header: "Bin de stockage", dataIndex: "bin_code" },
       { header: "Qte en stock", dataIndex: "quantite" },
     ];
 

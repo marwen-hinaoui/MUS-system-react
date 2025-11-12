@@ -14,7 +14,7 @@ import {
   Table,
   Tabs,
 } from "antd";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import SharedButton from "../../components/button/button";
 import { COLORS } from "../../constant/colors";
 import { get_all_mouvement_stock_api } from "../../api/get_all_mouvement_stock_api";
@@ -35,18 +35,23 @@ import dayjs from "dayjs";
 import {
   IoArrowBackCircleOutline,
   IoArrowForwardCircleOutline,
+  IoCloseCircleOutline,
   IoInformationCircleSharp,
 } from "react-icons/io5";
 import "./gestionStock.css";
 import { get_seq_api } from "../../api/plt/get_seq_api";
 import { get_material_api } from "../../api/plt/get_material_api";
 import { get_projet_api } from "../../api/plt/get_projet_api";
+import { get_bin_from_projet_api } from "../../api/get_bin_from_projet_api";
 import { CheckStock } from "../../components/checkStock/checkStock";
 import { get_stock_api } from "../../api/get_stock_api";
 import { ExportExcel } from "../../components/checkStock/components/exportExcel";
 import { ExcelReader } from "../../components/excelReader/excelReader";
 import { ajout_stock_admin_leather_api } from "../../api/ajout_stock_admin_leather_api";
 import { get_pn_from_kit_leather_api } from "../../api/plt/get_pn_from_kit_leather_api";
+import { get_bin_from_pattern_api } from "../../api/get_bin_from_pattern_api";
+import { RxCheckCircled } from "react-icons/rx";
+import { get_bin_from_pattern_api_livree } from "../../api/get_bin_from_pattern_api_livree";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -56,6 +61,9 @@ const GestionStock = () => {
   const [formAdminKitLeather] = Form.useForm();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [lastComfirmBinPlein, setLastComfirmBinPlein] = useState(false);
+  const [binPlein, setBinPlein] = useState(false);
+  const [currentKey, setCurrentKey] = useState({});
   const [allStockMouvement, setAllStockMouvement] = useState([]);
   const [api, contextHolder] = notification.useNotification();
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -67,25 +75,92 @@ const GestionStock = () => {
   const isLoading = useSelector((state) => state.app.isLoading);
   const roleList = useSelector((state) => state.app.roleList);
   const [projetNom, setProjet] = useState("");
+  const [binCode, setBinCode] = useState(""); // Old bin : will be Plein
+  const [binCodePlein, setBinCodePlein] = useState(""); // New bin
   const [partNumberFrommKitLeather, setPartNumberFrommKitLeather] =
     useState("");
   const [stockDATA, setStockDATA] = useState([]);
+  const [binStorage, setBinStorage] = useState([]);
+  const [selectedBin, setSelectedBin] = useState({});
 
   const [exportDateRange, setExportDateRange] = useState([]);
+  const [beforeComfirmBinPlein, setBeforeComfirmBinPlein] = useState(false);
   const [currentView, setCurrentView] = useState("Mouvement Stock");
+  const [partNumber, setPartNumber] = useState("");
+  const [patternNumb, setPatternNumb] = useState("");
   const id_userMUS = useSelector((state) => state.app.userId);
 
   const dispatch = useDispatch();
+
   useEffect(() => {
     fetchStock();
     fetchStockAllQte();
   }, []);
+
   const fetchStockAllQte = async () => {
     try {
       const resStock = await get_stock_api(token);
       if (resStock.resData) {
-        setStockDATA(resStock.resData.data);
+        if (!resStock.resData.data || resStock.resData.data.length === 0)
+          return;
+
+        const updatedData = await Promise.all(
+          resStock.resData.data.map(async (item) => {
+            try {
+              const res = await get_bin_from_pattern_api_livree(
+                item.partNumber,
+                item.patternNumb,
+                token
+              );
+              const binCodes =
+                res?.resData?.data?.map((b) => b.bin_code).join(", ") || "N/A";
+              return { ...item, bin_code: binCodes };
+            } catch (err) {
+              console.error("Error fetching bins:", err);
+              return { ...item, bin_code: "Error" };
+            }
+          })
+        );
+
+        setStockDATA(updatedData);
       }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchBinsStorate = async (partNumber, pattern) => {
+    try {
+      const resBinFromPattern = await get_bin_from_pattern_api(
+        partNumber,
+        pattern,
+        token
+      );
+      setBinStorage(resBinFromPattern?.resData?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCancelPlein = () => {
+    fetchBinsStorate(partNumber, patternNumb, token);
+  };
+
+  const fetchBinFromProjet = async () => {
+    try {
+      const resBinFromProjet = await get_bin_from_projet_api(
+        projetNom,
+        binCode,
+        token
+      );
+
+      form.resetFields(["bin"]);
+      formAdmin.resetFields(["bin"]);
+      formAdminKitLeather.resetFields(["bin"]);
+
+      setBinStorage(resBinFromProjet?.resData?.data);
+      setBinPlein(false);
+      setLastComfirmBinPlein(true);
     } catch (error) {
       console.log(error);
     }
@@ -101,6 +176,7 @@ const GestionStock = () => {
       console.log(error);
     }
   };
+
   const exportSchema = [
     { header: "Id", dataIndex: "id" },
     { header: "Date", dataIndex: "date_creation" },
@@ -180,20 +256,36 @@ const GestionStock = () => {
   const showModal = () => {
     setIsModalOpen(true);
   };
-
+  const hanleCloseModal = () => {
+    setLastComfirmBinPlein(false);
+    formAdmin.resetFields();
+    form.resetFields();
+    formAdminKitLeather.resetFields();
+    setPartNumbers([]);
+    setBinStorage([]);
+    setBinCode("");
+    setBinCodePlein("");
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
+    setAvailablePatterns([]);
+    setMaterialPartNumber("");
+    setIsModalOpen(false);
+  };
   const handleSequenceChange = async (val) => {
+    setBinStorage([]);
+    setBinCode("");
+    setBinCodePlein("");
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
+    setSelectedBin("");
     form.setFieldsValue({
       partNumber: undefined,
       projetNom: undefined,
       patternNumb: undefined,
       materialPartNumber: undefined,
+      bin: undefined,
     });
-    formAdmin.setFieldsValue({
-      partNumber: undefined,
-      projetNom: undefined,
-      patternNumb: undefined,
-      materialPartNumber: undefined,
-    });
+
     setPartNumbers([]);
     setMaterialPartNumber([]);
     setAvailablePatterns([]);
@@ -213,7 +305,16 @@ const GestionStock = () => {
 
   const handlePartNumberChange = async (value) => {
     console.log(value);
-
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
+    form.setFieldsValue({
+      projetNom: undefined,
+      patternNumb: undefined,
+      materialPartNumber: undefined,
+      bin: undefined,
+    });
+    setPartNumber("");
+    setPatternNumb("");
     const resPatterns = await get_patterns_api(value, token);
     console.log(resPatterns?.resData);
     try {
@@ -233,17 +334,21 @@ const GestionStock = () => {
   };
 
   const handlePartNumberChangeAdmin = async (e) => {
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
     formAdmin.setFieldsValue({
       projetNom: undefined,
       patternNumb: undefined,
       materialPartNumber: undefined,
+      bin: undefined,
     });
     setPartNumbers([]);
     setMaterialPartNumber([]);
     setAvailablePatterns([]);
     const partNumber = e.target.value;
     console.log(partNumber);
-
+    setPartNumber("");
+    setPatternNumb("");
     if (partNumber.length >= 15) {
       const resPatterns = await get_patterns_api(partNumber, token);
       console.log(resPatterns?.resData);
@@ -264,18 +369,23 @@ const GestionStock = () => {
 
     form.setFieldsValue({});
   };
+
   const handleKitLeatherPartNumberChangeAdmin = async (e) => {
-    formAdminKitLeather.setFieldsValue({
-      patternNumb: undefined,
-      materialPartNumber: undefined,
-      partNumberCoiff: undefined,
-    });
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
     setPartNumbers([]);
     setMaterialPartNumber([]);
     setAvailablePatterns([]);
+    formAdminKitLeather.setFieldsValue({
+      projetNom: undefined,
+      patternNumb: undefined,
+      materialPartNumber: undefined,
+      bin: undefined,
+    });
     const kit_leather_pn = e.target.value;
     console.log(kit_leather_pn);
-
+    setPartNumber("");
+    setPatternNumb("");
     try {
       if (kit_leather_pn.length >= 15) {
         const resPn = await get_pn_from_kit_leather_api(kit_leather_pn, token);
@@ -305,11 +415,23 @@ const GestionStock = () => {
   };
 
   const handlePatternChange = async (pattern) => {
+    setBinStorage([]);
+    setBinCode("");
+    setBinCodePlein("");
+
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
+    setSelectedBin({});
+    form.setFieldsValue({
+      bin: undefined,
+    });
     const partNumber = form.getFieldValue("partNumber");
+    setPartNumber(partNumber);
+    setPatternNumb(pattern);
     let material;
     try {
       const resMaterial = await get_material_api(partNumber, pattern, token);
-
+      fetchBinsStorate(partNumber, pattern);
       material = resMaterial?.resData?.part_number_material;
       setMaterialPartNumber(material);
     } catch (error) {
@@ -320,25 +442,55 @@ const GestionStock = () => {
   };
 
   const handlePatternChangeAdmin = async (pattern) => {
+    setBinStorage([]);
+    setBinCode("");
+    setBinCodePlein("");
+
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
+    setSelectedBin({});
+    formAdmin.setFieldsValue({
+      bin: undefined,
+    });
     const partNumber = formAdmin.getFieldValue("partNumber");
+    setPartNumber(partNumber);
+    setPatternNumb(pattern);
     let material;
 
     try {
       const resMaterial = await get_material_api(partNumber, pattern, token);
       material = resMaterial?.resData?.part_number_material;
+
+      fetchBinsStorate(partNumber, pattern);
     } catch (error) {
       console.log(error);
     }
 
     formAdmin.setFieldsValue({ materialPartNumber: material });
   };
+
   const handlePatternKitLeatherChangeAdmin = async (pattern) => {
+    setBinStorage([]);
+    setBinCode("");
+    setBinCodePlein("");
+
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
+    setSelectedBin({});
+    formAdminKitLeather.setFieldsValue({
+      bin: undefined,
+    });
     const partNumber = formAdminKitLeather.getFieldValue("partNumberCoiff");
+    setPartNumber(partNumber);
+    setPatternNumb(pattern);
+
     let material;
 
     try {
       const resMaterial = await get_material_api(partNumber, pattern, token);
       material = resMaterial?.resData?.part_number_material;
+
+      fetchBinsStorate(partNumber, pattern);
     } catch (error) {
       console.log(error);
     }
@@ -359,22 +511,32 @@ const GestionStock = () => {
       patternNumb: values.patternNumb,
       partNumberMaterial: values.materialPartNumber,
       quantiteAjouter: values.quantite,
+      bin_code: binCode,
+      bin_code_plein: binCodePlein,
     };
 
     const resAjout = await ajout_stock_api(piece, token);
     if (resAjout.resData) {
       openNotificationSuccess(api, resAjout?.resData?.message);
+      fetchStockAllQte();
+      fetchStock();
     } else {
       console.log(resAjout?.resError?.response?.data?.message);
     }
-    dispatch(set_loading(false));
     form.resetFields();
     setPartNumbers([]);
+    setBinStorage([]);
+    setBinCode("");
+    setBinCodePlein("");
+
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
     setAvailablePatterns([]);
     setMaterialPartNumber("");
     setIsModalOpen(false);
     fetchStockAllQte();
-    fetchStock();
+
+    dispatch(set_loading(false));
   };
 
   const onSubmitAdmin = async (values) => {
@@ -383,40 +545,54 @@ const GestionStock = () => {
     dispatch(set_loading(true));
     const piece = {
       projetNom: projetNom,
-      sequence: "-",
+      sequence: "N/A",
       partNumber: values.partNumber,
       patternNumb: values.patternNumb,
       partNumberMaterial: values.materialPartNumber,
       quantiteAjouter: values.quantite,
+      bin_code: binCode,
+      bin_code_plein: binCodePlein,
     };
+    console.log(piece);
 
     const resAjout = await ajout_stock_admin_api(piece, token);
     if (resAjout.resData) {
       openNotificationSuccess(api, resAjout?.resData?.message);
       setIsModalOpen(false);
+      fetchStockAllQte();
       fetchStock();
     } else {
       console.log(resAjout?.resError?.response?.data?.message);
     }
-    dispatch(set_loading(false));
     formAdmin.resetFields();
     setPartNumbers([]);
+    setBinStorage([]);
+    setBinCode("");
+    setBinCodePlein("");
+
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
     setAvailablePatterns([]);
     setMaterialPartNumber("");
+    dispatch(set_loading(false));
   };
 
   const onSubmitAdminKitLeather = async (values) => {
+    console.log(values.bin);
+
     dispatch(set_loading(true));
     form.resetFields();
     formAdmin.resetFields();
     const piece = {
       projetNom: projetNom,
-      sequence: "-",
+      sequence: "N/A",
       partNumberCoiff: values.partNumberCoiff,
       kitLeatherPartNumber: values.kitLeatherPartNumber,
       patternNumb: values.patternNumb,
       partNumberMaterial: values.materialPartNumber,
       quantiteAjouter: values.quantite,
+      bin_code: binCode,
+      bin_code_plein: binCodePlein,
     };
     console.log(piece);
 
@@ -424,15 +600,22 @@ const GestionStock = () => {
     if (resAjout.resData) {
       openNotificationSuccess(api, resAjout?.resData?.message);
       setIsModalOpen(false);
+      fetchStockAllQte();
       fetchStock();
     } else {
       console.log(resAjout?.resError?.response?.data?.message);
     }
-    dispatch(set_loading(false));
     formAdminKitLeather.resetFields();
     setPartNumbers([]);
+    setBinStorage([]);
+    setBinCode("");
+    setBinCodePlein("");
+
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
     setAvailablePatterns([]);
     setMaterialPartNumber("");
+    dispatch(set_loading(false));
   };
 
   const columns = [
@@ -514,15 +697,7 @@ const GestionStock = () => {
       onFilter: (value, record) => record.sequence === value,
       filterSearch: true,
       render: (text, record) => {
-        return (
-          <div>
-            {text === "-" ? (
-              <p style={{ textAlign: "center" }}>{text}</p>
-            ) : (
-              <p>{text}</p>
-            )}
-          </div>
-        );
+        return <div>{text === "N/A" ? <p>{text}</p> : <p>{text}</p>}</div>;
       },
     },
     {
@@ -535,6 +710,10 @@ const GestionStock = () => {
         })
       ),
       onFilter: (value, record) => record.projetNom === value,
+    },
+    {
+      title: "Bin de stockage",
+      dataIndex: "bin_code",
     },
     {
       title: "Part Number",
@@ -595,6 +774,151 @@ const GestionStock = () => {
     },
   ];
 
+  const binOptions = React.useMemo(() =>
+    binStorage?.map((p) => ({
+      label: `${p.bin_code} -> ${p.status}`,
+      value: p.id,
+      status: p.status,
+      style: {
+        marginBottom: 2,
+        marginTop: 2,
+        background:
+          p.status === "Vide"
+            ? COLORS.GREEN_ALERT
+            : p.status === "Plein"
+            ? COLORS.REDWHITE
+            : COLORS.WARNIGN_ALERT_TABLE_COLUMN,
+      },
+    }))
+  );
+
+  const handleChange = (value, option) => {
+    const _selectedBin = binStorage.find((b) => b.id === value);
+    const isPleinOrReserve =
+      option?.status === "Vide" || option?.status === "Réservé";
+    setBeforeComfirmBinPlein(isPleinOrReserve);
+    !lastComfirmBinPlein && setBinCode(_selectedBin?.bin_code);
+    lastComfirmBinPlein && setBinCodePlein(_selectedBin?.bin_code);
+    setSelectedBin(`${_selectedBin?.bin_code} -> ${_selectedBin?.status}`);
+  };
+
+  const BinPleinComponent = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          padding: "5px 0 0 0",
+          marginBottom: "17px",
+        }}
+      >
+        <p
+          style={{
+            cursor: "pointer",
+            width: "auto",
+            color: COLORS.LearRed,
+            textDecoration: "underline",
+            display: "inline-block",
+          }}
+          onClick={() => {
+            if (!lastComfirmBinPlein) {
+              setBinPlein(true);
+              setBinCodePlein("");
+            }
+          }}
+        >
+          Le bin est-il plein ?
+        </p>
+        {binPlein && (
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <div
+              style={{
+                padding: "0 4px",
+              }}
+            >
+              <Button
+                style={{
+                  padding: "7px",
+                  border: "none",
+                  background: COLORS.LearRed,
+                  color: COLORS.WHITE,
+                }}
+                onClick={() => {
+                  setBinPlein(false);
+                  handleCancelPlein();
+                }}
+              >
+                <IoCloseCircleOutline size={ICONSIZE.SMALL} /> Non
+              </Button>
+            </div>
+            <Button
+              style={{
+                padding: "7px",
+                border: "none",
+                background: COLORS.GREEN,
+                color: COLORS.WHITE,
+              }}
+              onClick={() => fetchBinFromProjet()}
+            >
+              <RxCheckCircled size={ICONSIZE.SMALL - 1} /> Oui
+            </Button>
+          </div>
+        )}
+        {lastComfirmBinPlein && (
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <div
+              style={{
+                padding: "0 4px",
+              }}
+            >
+              <Button
+                style={{
+                  padding: "7px",
+                  border: "none",
+                  background: COLORS.LearRed,
+                  color: COLORS.WHITE,
+                }}
+                onClick={() => {
+                  setBinPlein(false);
+                  setLastComfirmBinPlein(false);
+
+                  form.resetFields(["bin"]);
+                  formAdmin.resetFields(["bin"]);
+                  formAdminKitLeather.resetFields(["bin"]);
+                  handleCancelPlein();
+                  setBeforeComfirmBinPlein(false);
+                }}
+              >
+                <IoCloseCircleOutline size={ICONSIZE.SMALL} /> Annuler
+              </Button>
+            </div>
+            <Button
+              disabled={binCodePlein === ""}
+              style={{
+                padding: "7px",
+                border: "none",
+                background:
+                  binCodePlein !== "" ? COLORS.GREEN : "rgb(55 138 58 / 71%)",
+                color: COLORS.WHITE,
+              }}
+              onClick={() => updateBinStatus()}
+            >
+              <RxCheckCircled size={ICONSIZE.SMALL - 1} /> Confirmer
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const items = [
     {
       key: "1",
@@ -640,6 +964,7 @@ const GestionStock = () => {
                     showSearch
                     placeholder="Select Part Number"
                     onChange={handlePartNumberChange}
+                    disabled={partNumbers.length === 0}
                   >
                     {partNumbers.map((p) => (
                       <Option
@@ -678,6 +1003,31 @@ const GestionStock = () => {
                   <Input value={materialPartNumber} readOnly />
                 </Form.Item>
 
+                {/* Bin */}
+                <Form.Item
+                  label="Bin de stockage"
+                  name="bin"
+                  required={false}
+                  style={{
+                    marginBottom: beforeComfirmBinPlein && "0px",
+                  }}
+                  rules={[
+                    { required: true, message: "Choisir bin de stockage!" },
+                  ]}
+                >
+                  <Select
+                    value={selectedBin}
+                    placeholder="Select Bin de stockage"
+                    onChange={handleChange}
+                    disabled={binStorage?.length === 0}
+                    style={{
+                      padding: "0px",
+                    }}
+                    options={binOptions}
+                  />
+                </Form.Item>
+                <div>{beforeComfirmBinPlein && <BinPleinComponent />}</div>
+
                 {/* Quantité */}
                 <Form.Item
                   required={false}
@@ -693,13 +1043,7 @@ const GestionStock = () => {
                 </Form.Item>
 
                 <div style={{ display: "flex", justifyContent: "end" }}>
-                  <Button
-                    key="cancel"
-                    onClick={() => {
-                      formAdmin.resetFields();
-                      setIsModalOpen(false);
-                    }}
-                  >
+                  <Button key="cancel" onClick={hanleCloseModal}>
                     Annuler
                   </Button>
                   <span
@@ -709,9 +1053,14 @@ const GestionStock = () => {
                   ></span>
                   <SharedButton
                     loading={isLoading}
+                    disabled={lastComfirmBinPlein}
                     type="primary"
                     name="Enregistrer"
-                    color={COLORS.LearRed}
+                    color={
+                      lastComfirmBinPlein
+                        ? "rgb(238 49 36 / 70%)"
+                        : COLORS.LearRed
+                    }
                     htmlType="submit"
                   />
                 </div>
@@ -769,6 +1118,31 @@ const GestionStock = () => {
                   <Input value={materialPartNumber} readOnly />
                 </Form.Item>
 
+                {/* Bin */}
+                <Form.Item
+                  label="Bin de stockage"
+                  name="bin"
+                  required={false}
+                  rules={[
+                    { required: true, message: "Choisir bin de stockage!" },
+                  ]}
+                  style={{
+                    marginBottom: beforeComfirmBinPlein && "0px",
+                  }}
+                >
+                  <Select
+                    value={selectedBin}
+                    showSearch
+                    placeholder="Select Bin de stockage"
+                    onChange={handleChange}
+                    disabled={binStorage?.length === 0}
+                    style={{
+                      padding: "0px",
+                    }}
+                    options={binOptions}
+                  />
+                </Form.Item>
+                <div>{beforeComfirmBinPlein && <BinPleinComponent />}</div>
                 {/* Quantité */}
                 <Form.Item
                   required={false}
@@ -784,7 +1158,7 @@ const GestionStock = () => {
                 </Form.Item>
 
                 <div style={{ display: "flex", justifyContent: "end" }}>
-                  <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+                  <Button key="cancel" onClick={hanleCloseModal}>
                     Annuler
                   </Button>
                   <span
@@ -866,6 +1240,39 @@ const GestionStock = () => {
                   <Input value={materialPartNumber} readOnly />
                 </Form.Item>
 
+                {/* Bin */}
+                <Form.Item
+                  label="Bin de stockage"
+                  name="bin"
+                  required={false}
+                  style={{
+                    marginBottom: beforeComfirmBinPlein && "0px",
+                  }}
+                  rules={[
+                    { required: true, message: "Choisir bin de stockage!" },
+                  ]}
+                >
+                  <Select
+                    value={selectedBin}
+                    showSearch
+                    placeholder="Select Bin de stockage"
+                    onChange={handleChange}
+                    disabled={binStorage?.length === 0}
+                    style={{
+                      padding: "0px",
+                    }}
+                    options={binOptions}
+                  />
+                </Form.Item>
+                <div>{beforeComfirmBinPlein && <BinPleinComponent />}</div>
+
+                {binCodePlein === "" && (
+                  <p>
+                    <b>NOTE:</b>
+                    test
+                  </p>
+                )}
+
                 {/* Quantité */}
                 <Form.Item
                   required={false}
@@ -881,7 +1288,7 @@ const GestionStock = () => {
                 </Form.Item>
 
                 <div style={{ display: "flex", justifyContent: "end" }}>
-                  <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+                  <Button key="cancel" onClick={hanleCloseModal}>
                     Annuler
                   </Button>
                   <span
@@ -904,6 +1311,30 @@ const GestionStock = () => {
       ),
     },
   ];
+
+  const handleTabChangeTabsItems = async (e) => {
+    setCurrentKey(e);
+    setLastComfirmBinPlein(false);
+    formAdmin.resetFields();
+    form.resetFields();
+    formAdminKitLeather.resetFields();
+    setPartNumbers([]);
+    setBinStorage([]);
+    setBinCode("");
+    setBinCodePlein("");
+    setBeforeComfirmBinPlein(false);
+    setBinPlein(false);
+    setAvailablePatterns([]);
+    setMaterialPartNumber("");
+  };
+
+  const updateBinStatus = async () => {
+    setLastComfirmBinPlein(false);
+    setBeforeComfirmBinPlein(false);
+    console.log("-----binCode----");
+    console.log(binCode, " ", binCodePlein, " ", partNumber, " ", patternNumb);
+  };
+
   const options = ["Mouvement Stock", "Check Stock"];
   return (
     <div>
@@ -911,7 +1342,6 @@ const GestionStock = () => {
         {contextHolder}
 
         <Modal
-          // title="Ajout Pattern"
           title={
             <div>
               <p
@@ -930,6 +1360,11 @@ const GestionStock = () => {
                     </div>
                   }
                 >
+                  <span
+                    style={{
+                      paddingLeft: "3px",
+                    }}
+                  ></span>
                   <IoInformationCircleSharp
                     style={{
                       cursor: "pointer",
@@ -946,142 +1381,19 @@ const GestionStock = () => {
               ></p>
             </div>
           }
-          closable={{ "aria-label": "Custom Close Button" }}
+          closable
           open={isModalOpen}
-          onCancel={() => {
-            setIsModalOpen(false);
-            form.resetFields();
-            formAdmin.resetFields();
-            formAdminKitLeather.resetFields();
-          }}
+          onCancel={hanleCloseModal}
           footer={[]}
         >
-          {roleList.includes("Admin") ||
-          roleList.includes("GESTIONNAIRE_STOCK") ||
-          roleList.includes("AGENT_MUS") ? (
-            <Tabs defaultActiveKey="1" items={items} />
-          ) : (
-            <>
-              <div style={{ width: "100%" }}>
-                {
-                  <Form layout="vertical" form={form} onFinish={onSubmit}>
-                    {/* Sequence */}
-                    <Form.Item
-                      label="Séquence"
-                      name="sequence"
-                      required={false}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Le champ sequence est obligatoire !",
-                        },
-                        {
-                          len: 12,
-                          message: "La sequence doit contenir 12 chiffres !",
-                        },
-                      ]}
-                    >
-                      <Input
-                        style={{ height: "34px" }}
-                        // value={sequence}
-                        onChange={(e) => handleSequenceChange(e.target.value)}
-                        maxLength={12}
-                      />
-                    </Form.Item>
-
-                    {/* Part Number */}
-
-                    <Form.Item
-                      label="Part Number"
-                      name="partNumber"
-                      required={false}
-                      rules={[
-                        { required: true, message: "Choisir part Number!" },
-                      ]}
-                    >
-                      <Select
-                        showSearch
-                        placeholder="Select Part Number"
-                        onChange={(val) => handlePartNumberChange(val)}
-                      >
-                        {partNumbers.map((p) => (
-                          <Option
-                            key={p.cover_part_number}
-                            value={p.cover_part_number}
-                          >
-                            {p.cover_part_number}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-
-                    {/* Pattern */}
-                    <Form.Item
-                      required={false}
-                      label="Pattern"
-                      name="patternNumb"
-                      rules={[{ required: true, message: "Choisir pattern!" }]}
-                    >
-                      <Select
-                        showSearch
-                        placeholder="Select Pattern"
-                        onChange={(val) => handlePatternChange(val)}
-                        disabled={availablePatterns.length === 0}
-                      >
-                        {availablePatterns.map((pat, i) => (
-                          <Option key={i} value={pat.panel_number}>
-                            {pat.panel_number}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-
-                    {/* Material */}
-                    <Form.Item label="Material" name="materialPartNumber">
-                      <Input value={materialPartNumber} readOnly />
-                    </Form.Item>
-
-                    {/* Quantité */}
-                    <Form.Item
-                      required={false}
-                      label="Quantité"
-                      name="quantite"
-                      rules={[{ required: true, message: "Saisie quantité!" }]}
-                    >
-                      <InputNumber
-                        min={1}
-                        max={999}
-                        style={{ width: "100%", height: "34px" }}
-                      />
-                    </Form.Item>
-
-                    <div style={{ display: "flex", justifyContent: "end" }}>
-                      <Button
-                        key="cancel"
-                        onClick={() => {
-                          form.resetFields();
-                          setIsModalOpen(false);
-                        }}
-                      >
-                        Annuler
-                      </Button>
-                      <span
-                        style={{
-                          paddingLeft: "8px",
-                        }}
-                      ></span>
-                      <SharedButton
-                        loading={isLoading}
-                        type="primary"
-                        name="Enregistrer"
-                        color={COLORS.LearRed}
-                        htmlType="submit"
-                      />
-                    </div>
-                  </Form>
-                }
-              </div>
-            </>
+          {(roleList.includes("Admin") ||
+            roleList.includes("GESTIONNAIRE_STOCK") ||
+            roleList.includes("AGENT_MUS")) && (
+            <Tabs
+              defaultActiveKey="1"
+              onChange={handleTabChangeTabsItems}
+              items={items}
+            />
           )}
         </Modal>
 

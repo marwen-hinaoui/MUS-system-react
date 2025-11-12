@@ -1,10 +1,16 @@
 import apiInstance from "./axios";
 
-export const status_change_api = async (id, token, nameButton, selectedBins) => {
+export const update_bin_status_api = async (
+  new_bin_code,
+  bin_code_plein,
+  partNumber,
+  patternNumb,
+  token
+) => {
   try {
     const res = await apiInstance.post(
-      "demande/status/change/" + id,
-      { nameButton, selectedBins },
+      "bins/update",
+      { new_bin_code, bin_code_plein, partNumber, patternNumb },
       {
         headers: {
           Authorization: `Bearer ${token}`,

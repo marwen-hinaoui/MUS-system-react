@@ -13,7 +13,7 @@ export const SharedModal = ({
       open={modalState}
       onCancel={callback}
       footer={[
-        <Button key="cancel" danger onClick={callback}>
+        <Button key="cancel" onClick={callback}>
           Annuler
         </Button>,
         <Button

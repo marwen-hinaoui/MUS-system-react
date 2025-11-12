@@ -64,7 +64,7 @@ export const ModalDetailsGamme = ({
         row.missing > 0 ? (
           <p
             style={{
-              color: "red",
+              color: "#d30000",
               fontWeight: "bold",
             }}
           >
@@ -147,11 +147,7 @@ export const ModalDetailsGamme = ({
         open={detailsModalClose}
         onCancel={() => setDetailsCloseModal(false)}
         footer={[
-          <Button
-            key="cancel"
-            danger
-            onClick={() => setDetailsCloseModal(false)}
-          >
+          <Button key="cancel" onClick={() => setDetailsCloseModal(false)}>
             Annuler
           </Button>,
           <Button

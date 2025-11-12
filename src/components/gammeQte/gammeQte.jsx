@@ -565,10 +565,10 @@ export const GammeQte = () => {
                           fontSize: 15,
                           color: "#6b7280",
                           margin: 0,
-                          padding: "0 5px 0 0",
+                          padding: "0 5px 0 5px",
                         }}
                       >
-                        {":"}
+                        {"->"}
                       </p>
                       <p
                         style={{

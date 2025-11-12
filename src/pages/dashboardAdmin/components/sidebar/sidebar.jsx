@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Layout, Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -7,7 +6,7 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
-import { HiMiniUserCircle } from "react-icons/hi2";
+import { HiUserCircle } from "react-icons/hi";
 
 import { IoLayers } from "react-icons/io5";
 import { IoMdRefreshCircle, IoMdSettings } from "react-icons/io";
@@ -41,14 +40,14 @@ const navItems = [
   },
 
   {
-    key: "paramétre",
+    key: "bins_parametre",
     icon: <IoMdSettings size={ICONSIZE.SMALL} />,
-    label: "Paramètre",
+    label: "Paramètre Bins",
     route: "/admin/bins",
   },
   {
     key: "gestion_user",
-    icon: <HiMiniUserCircle   size={ICONSIZE.SMALL} />,
+    icon: <HiUserCircle size={ICONSIZE.SMALL} />,
     label: "Gestion des comptes",
     route: "/admin/users",
   },
