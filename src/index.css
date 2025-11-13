@@ -194,11 +194,11 @@ h4 {
 }
 
 /* Example CSS to change the background color of the checkbox when checked */
-.ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #309933ff !important; /* Your desired background color */
-  border-color: rgb(170, 170, 170); /* Match border color for a solid look */
+/* .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #309933ff !important; 
+  border-color: rgb(170, 170, 170); 
   color: #309933ff !important;
-}
+} */
 
 .ant-result-icon {
   margin-bottom: 10px !important;

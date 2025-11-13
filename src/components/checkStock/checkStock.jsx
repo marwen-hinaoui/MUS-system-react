@@ -8,7 +8,7 @@ import { openNotificationSuccess } from "../notificationComponent/openNotificati
 import { RiEdit2Fill } from "react-icons/ri";
 import { update_stock_api } from "../../api/update_stock_api";
 import { ExcelReader } from "../excelReader/excelReader";
-import { get_bin_from_pattern_api_livree } from "../../api/get_bin_from_pattern_api_livree";
+
 export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
   const roleList = useSelector((state) => state.app.roleList);
   const token = useSelector((state) => state.app.tokenValue);
@@ -17,53 +17,27 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
   const [editingModal, setEditingModal] = useState(false);
   const [laodingComfirmation, setLaodingComfirmation] = useState(false);
   const [api, contextHolder] = notification.useNotification();
-  const [mergedStock, setMergedStock] = useState([]);
 
+  // const updateQteStock = async () => {
+  //   setLaodingComfirmation(true);
+
+  //   try {
+  //     const resUpdate = await update_stock_api(idStock, qteAjour, token);
+  //     if (resUpdate.resData) {
+  //       console.log(resUpdate.resData);
+
+  //       openNotificationSuccess(api, resUpdate.resData.message);
+  //       setEditingModal(false);
+  //       refreshData();
+  //     }
+  //   } catch (error) {
+  //   } finally {
+  //     setLaodingComfirmation(false);
+  //   }
+  // };
   useEffect(() => {
-    const fetchBinsForStocks = async () => {
-      if (!stockDATA || stockDATA.length === 0) return;
-
-      const updatedData = await Promise.all(
-        stockDATA.map(async (item) => {
-          try {
-            const res = await get_bin_from_pattern_api_livree(
-              item.partNumber,
-              item.patternNumb,
-              token
-            );
-            const binCodes =
-              res?.resData?.data?.map((b) => b.bin_code).join(", ") || "N/A";
-            return { ...item, bin_code: binCodes };
-          } catch (err) {
-            console.error("Error fetching bins:", err);
-            return { ...item, bin_code: "Error" };
-          }
-        })
-      );
-
-      setMergedStock(updatedData);
-    };
-
-    fetchBinsForStocks();
-  }, [stockDATA]);
-
-  const updateQteStock = async () => {
-    setLaodingComfirmation(true);
-
-    try {
-      const resUpdate = await update_stock_api(idStock, qteAjour, token);
-      if (resUpdate.resData) {
-        console.log(resUpdate.resData);
-
-        openNotificationSuccess(api, resUpdate.resData.message);
-        setEditingModal(false);
-        refreshData();
-      }
-    } catch (error) {
-    } finally {
-      setLaodingComfirmation(false);
-    }
-  };
+    console.log(stockDATA);
+  }, []);
 
   const columns = [
     { title: "Id", dataIndex: "id", width: 60 },
@@ -103,6 +77,15 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       filterSearch: true,
     },
     { title: "Bin de stockage", dataIndex: "bin_code" },
+    {
+      title: "Site",
+      dataIndex: "site",
+      filters: [...new Set(stockDATA?.map((d) => d.site))].map((site) => ({
+        text: site,
+        value: site,
+      })),
+      onFilter: (value, record) => record.projetNom === value,
+    },
 
     { title: "Matière", dataIndex: "partNumberMaterial" },
     { title: "Qte en stock", dataIndex: "quantite", width: 150 },
@@ -137,7 +120,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
           padding: "13px 0 0 0",
         }}
         bordered
-        dataSource={mergedStock}
+        dataSource={stockDATA}
         columns={columns}
         pagination={{
           position: ["bottomCenter"],
@@ -151,7 +134,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
         size="small"
       />
 
-      <Modal
+      {/* <Modal
         title={<p style={{ margin: 0 }}>Modifier qte stock</p>}
         closable={{ "aria-label": "Custom Close Button" }}
         open={editingModal}
@@ -187,7 +170,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
           value={qteAjour}
           style={{ width: "100%" }}
         />
-      </Modal>
+      </Modal> */}
     </div>
   );
 });

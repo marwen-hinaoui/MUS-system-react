@@ -19,26 +19,27 @@ const columns = [
   { title: "Pattern", dataIndex: "patternNumb" },
   { title: "Matière", dataIndex: "partNumberMaterial" },
   { title: "Bin de stockage", dataIndex: "bin_code" },
+  { title: "Site", dataIndex: "site" },
   { title: "Qte en stock", dataIndex: "quantite" },
 ];
 const columns_check = [
   { title: "Part Number", dataIndex: "partNumber" },
   { title: "Pattern", dataIndex: "pattern" },
-  {
-    title: "Bin de stockage",
-    dataIndex: "binChangement",
-    render: (text, record) => {
-      return (
-        <div>
-          <p>
-            <span style={{ color: "#6b7280" }}>{record.binChangement[0]}</span>
-            {" -> "}
-            <span>{record.binChangement[1]} </span>
-          </p>
-        </div>
-      );
-    },
-  },
+  // {
+  //   title: "Bin de stockage",
+  //   dataIndex: "bin_code",
+  //   // render: (text, record) => {
+  //   //   return (
+  //   //     <div>
+  //   //       <p>
+  //   //         <span style={{ color: "#6b7280" }}>{record.binChangement[0]}</span>
+  //   //         {" -> "}
+  //   //         <span>{record.binChangement[1]} </span>
+  //   //       </p>
+  //   //     </div>
+  //   //   );
+  //   // },
+  // },
   {
     title: "Quantité",
     dataIndex: "qteChangement",

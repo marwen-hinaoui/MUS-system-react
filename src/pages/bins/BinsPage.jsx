@@ -175,62 +175,68 @@ export default function BinsPage() {
         </Space>
       )}
 
-      <Row gutter={[13, 8]}>
-        {bins.map((bin, idx) => {
-          let backgroundColor = PROJECT_COLORS[bin.project] || "#fff";
-          let color = COLORS.BLACK;
-          if (editing && selectedRange.length > 0) {
-            const [start, end] = selectedRange;
+      {bins.length > 0 ? (
+        <div>
+          <Row gutter={[13, 8]}>
+            {bins.map((bin, idx) => {
+              let backgroundColor = PROJECT_COLORS[bin.project] || "#fff";
+              let color = COLORS.BLACK;
+              if (editing && selectedRange.length > 0) {
+                const [start, end] = selectedRange;
 
-            if (selectedRange.length === 1 && hoverIndex !== null) {
-              const min = Math.min(selectedRange[0], hoverIndex);
-              const max = Math.max(selectedRange[0], hoverIndex);
-              if (idx >= min && idx <= max) {
-                backgroundColor = "#fff1f0";
-                if (idx === min || idx === max) {
-                  backgroundColor = COLORS.LearRed;
-                  color = COLORS.WHITE;
+                if (selectedRange.length === 1 && hoverIndex !== null) {
+                  const min = Math.min(selectedRange[0], hoverIndex);
+                  const max = Math.max(selectedRange[0], hoverIndex);
+                  if (idx >= min && idx <= max) {
+                    backgroundColor = "#fff1f0";
+                    if (idx === min || idx === max) {
+                      backgroundColor = COLORS.LearRed;
+                      color = COLORS.WHITE;
+                    }
+                  }
+                } else if (selectedRange.length === 2) {
+                  if (idx >= start && idx <= end) {
+                    backgroundColor = "#fff1f0";
+                    if (idx === start || idx === end) {
+                      color = COLORS.WHITE;
+
+                      backgroundColor = COLORS.LearRed;
+                    }
+                  }
                 }
               }
-            } else if (selectedRange.length === 2) {
-              if (idx >= start && idx <= end) {
-                backgroundColor = "#fff1f0";
-                if (idx === start || idx === end) {
-                  color = COLORS.WHITE;
 
-                  backgroundColor = COLORS.LearRed;
-                }
-              }
-            }
-          }
-
-          return (
-            <Col key={bin.main_bin} span={2}>
-              <Card
-                onClick={() => handleBinClick(idx)}
-                onMouseEnter={() => handleBinHover(idx)}
-                style={{
-                  borderRadius: "4px",
-                  textAlign: "center",
-                  backgroundColor,
-                  cursor: editing ? "pointer" : "default",
-                  padding: "4px",
-                  transition: "background-color 0.15s ease",
-                }}
-              >
-                <p style={{ margin: 0, color }}>{bin.main_bin}</p>
-              </Card>
-            </Col>
-          );
-        })}
-      </Row>
-      <div style={{ padding: "14px 0" }}>
-        {projectRanges.map((proj) => (
-          <p key={proj.projectName}>
-            <b>{proj.projectName}</b>: {proj.start} {"->"} {proj.end}
-          </p>
-        ))}
-      </div>
+              return (
+                <Col key={bin.main_bin} span={2}>
+                  <Card
+                    onClick={() => handleBinClick(idx)}
+                    onMouseEnter={() => handleBinHover(idx)}
+                    style={{
+                      borderRadius: "4px",
+                      textAlign: "center",
+                      backgroundColor,
+                      cursor: editing ? "pointer" : "default",
+                      padding: "4px",
+                      transition: "background-color 0.15s ease",
+                    }}
+                  >
+                    <p style={{ margin: 0, color }}>{bin.main_bin}</p>
+                  </Card>
+                </Col>
+              );
+            })}
+          </Row>
+          <div style={{ padding: "14px 0" }}>
+            {projectRanges.map((proj) => (
+              <p key={proj.projectName}>
+                <b>{proj.projectName}</b>: {proj.start} {"->"} {proj.end}
+              </p>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p>Aucune donnée trouvée</p>
+      )}
     </div>
   );
 }

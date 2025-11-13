@@ -5,6 +5,7 @@ const appSlices = createSlice({
   initialState: {
     tokenValue: null,
     userId: "",
+    site: "",
     roleList: [],
     fullname: "",
     fonction: "",
@@ -35,6 +36,9 @@ const appSlices = createSlice({
     },
     set_userId: (state, action) => {
       state.userId = action.payload;
+    },
+    set_site: (state, action) => {
+      state.site = action.payload;
     },
     set_fullname: (state, action) => {
       state.fullname = action.payload;
@@ -113,6 +117,7 @@ export const {
   set_redirect,
   set_loading_refresh,
   set_network_error,
+  set_site,
 } = appSlices.actions;
 
 export default appSlices.reducer;

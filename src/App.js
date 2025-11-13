@@ -21,9 +21,9 @@ const App = () => {
               linkDecoration: "underline",
               linkHoverColor: "inherit",
             },
-            Checkbox: {
-              colorPrimaryBg: COLORS.GREEN,
-            },
+            // Checkbox: {
+            //   colorPrimaryBg: COLORS.GREEN,
+            // },
             DatePicker: {
               borderRadius: "4px",
             },

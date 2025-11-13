@@ -493,8 +493,8 @@ const GestionUser = () => {
             rules={[{ required: true, message: "Sélectionnez site!" }]}
           >
             <Select placeholder="Select site">
-              <Option value={1}>BrownField</Option>
-              <Option value={2}>GreenField</Option>
+              <Option value={1}>GreenField</Option>
+              <Option value={2}>BrownField</Option>
             </Select>
           </Form.Item>
         </Form>

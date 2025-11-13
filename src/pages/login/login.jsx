@@ -14,6 +14,7 @@ import {
   set_redirect,
   set_redirection,
   set_role,
+  set_site,
   set_token,
   set_userId,
 } from "../../redux/slices";
@@ -59,6 +60,7 @@ const Login = () => {
       dispatch(set_role(res.resData.roleList));
       dispatch(set_token(res.resData.accessToken));
       dispatch(set_userId(res.resData.id));
+      dispatch(set_site(res.resData._site));
       dispatch(
         set_fullname(`${res.resData.firstName} ${res.resData.lastName}`)
       );

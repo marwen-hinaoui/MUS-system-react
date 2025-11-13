@@ -13,6 +13,7 @@ import {
   set_redirect,
   set_loading_refresh,
   set_network_error,
+  set_site,
 } from "../../redux/slices";
 
 export const useRefreshAccessToken = () => {
@@ -29,9 +30,8 @@ export const useRefreshAccessToken = () => {
         },
       });
       if (res?.status === 200) {
-        console.log(res);
-
         dispatch(set_authenticated(true));
+        dispatch(set_site(res.data._site));
         dispatch(set_fonction(res.data.fonction));
         dispatch(set_token(res.data.accessToken));
         dispatch(set_role(res.data.roleList));

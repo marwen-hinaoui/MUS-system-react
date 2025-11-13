@@ -53,6 +53,7 @@ const CreeDemande = () => {
   const token = useSelector((state) => state.app.tokenValue);
   const id_userMUS = useSelector((state) => state.app.userId);
   const isLoading = useSelector((state) => state.app.isLoading);
+  const site = useSelector((state) => state.app.site);
   const [form] = Form.useForm();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDetails, setModalDetails] = useState(false);
@@ -88,6 +89,7 @@ const CreeDemande = () => {
 
   useEffect(() => {
     fetchData();
+    console.log("site: ", site);
   }, []);
 
   // Validation et changement de sequence
@@ -433,7 +435,6 @@ const CreeDemande = () => {
         demandeData: {
           id_userMUS,
           demandeur: fullname,
-          id_site: demande.id_site,
           id_lieuDetection: demande.id_lieuDetection,
           projetNom,
         },
@@ -578,12 +579,6 @@ const CreeDemande = () => {
                 style={{ marginBottom: "0" }}
                 required={false}
                 name="id_site"
-                rules={[
-                  {
-                    required: true,
-                    message: "Veuillez sélectionner un site !",
-                  },
-                ]}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span style={{ paddingRight: "5px" }}>Site:</span>
@@ -596,12 +591,9 @@ const CreeDemande = () => {
                     }}
                     showSearch
                     optionFilterProp="children"
+                    value={site}
                   >
-                    {sites?.map((rec) => (
-                      <Option key={rec.id} value={rec.id}>
-                        {rec.nom}
-                      </Option>
-                    ))}
+                    <Option value={site}>{site}</Option>
                   </Select>
                 </div>
               </Form.Item>

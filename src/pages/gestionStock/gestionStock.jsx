@@ -72,6 +72,7 @@ const GestionStock = () => {
   const [availablePatterns, setAvailablePatterns] = useState([]);
   const [materialPartNumber, setMaterialPartNumber] = useState("");
   const token = useSelector((state) => state.app.tokenValue);
+  const site = useSelector((state) => state.app.site);
   const isLoading = useSelector((state) => state.app.isLoading);
   const roleList = useSelector((state) => state.app.roleList);
   const [projetNom, setProjet] = useState("");
@@ -95,6 +96,7 @@ const GestionStock = () => {
   useEffect(() => {
     fetchStock();
     fetchStockAllQte();
+    console.log(site);
   }, []);
 
   const fetchStockAllQte = async () => {
@@ -112,6 +114,8 @@ const GestionStock = () => {
                 item.patternNumb,
                 token
               );
+              console.log(res);
+
               const binCodes =
                 res?.resData?.data?.map((b) => b.bin_code).join(", ") || "N/A";
               return { ...item, bin_code: binCodes };
@@ -134,6 +138,7 @@ const GestionStock = () => {
       const resBinFromPattern = await get_bin_from_pattern_api(
         partNumber,
         pattern,
+        id_userMUS,
         token
       );
       setBinStorage(resBinFromPattern?.resData?.data);
@@ -151,6 +156,7 @@ const GestionStock = () => {
       const resBinFromProjet = await get_bin_from_projet_api(
         projetNom,
         binCode,
+        id_userMUS,
         token
       );
 
@@ -188,6 +194,10 @@ const GestionStock = () => {
     { header: "Pattern", dataIndex: "patternNumb" },
     { header: "Matière", dataIndex: "partNumberMaterial" },
     { header: "Quantité", dataIndex: "quantite" },
+    {
+      header: "Site",
+      dataIndex: "site",
+    },
     { header: "Statut Pattern", dataIndex: "statusMouvement" },
   ];
 
@@ -621,6 +631,18 @@ const GestionStock = () => {
   const columns = [
     { title: "Id", dataIndex: "id", width: 60 },
     {
+      title: "Créateur de mvt",
+      dataIndex: "mvt_create",
+      filters: [...new Set(allStockMouvement?.map((d) => d.mvt_create))].map(
+        (mvt) => ({
+          text: mvt,
+          value: mvt,
+        })
+      ),
+      onFilter: (value, record) => record.mvt_create === value,
+      filterSearch: true,
+    },
+    {
       title: "Date",
       dataIndex: "date_creation",
 
@@ -672,19 +694,19 @@ const GestionStock = () => {
         );
       },
     },
+
+    { title: "Heure", dataIndex: "heure" },
     {
-      title: "Créateur de mvt",
-      dataIndex: "mvt_create",
-      filters: [...new Set(allStockMouvement?.map((d) => d.mvt_create))].map(
-        (mvt) => ({
-          text: mvt,
-          value: mvt,
+      title: "Projet",
+      dataIndex: "projetNom",
+      filters: [...new Set(allStockMouvement?.map((d) => d.projetNom))].map(
+        (projet) => ({
+          text: projet,
+          value: projet,
         })
       ),
-      onFilter: (value, record) => record.mvt_create === value,
-      filterSearch: true,
+      onFilter: (value, record) => record.projetNom === value,
     },
-    { title: "Heure", dataIndex: "heure" },
     {
       title: "Séquence",
       dataIndex: "sequence",
@@ -700,21 +722,7 @@ const GestionStock = () => {
         return <div>{text === "N/A" ? <p>{text}</p> : <p>{text}</p>}</div>;
       },
     },
-    {
-      title: "Projet",
-      dataIndex: "projetNom",
-      filters: [...new Set(allStockMouvement?.map((d) => d.projetNom))].map(
-        (projet) => ({
-          text: projet,
-          value: projet,
-        })
-      ),
-      onFilter: (value, record) => record.projetNom === value,
-    },
-    {
-      title: "Bin de stockage",
-      dataIndex: "bin_code",
-    },
+
     {
       title: "Part Number",
       dataIndex: "partNumber",
@@ -739,7 +747,21 @@ const GestionStock = () => {
       onFilter: (value, record) => record.patternNumb === value,
     },
     { title: "Matière", dataIndex: "partNumberMaterial" },
+
     { title: "Quantité", dataIndex: "quantite" },
+    {
+      title: "Bin de stockage",
+      dataIndex: "bin_code",
+    },
+    {
+      title: "Site",
+      dataIndex: "site",
+      filters: [...new Set(stockDATA?.map((d) => d.site))].map((site) => ({
+        text: site,
+        value: site,
+      })),
+      onFilter: (value, record) => record.projetNom === value,
+    },
     {
       title: "Statut Pattern",
       dataIndex: "statusMouvement",
@@ -1266,12 +1288,12 @@ const GestionStock = () => {
                 </Form.Item>
                 <div>{beforeComfirmBinPlein && <BinPleinComponent />}</div>
 
-                {binCodePlein === "" && (
+                {/* {binCodePlein === "" && (
                   <p>
                     <b>NOTE:</b>
                     test
                   </p>
-                )}
+                )} */}
 
                 {/* Quantité */}
                 <Form.Item
@@ -1366,6 +1388,7 @@ const GestionStock = () => {
                     }}
                   ></span>
                   <IoInformationCircleSharp
+                    size={ICONSIZE.SMALL - 1}
                     style={{
                       cursor: "pointer",
                     }}

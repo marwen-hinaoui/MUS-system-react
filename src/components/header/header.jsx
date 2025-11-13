@@ -22,6 +22,7 @@ const DashboardHeader = ({ role, fullname, token }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const fonction = useSelector((state) => state.app.fonction);
+  const site = useSelector((state) => state.app.site);
   const [isLoading, setIsLoading] = useState(false);
 
   const logout = async () => {
@@ -62,6 +63,9 @@ const DashboardHeader = ({ role, fullname, token }) => {
           <p style={{ fontSize: FONTSIZE.PRIMARY }}>{fullname || ""}</p>
           <p style={{ fontSize: FONTSIZE.PRIMARY, paddingLeft: "15px" }}>
             {fonction}
+          </p>
+          <p style={{ fontSize: FONTSIZE.PRIMARY, paddingLeft: "15px" }}>
+            {site}
           </p>
         </div>
 
