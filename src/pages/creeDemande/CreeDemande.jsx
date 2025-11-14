@@ -90,6 +90,7 @@ const CreeDemande = () => {
   useEffect(() => {
     fetchData();
     console.log("site: ", site);
+    document.title = "MUS - Nouvelle demande";
   }, []);
 
   // Validation et changement de sequence

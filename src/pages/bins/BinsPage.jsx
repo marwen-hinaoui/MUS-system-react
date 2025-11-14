@@ -35,6 +35,8 @@ export default function BinsPage() {
   useEffect(() => {
     fetchBins();
     getProjets();
+
+    document.title = "MUS - Paramètre Bins";
   }, []);
 
   const fetchBins = async () => {

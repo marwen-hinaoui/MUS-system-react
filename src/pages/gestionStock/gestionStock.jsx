@@ -97,36 +97,14 @@ const GestionStock = () => {
     fetchStock();
     fetchStockAllQte();
     console.log(site);
+    document.title = "MUS - Gestion Stock";
   }, []);
 
   const fetchStockAllQte = async () => {
     try {
       const resStock = await get_stock_api(token);
       if (resStock.resData) {
-        if (!resStock.resData.data || resStock.resData.data.length === 0)
-          return;
-
-        const updatedData = await Promise.all(
-          resStock.resData.data.map(async (item) => {
-            try {
-              const res = await get_bin_from_pattern_api_livree(
-                item.partNumber,
-                item.patternNumb,
-                token
-              );
-              console.log(res);
-
-              const binCodes =
-                res?.resData?.data?.map((b) => b.bin_code).join(", ") || "N/A";
-              return { ...item, bin_code: binCodes };
-            } catch (err) {
-              console.error("Error fetching bins:", err);
-              return { ...item, bin_code: "Error" };
-            }
-          })
-        );
-
-        setStockDATA(updatedData);
+        setStockDATA(resStock.resData.data);
       }
     } catch (error) {
       console.log(error);

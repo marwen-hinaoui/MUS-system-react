@@ -319,7 +319,7 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
           paddingRight: "8px",
         }}
       >
-        <Button type="primary" onClick={() => setModalVisible(true)}>
+        <Button disabled type="primary" onClick={() => setModalVisible(true)}>
           Excel Upload
           <MdOutlineFileUpload size={ICONSIZE.XSMALL} />
         </Button>

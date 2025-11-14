@@ -40,7 +40,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
   }, []);
 
   const columns = [
-    { title: "Id", dataIndex: "id", width: 60 },
+    // { title: "Id", dataIndex: "id", width: 60 },
 
     {
       title: "Part Number",
@@ -51,17 +51,6 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       })),
       onFilter: (value, record) => record.partNumber === value,
       filterSearch: true,
-    },
-    {
-      title: "Projet",
-      dataIndex: "projetNom",
-      filters: [...new Set(stockDATA?.map((d) => d.projetNom))].map(
-        (projet) => ({
-          text: projet,
-          value: projet,
-        })
-      ),
-      onFilter: (value, record) => record.projetNom === value,
     },
 
     {
@@ -76,6 +65,18 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       onFilter: (value, record) => record.patternNumb === value,
       filterSearch: true,
     },
+    {
+      title: "Projet",
+      dataIndex: "projetNom",
+      filters: [...new Set(stockDATA?.map((d) => d.projetNom))].map(
+        (projet) => ({
+          text: projet,
+          value: projet,
+        })
+      ),
+      onFilter: (value, record) => record.projetNom === value,
+    },
+
     { title: "Bin de stockage", dataIndex: "bin_code" },
     {
       title: "Site",
@@ -87,7 +88,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       onFilter: (value, record) => record.projetNom === value,
     },
 
-    { title: "Matière", dataIndex: "partNumberMaterial" },
+    { title: "Qte par bin", dataIndex: "quantiteBin", width: 150 },
     { title: "Qte en stock", dataIndex: "quantite", width: 150 },
   ];
 

@@ -25,6 +25,7 @@ import { COLORS } from "../../constant/colors";
 import { openNotification } from "../../components/notificationComponent/openNotification";
 import { TbLockPassword } from "react-icons/tb";
 import { MdOutlinePassword } from "react-icons/md";
+import { useEffect } from "react";
 
 const inputErrorMsg = {
   username: "Veuillez saisir votre nom d'utilisateur!",
@@ -41,6 +42,9 @@ const Login = () => {
   //SUBSCRIBE TO STORE
 
   const redirection = useSelector((state) => state.app.redirection);
+  useEffect(() => {
+    document.title = "MUS - Login";
+  }, []);
 
   //LOGIN ACTION
   const onFinish = async (form) => {

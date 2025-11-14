@@ -69,6 +69,7 @@ const DetailsDemande = () => {
   };
   useEffect(() => {
     getDemandeById();
+    document.title = "MUS - Détails demande";
   }, []);
 
   const fetBinsFromSubDemande = async (subDemandeMUS) => {
