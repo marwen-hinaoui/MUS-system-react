@@ -34,7 +34,6 @@ import { annuler_demande_api } from "../../api/annuler_demande_api";
 import CardComponent from "../../components/card/cardComponent";
 import { SharedModal } from "./sharedModal";
 import "./details.css";
-import { get_bin_from_pattern_api } from "../../api/get_bin_from_pattern_api";
 import { get_bin_from_pattern_api_livree } from "../../api/get_bin_from_pattern_api_livree";
 
 const DetailsDemande = () => {
@@ -44,7 +43,9 @@ const DetailsDemande = () => {
   const [validColumns, setValidColumns] = useState(0);
   const [modalLivree, setModalLivree] = useState(false);
   const [modalAnnuler, setModalAnnuler] = useState(false);
-  const [selectedBins, setSelectedBins] = useState([]);
+  const [selectedBins, setSelectedBins] = useState({});
+  const [selectedQte, setSelectedQte] = useState({});
+  const [allSubFull, setAllSubFull] = useState(false);
 
   const [accepter, setAccepter] = useState(false);
   const roleList = useSelector((state) => state.app.roleList);
@@ -72,6 +73,23 @@ const DetailsDemande = () => {
     document.title = "MUS - Détails demande";
   }, []);
 
+  useEffect(() => {
+    if (!subDemandes || subDemandes.length === 0) return;
+
+    let allFull = true;
+
+    for (const sub of subDemandes) {
+      const qteSelected = selectedQte[sub.numSubDemande] || 0;
+
+      if (qteSelected < sub.quantite) {
+        allFull = false;
+        break;
+      }
+    }
+
+    setAllSubFull(allFull);
+  }, [selectedQte, subDemandes]);
+
   const fetBinsFromSubDemande = async (subDemandeMUS) => {
     let binStorage = {};
     let tmpArray = [];
@@ -91,43 +109,46 @@ const DetailsDemande = () => {
 
   const changeStatus = async (type) => {
     dispatch(set_loading(true));
-    const resStatus = await status_change_api(
-      id,
-      token,
-      type,
-      type === "Livree" ? selectedBins : []
-    );
-    if (resStatus.resData) {
-      openNotificationSuccess(api, resStatus?.resData?.message);
-      getDemandeById();
-      if (type === "Accepter") {
-        setAccepter(false);
-      }
-      if (type === "Livree") {
-        setModalLivree(false);
-      }
-    } else {
-      openNotification(api, resStatus?.resError?.response?.data?.message);
-      console.log(resStatus?.resError);
-    }
-    dispatch(set_loading(false));
+    console.log("selectedBins ----------");
+    console.log(selectedBins);
+
+    // const resStatus = await status_change_api(
+    //   id,
+    //   token,
+    //   type,
+    //   type === "Livree" ? selectedBins : []
+    // );
+    // if (resStatus.resData) {
+    //   openNotificationSuccess(api, resStatus?.resData?.message);
+    //   getDemandeById();
+    //   if (type === "Accepter") {
+    //     setAccepter(false);
+    //   }
+    //   if (type === "Livree") {
+    //     setModalLivree(false);
+    //   }
+    // } else {
+    //   openNotification(api, resStatus?.resError?.response?.data?.message);
+    //   console.log(resStatus?.resError);
+    // }
+    // dispatch(set_loading(false));
   };
 
-  const handleBinChange = (numSubDemande, value) => {
-    setSelectedBins((prev) => {
-      const existingIndex = prev.findIndex(
-        (item) => item.numSubDemande === numSubDemande
-      );
+  // const handleBinChange = (numSubDemande, value) => {
+  //   setSelectedBins((prev) => {
+  //     const existingIndex = prev.findIndex(
+  //       (item) => item.numSubDemande === numSubDemande
+  //     );
 
-      if (existingIndex !== -1) {
-        const updated = [...prev];
-        updated[existingIndex].bin = value;
-        return updated;
-      }
+  //     if (existingIndex !== -1) {
+  //       const updated = [...prev];
+  //       updated[existingIndex].bin = value;
+  //       return updated;
+  //     }
 
-      return [...prev, { numSubDemande, bin: value }];
-    });
-  };
+  //     return [...prev, { numSubDemande, bin: value }];
+  //   });
+  // };
 
   const fetchBinsStorate = async (partNumber, pattern) => {
     try {
@@ -137,8 +158,6 @@ const DetailsDemande = () => {
         token
       );
 
-      console.log("resBinFromPattern?.resData?.data");
-      console.log(resBinFromPattern?.resData?.data);
       return resBinFromPattern?.resData?.data;
     } catch (error) {
       console.log(error);
@@ -185,6 +204,19 @@ const DetailsDemande = () => {
         />
       ),
     },
+
+    {
+      title: "Defaut",
+      dataIndex: "defaut",
+      key: "defaut",
+      render: (text, record) => (
+        <Input
+          style={{ width: "100%", height: "34px" }}
+          value={`${record.code_defaut} (${record.typeDefaut})`}
+          readOnly
+        />
+      ),
+    },
     {
       title: "Part number",
       dataIndex: "partNumber",
@@ -199,6 +231,8 @@ const DetailsDemande = () => {
     },
 
     {
+      width: 150,
+
       title: "Pattern",
       dataIndex: "patternNumb",
       key: "patternNumb",
@@ -212,13 +246,16 @@ const DetailsDemande = () => {
         );
       },
     },
+
     {
+      width: 250,
+
       title: "Bin de stockage",
       dataIndex: "bin",
       key: "bin",
       render: (text, record) => {
         const binOptions = allBins[record.numSubDemande]?.map((p) => ({
-          label: `${p.bin_code} -> ${p.status}`,
+          label: `${p.bin_code} ->  ${p.status} -> ${p.quantiteBin} `,
           value: p.bin_code,
           status: p.status,
           style: {
@@ -235,24 +272,104 @@ const DetailsDemande = () => {
 
         return (
           <Select
+            mode="multiple"
             placeholder="Select Bin de stockage"
             disabled={binOptions?.length === 0}
-            style={{ width: "100%", height: "34px" }}
+            style={{ width: "100%", minHeight: "34px" }}
             options={binOptions}
-            value={
-              selectedBins.find(
-                (item) => Object.keys(item)[0] === record.numSubDemande
-              )?.[record.numSubDemande]
-            }
-            onChange={(value) => {
-              handleBinChange(record.numSubDemande, value);
-              setValidColumns((prev) => prev + 1);
+            value={selectedBins[record.numSubDemande] || []}
+            // Prevent adding bins when qte is full
+            onChange={(newValues) => {
+              const sub = record.numSubDemande;
+              const prevValues = selectedBins[sub] || [];
+
+              const added = newValues.filter((v) => !prevValues.includes(v));
+              const removed = prevValues.filter((v) => !newValues.includes(v));
+
+              let newQte = selectedQte[sub] || 0;
+              const demand = record.quantite;
+
+              // ADD
+              if (added.length > 0) {
+                const bin = allBins[sub].find((b) => b.bin_code === added[0]);
+
+                if (newQte >= demand) {
+                  openNotification(api, "Quantité demandée atteinte !");
+                  return;
+                }
+
+                let updatedTotal = newQte + bin.quantiteBin;
+                if (updatedTotal > demand) updatedTotal = demand;
+
+                newQte = updatedTotal;
+              }
+
+              // REMOVE
+              if (removed.length > 0) {
+                const bin = allBins[sub].find((b) => b.bin_code === removed[0]);
+                newQte = Math.max(0, newQte - bin.quantiteBin);
+              }
+
+              setSelectedQte((prev) => ({
+                ...prev,
+                [sub]: newQte,
+              }));
+
+              setSelectedBins((prev) => ({
+                ...prev,
+                [sub]: newValues,
+              }));
             }}
+            tagRender={(tagProps) => {
+              const { label, value, closable, onClose } = tagProps;
+              return (
+                <span
+                  style={{
+                    padding: "1px 5px",
+                    background: COLORS.Gray2,
+                    marginRight: 3,
+                    borderRadius: 2,
+                    display: "inline-block",
+                  }}
+                >
+                  {value}
+                  {closable && (
+                    <span
+                      onClick={onClose}
+                      style={{ marginLeft: 6, cursor: "pointer" }}
+                    >
+                      ×
+                    </span>
+                  )}
+                </span>
+              );
+            }}
+            onDropdownVisibleChange={(open) => {
+              const currentQte = selectedQte[record.numSubDemande] || 0;
+              if (open && currentQte >= record.quantite) {
+                // block opening if qte limit reached
+                return;
+              }
+            }}
+            maxTagCount="responsive"
+            showArrow
           />
         );
       },
     },
-
+    {
+      width: 150,
+      title: "Qte sélectionnée",
+      dataIndex: "selectedQuantite",
+      key: "selectedQuantite",
+      render: (text, record) => (
+        <InputNumber
+          value={selectedQte[record.numSubDemande] || 0}
+          readOnly
+          style={{ width: "100%", height: "34px" }}
+        />
+      ),
+    },
     {
       title: "Matière",
       dataIndex: "materialPartNumber",
@@ -266,20 +383,8 @@ const DetailsDemande = () => {
       ),
     },
     {
-      title: "Defaut",
-      dataIndex: "defaut",
-      key: "defaut",
-      render: (text, record) => (
-        <Input
-          style={{ width: "100%", height: "34px" }}
-          value={`${record.code_defaut} (${record.typeDefaut})`}
-          readOnly
-        />
-      ),
-    },
-    {
       width: 150,
-      title: "Quantité",
+      title: "Qte demandée ",
       dataIndex: "quantite",
       key: "quantite",
       render: (text, record) => (
@@ -292,7 +397,7 @@ const DetailsDemande = () => {
     },
     {
       width: 150,
-      title: "Quantité disponible",
+      title: "Qte disponible",
       dataIndex: "quantiteDisponible",
       key: "quantiteDisponible",
       render: (text, record) => (
@@ -613,14 +718,13 @@ const DetailsDemande = () => {
               roleList.includes("AGENT_MUS") ||
               roleList.includes("GESTIONNAIRE_STOCK")) && (
               <Button
-                disabled={validColumns < subDemandes.length}
+                disabled={!allSubFull}
                 style={{
                   padding: "10px",
                   border: "none",
-                  background:
-                    validColumns < subDemandes.length
-                      ? "rgb(55 138 58 / 71%)"
-                      : COLORS.GREEN,
+                  background: !allSubFull
+                    ? "rgb(55 138 58 / 71%)"
+                    : COLORS.GREEN,
                   color: COLORS.WHITE,
                 }}
                 onClick={() => {
