@@ -89,6 +89,7 @@ export const ModalDetailsGamme = ({
       filterSearch: true,
     },
     { title: "Pattern N°", dataIndex: "panel_number" },
+    { title: "Bin de stockage", dataIndex: "binCode" },
     {
       title: "Quantité",
       dataIndex: "quantity",

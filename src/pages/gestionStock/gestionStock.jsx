@@ -52,6 +52,8 @@ import { get_pn_from_kit_leather_api } from "../../api/plt/get_pn_from_kit_leath
 import { get_bin_from_pattern_api } from "../../api/get_bin_from_pattern_api";
 import { RxCheckCircled } from "react-icons/rx";
 import { get_bin_from_pattern_api_livree } from "../../api/get_bin_from_pattern_api_livree";
+import { CheckStatusBin } from "../../components/CheckStatusBin/CheckStatusBin";
+import { get_all_bins_api } from "../../api/get_all_bins_api";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -83,6 +85,8 @@ const GestionStock = () => {
   const [stockDATA, setStockDATA] = useState([]);
   const [binStorage, setBinStorage] = useState([]);
   const [selectedBin, setSelectedBin] = useState({});
+  const [binData, setBinData] = useState([]);
+  const [binStatus, setBinStatus] = useState(false);
 
   const [exportDateRange, setExportDateRange] = useState([]);
   const [beforeComfirmBinPlein, setBeforeComfirmBinPlein] = useState(false);
@@ -96,10 +100,14 @@ const GestionStock = () => {
   useEffect(() => {
     fetchStock();
     fetchStockAllQte();
+    fetchAllBins();
     console.log(site);
-    document.title = "MUS - Gestion Stock";
   }, []);
 
+  const fetchAllBins = async () => {
+    const resBins = await get_all_bins_api(token);
+    setBinData(resBins?.resData?.data);
+  };
   const fetchStockAllQte = async () => {
     try {
       const resStock = await get_stock_api(token);
@@ -506,7 +514,9 @@ const GestionStock = () => {
     const resAjout = await ajout_stock_api(piece, token);
     if (resAjout.resData) {
       openNotificationSuccess(api, resAjout?.resData?.message);
+      fetchAllBins();
       fetchStockAllQte();
+
       fetchStock();
     } else {
       console.log(resAjout?.resError?.response?.data?.message);
@@ -522,8 +532,6 @@ const GestionStock = () => {
     setAvailablePatterns([]);
     setMaterialPartNumber("");
     setIsModalOpen(false);
-    fetchStockAllQte();
-
     dispatch(set_loading(false));
   };
 
@@ -532,6 +540,7 @@ const GestionStock = () => {
     form.resetFields();
     dispatch(set_loading(true));
     const piece = {
+      id_userMUS,
       projetNom: projetNom,
       sequence: "N/A",
       partNumber: values.partNumber,
@@ -548,6 +557,7 @@ const GestionStock = () => {
       openNotificationSuccess(api, resAjout?.resData?.message);
       setIsModalOpen(false);
       fetchStockAllQte();
+      fetchAllBins();
       fetchStock();
     } else {
       console.log(resAjout?.resError?.response?.data?.message);
@@ -572,6 +582,7 @@ const GestionStock = () => {
     form.resetFields();
     formAdmin.resetFields();
     const piece = {
+      id_userMUS,
       projetNom: projetNom,
       sequence: "N/A",
       partNumberCoiff: values.partNumberCoiff,
@@ -589,6 +600,7 @@ const GestionStock = () => {
       openNotificationSuccess(api, resAjout?.resData?.message);
       setIsModalOpen(false);
       fetchStockAllQte();
+      fetchAllBins();
       fetchStock();
     } else {
       console.log(resAjout?.resError?.response?.data?.message);
@@ -714,7 +726,7 @@ const GestionStock = () => {
       filterSearch: true,
     },
     {
-      title: "Pattern",
+      title: "Pattern N°",
       dataIndex: "patternNumb",
       filters: [...new Set(allStockMouvement?.map((d) => d.patternNumb))].map(
         (pattern) => ({
@@ -799,6 +811,8 @@ const GestionStock = () => {
     setBeforeComfirmBinPlein(isPleinOrReserve);
     !lastComfirmBinPlein && setBinCode(_selectedBin?.bin_code);
     lastComfirmBinPlein && setBinCodePlein(_selectedBin?.bin_code);
+    _selectedBin?.status === "Réservé" && setBinStatus(true);
+    _selectedBin?.status === "Vide" && setBinStatus(false);
     setSelectedBin(`${_selectedBin?.bin_code} -> ${_selectedBin?.status}`);
   };
 
@@ -812,23 +826,25 @@ const GestionStock = () => {
           marginBottom: "17px",
         }}
       >
-        <p
-          style={{
-            cursor: "pointer",
-            width: "auto",
-            color: COLORS.LearRed,
-            textDecoration: "underline",
-            display: "inline-block",
-          }}
-          onClick={() => {
-            if (!lastComfirmBinPlein) {
-              setBinPlein(true);
-              setBinCodePlein("");
-            }
-          }}
-        >
-          Le bin est-il plein ?
-        </p>
+        {binStatus && (
+          <p
+            style={{
+              cursor: "pointer",
+              width: "auto",
+              color: COLORS.LearRed,
+              textDecoration: "underline",
+              display: "inline-block",
+            }}
+            onClick={() => {
+              if (!lastComfirmBinPlein) {
+                setBinPlein(true);
+                setBinCodePlein("");
+              }
+            }}
+          >
+            Le bin est-il plein ?
+          </p>
+        )}
         {binPlein && (
           <div
             style={{
@@ -1335,7 +1351,7 @@ const GestionStock = () => {
     console.log(binCode, " ", binCodePlein, " ", partNumber, " ", patternNumb);
   };
 
-  const options = ["Mouvement Stock", "Check Stock"];
+  const options = ["Mouvement Stock", "Check Stock", "Check Bin"];
   return (
     <div>
       <div className="dashboard">
@@ -1343,43 +1359,55 @@ const GestionStock = () => {
 
         <Modal
           title={
-            <div>
-              <p
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <div
                 style={{
-                  fontSize: FONTSIZE.PRIMARY,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "3px",
                 }}
               >
-                Ajout Pattern
+                <span
+                  style={{
+                    fontSize: FONTSIZE.PRIMARY,
+                    fontWeight: 600,
+                  }}
+                >
+                  Ajout Pattern
+                </span>
+
                 <Popover
-                  placement="bottom"
+                  placement="right"
                   content={
-                    <div>
+                    <div style={{ maxWidth: "300px" }}>
                       Veuillez choisir si vous désirez insérer le Pattern par{" "}
                       <b>Sequence</b>, par <b>Coiffe PN</b> ou par{" "}
-                      <b>Kit Leather PN</b>
+                      <b>Kit Leather PN</b>.
                     </div>
                   }
                 >
-                  <span
-                    style={{
-                      paddingLeft: "3px",
-                    }}
-                  ></span>
                   <IoInformationCircleSharp
-                    size={ICONSIZE.SMALL - 1}
+                    size={ICONSIZE.SMALL}
                     style={{
                       cursor: "pointer",
                     }}
                   />
                 </Popover>
-              </p>
+              </div>
 
-              <p
+              <span
                 style={{
                   fontSize: "14px",
-                  fontWeight: "500",
+                  fontWeight: 500,
+                  color: "#555",
                 }}
-              ></p>
+              ></span>
             </div>
           }
           closable
@@ -1433,13 +1461,16 @@ const GestionStock = () => {
                 fetchFunction={fetchStockAllQte}
                 stockDATA={[...stockDATA]}
               />
-              <ExportExcel stockDATA={[...stockDATA]} />
+              <ExportExcel isBin={false} stockDATA={[...stockDATA]} />
             </div>
           )}
           {currentView === "Mouvement Stock" && (
             <Button type="primary" onClick={() => setIsExportModalOpen(true)}>
               Excel Export <MdOutlineFileDownload size={ICONSIZE.XSMALL} />
             </Button>
+          )}
+          {currentView === "Check Bin" && (
+            <ExportExcel stockDATA={[...binData]} isBin={true} />
           )}
         </div>
 
@@ -1478,6 +1509,11 @@ const GestionStock = () => {
                 stockDATA={stockDATA}
                 refreshData={fetchStockAllQte}
               />
+            </>
+          )}
+          {currentView === "Check Bin" && (
+            <>
+              <CheckStatusBin binData={binData} />
             </>
           )}
         </div>

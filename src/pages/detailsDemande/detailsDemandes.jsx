@@ -40,13 +40,10 @@ const DetailsDemande = () => {
   const [subDemandes, setSubDemandes] = useState([]);
   const [allBins, setAllBins] = useState([]);
   const [demandeMUS, setDemandeMUS] = useState([]);
-  const [validColumns, setValidColumns] = useState(0);
   const [modalLivree, setModalLivree] = useState(false);
   const [modalAnnuler, setModalAnnuler] = useState(false);
   const [selectedBins, setSelectedBins] = useState({});
   const [selectedQte, setSelectedQte] = useState({});
-  const [allSubFull, setAllSubFull] = useState(false);
-
   const [accepter, setAccepter] = useState(false);
   const roleList = useSelector((state) => state.app.roleList);
   const token = useSelector((state) => state.app.tokenValue);
@@ -56,7 +53,21 @@ const DetailsDemande = () => {
   const dispatch = useDispatch();
   const [api, contextHolder] = notification.useNotification();
   const { id } = useParams();
-
+  const allFull =
+    Array.isArray(subDemandes) &&
+    subDemandes.length > 0 &&
+    subDemandes.every((sub) => {
+      const qteSelected = selectedQte[sub.numSubDemande] || 0;
+      if (sub.statusSubDemande === "En stock") {
+        return qteSelected === sub.quantite;
+      }
+      if (sub.statusSubDemande === "Stock limité" && qteSelected > 0) {
+        return qteSelected === sub.quantiteDisponible;
+      }
+      if (sub.statusSubDemande === "Hors stock") {
+        return true;
+      }
+    });
   const getDemandeById = async () => {
     dispatch(set_loading(true));
     const res = await get_demande_by_id_api(id, token);
@@ -70,25 +81,7 @@ const DetailsDemande = () => {
   };
   useEffect(() => {
     getDemandeById();
-    document.title = "MUS - Détails demande";
   }, []);
-
-  useEffect(() => {
-    if (!subDemandes || subDemandes.length === 0) return;
-
-    let allFull = true;
-
-    for (const sub of subDemandes) {
-      const qteSelected = selectedQte[sub.numSubDemande] || 0;
-
-      if (qteSelected < sub.quantite) {
-        allFull = false;
-        break;
-      }
-    }
-
-    setAllSubFull(allFull);
-  }, [selectedQte, subDemandes]);
 
   const fetBinsFromSubDemande = async (subDemandeMUS) => {
     let binStorage = {};
@@ -112,26 +105,27 @@ const DetailsDemande = () => {
     console.log("selectedBins ----------");
     console.log(selectedBins);
 
-    // const resStatus = await status_change_api(
-    //   id,
-    //   token,
-    //   type,
-    //   type === "Livree" ? selectedBins : []
-    // );
-    // if (resStatus.resData) {
-    //   openNotificationSuccess(api, resStatus?.resData?.message);
-    //   getDemandeById();
-    //   if (type === "Accepter") {
-    //     setAccepter(false);
-    //   }
-    //   if (type === "Livree") {
-    //     setModalLivree(false);
-    //   }
-    // } else {
-    //   openNotification(api, resStatus?.resError?.response?.data?.message);
-    //   console.log(resStatus?.resError);
-    // }
-    // dispatch(set_loading(false));
+    const resStatus = await status_change_api(
+      id,
+      token,
+      type,
+      type === "Livree" ? selectedBins : [],
+      selectedQte
+    );
+    if (resStatus.resData) {
+      openNotificationSuccess(api, resStatus?.resData?.message);
+      getDemandeById();
+      if (type === "Accepter") {
+        setAccepter(false);
+      }
+      if (type === "Livree") {
+        setModalLivree(false);
+      }
+    } else {
+      openNotification(api, resStatus?.resError?.response?.data?.message);
+      console.log(resStatus?.resError);
+    }
+    dispatch(set_loading(false));
   };
 
   // const handleBinChange = (numSubDemande, value) => {
@@ -255,7 +249,7 @@ const DetailsDemande = () => {
       key: "bin",
       render: (text, record) => {
         const binOptions = allBins[record.numSubDemande]?.map((p) => ({
-          label: `${p.bin_code} ->  ${p.status} -> ${p.quantiteBin} `,
+          label: `${p.bin_code} ->  ${p.status} -> Stock : ${p.quantiteBin} `,
           value: p.bin_code,
           status: p.status,
           style: {
@@ -359,7 +353,7 @@ const DetailsDemande = () => {
     },
     {
       width: 150,
-      title: "Qte sélectionnée",
+      title: "Qte livrée",
       dataIndex: "selectedQuantite",
       key: "selectedQuantite",
       render: (text, record) => (
@@ -484,7 +478,7 @@ const DetailsDemande = () => {
     },
     {
       width: 150,
-      title: "Quantité",
+      title: "Quantité demandé",
       dataIndex: "quantite",
       key: "quantite",
       render: (text, record) => (
@@ -718,19 +712,16 @@ const DetailsDemande = () => {
               roleList.includes("AGENT_MUS") ||
               roleList.includes("GESTIONNAIRE_STOCK")) && (
               <Button
-                disabled={!allSubFull}
+                disabled={!allFull}
                 style={{
                   padding: "10px",
                   border: "none",
-                  background: !allSubFull
-                    ? "rgb(55 138 58 / 71%)"
-                    : COLORS.GREEN,
+                  background: !allFull ? "rgb(55 138 58 / 71%)" : COLORS.GREEN,
                   color: COLORS.WHITE,
                 }}
                 onClick={() => {
+                  if (!allFull) return;
                   setModalLivree(true);
-                  console.log(selectedBins);
-                  console.log(typeof selectedBins);
                 }}
               >
                 <RxCheckCircled size={ICONSIZE.SMALL} /> Livrée

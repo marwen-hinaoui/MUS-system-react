@@ -5,19 +5,25 @@ import { openNotification } from "../../../components/notificationComponent/open
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
-export const ExportExcel = ({ stockDATA }) => {
+export const ExportExcel = ({ stockDATA, isBin }) => {
   const [api, contextHolder] = notification.useNotification();
 
   const exportToExcel = (data) => {
-    const exportSchema = [
-      { header: "Projet", dataIndex: "projetNom" },
-      { header: "Part Number", dataIndex: "partNumber" },
-      { header: "Pattern", dataIndex: "patternNumb" },
-      { header: "Bin de stockage", dataIndex: "bin_code" },
-      { header: "Site", dataIndex: "site" },
-      { header: "Qte par bin", dataIndex: "quantiteBin" },
-      { header: "Qte en stock", dataIndex: "quantite" },
-    ];
+    const exportSchema = !isBin
+      ? [
+          { header: "Projet", dataIndex: "projetNom" },
+          { header: "Part Number", dataIndex: "partNumber" },
+          { header: "Pattern", dataIndex: "patternNumb" },
+          { header: "Bin de stockage", dataIndex: "bin_code" },
+          { header: "Site", dataIndex: "site" },
+          { header: "Qte par bin", dataIndex: "quantiteBin" },
+          { header: "Qte en stock", dataIndex: "quantite" },
+        ]
+      : [
+          { header: "Projet", dataIndex: "project" },
+          { header: "Bin code", dataIndex: "bin_code" },
+          { header: "Status bin", dataIndex: "status" },
+        ];
 
     if (!data || data.length === 0) {
       openNotification(api, "Aucune donnée à exporter !");
@@ -49,7 +55,9 @@ export const ExportExcel = ({ stockDATA }) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "stockDATA");
 
     const today = new Date().toISOString().split("T")[0];
-    const fileName = `qte_stock_hopital_${today}.xlsx`;
+    const fileName = isBin
+      ? `bin_stock_hopital_${today}.xlsx`
+      : `qte_stock_hopital_${today}.xlsx`;
 
     const dataBlob = new Blob(
       [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],

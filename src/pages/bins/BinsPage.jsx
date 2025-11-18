@@ -36,7 +36,6 @@ export default function BinsPage() {
     fetchBins();
     getProjets();
 
-    document.title = "MUS - Paramètre Bins";
   }, []);
 
   const fetchBins = async () => {

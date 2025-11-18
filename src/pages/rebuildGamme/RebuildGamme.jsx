@@ -21,7 +21,6 @@ const RebuildGamme = () => {
 
   useEffect(() => {
     fetchRebuild(currentView);
-    document.title = "MUS - Reconstitution Coiffes";
   }, [dispatch]);
 
   const fetchRebuild = async (value) => {

@@ -38,6 +38,7 @@ import {
 } from "../notificationComponent/openNotification";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import dayjs from "dayjs";
+import { get_bin_from_pattern_api_livree } from "../../api/get_bin_from_pattern_api_livree";
 
 const options = ["Préparation en cours", "Mouvement Coiffes"];
 const { RangePicker } = DatePicker;
@@ -101,18 +102,33 @@ export const GammeQte = () => {
     const res = await get_patterns_api(pn, token);
 
     if (res.resData) {
-      const updatedRows = res.resData.map((item) => {
-        if (item.quantity) {
+      // 1. Fetch bins for all patterns in parallel
+      const patternsWithBins = await Promise.all(
+        res.resData.map(async (item) => {
+          const binsRes = await get_bin_from_pattern_api_livree(
+            pn,
+            item.panel_number,
+            token
+          );
+          console.log("binsRes ++++");
+          console.log(binsRes);
+
+          const bins = Array.isArray(binsRes?.resData.data)
+            ? binsRes.resData.data
+            : [];
+
           return {
             ...item,
-            quantity: item.quantity * qte,
+            quantity: item.quantity ? item.quantity * qte : item.quantity,
+            binCode: bins.map((b) => b.bin_code).join(", "),
           };
-        }
-        return item;
-      });
-      setSelectedItem(updatedRows);
+        })
+      );
+
+      setSelectedItem(patternsWithBins);
       setPN(pn);
     }
+
     setLoadingComfimation(false);
   };
 

@@ -5,21 +5,19 @@ import {
   Form,
   Table,
   notification,
-  Empty,
   InputNumber,
   Col,
   Row,
   Button,
   Modal,
-  Card,
   Typography,
 } from "antd";
 import CardComponent from "../../components/card/cardComponent";
 import { openNotification } from "../../components/notificationComponent/openNotification";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { COLORS } from "../../constant/colors";
-import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
+import { ICONSIZE } from "../../constant/FontSizes";
 import { get_sites } from "../../api/get_sites";
 import { get_lieuDetection } from "../../api/get_lieuDetection";
 import { create_demande_api } from "../../api/create_demande_api";
@@ -36,6 +34,7 @@ import {
   ExclamationCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
+import { error } from "ajv/dist/vocabularies/applicator/dependencies";
 const { Option } = Select;
 
 const CreeDemande = () => {
@@ -90,7 +89,6 @@ const CreeDemande = () => {
   useEffect(() => {
     fetchData();
     console.log("site: ", site);
-    document.title = "MUS - Nouvelle demande";
   }, []);
 
   // Validation et changement de sequence
@@ -464,6 +462,10 @@ const CreeDemande = () => {
           setModalVisible(true);
           console.log(resDemande?.resData);
         }
+      } else if (resDemande?.resError.status === 403) {
+        console.log(resDemande?.resError);
+
+        openNotification(api, resDemande?.resError?.response?.data?.message);
       }
     } catch (err) {
       console.log("Erreur lors de la validation des champs");

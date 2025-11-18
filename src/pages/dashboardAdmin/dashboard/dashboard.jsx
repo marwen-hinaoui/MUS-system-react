@@ -64,7 +64,6 @@ const Dashboard = () => {
     dispatch(set_demande_data_table(demandes));
     dispatch(set_data_searching(demandes));
     get_all_demande();
-    document.title = "MUS - Suivi des demandes";
   }, [dispatch]);
 
   return (

@@ -48,7 +48,6 @@ const GestionUser = () => {
     getAllUsers();
     getFonctions();
     getProjets();
-    document.title = "MUS - Gestion des comptes";
   }, []);
 
   const openPasswordModal = (user) => {

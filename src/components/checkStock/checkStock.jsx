@@ -8,6 +8,7 @@ import { openNotificationSuccess } from "../notificationComponent/openNotificati
 import { RiEdit2Fill } from "react-icons/ri";
 import { update_stock_api } from "../../api/update_stock_api";
 import { ExcelReader } from "../excelReader/excelReader";
+import SearchComponent from "../searchComponent/searchComponent";
 
 export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
   const roleList = useSelector((state) => state.app.roleList);
@@ -17,33 +18,47 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
   const [editingModal, setEditingModal] = useState(false);
   const [laodingComfirmation, setLaodingComfirmation] = useState(false);
   const [api, contextHolder] = notification.useNotification();
+  const searchingData = useSelector((state) => state.app.searchingData);
 
-  // const updateQteStock = async () => {
-  //   setLaodingComfirmation(true);
+  const updateQteStock = async () => {
+    setLaodingComfirmation(true);
 
-  //   try {
-  //     const resUpdate = await update_stock_api(idStock, qteAjour, token);
-  //     if (resUpdate.resData) {
-  //       console.log(resUpdate.resData);
+    try {
+      const resUpdate = await update_stock_api(idStock, qteAjour, token);
+      if (resUpdate.resData) {
+        console.log(resUpdate.resData);
 
-  //       openNotificationSuccess(api, resUpdate.resData.message);
-  //       setEditingModal(false);
-  //       refreshData();
-  //     }
-  //   } catch (error) {
-  //   } finally {
-  //     setLaodingComfirmation(false);
-  //   }
-  // };
-  useEffect(() => {
-    console.log(stockDATA);
-  }, []);
+        openNotificationSuccess(api, resUpdate.resData.message);
+        setEditingModal(false);
+        refreshData();
+      }
+    } catch (error) {
+    } finally {
+      setLaodingComfirmation(false);
+    }
+  };
 
   const columns = [
-    // { title: "Id", dataIndex: "id", width: 60 },
+    { title: "Id", dataIndex: "id", width: 60 },
 
     {
-      title: "Part Number",
+      title: () => {
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <SearchComponent
+              table={true}
+              data={stockDATA}
+              searchFor={"partNumber"}
+              placeholder={"Part Number"}
+            />
+          </div>
+        );
+      },
       dataIndex: "partNumber",
       filters: [...new Set(stockDATA?.map((d) => d.partNumber))].map((pn) => ({
         text: pn,
@@ -54,7 +69,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
     },
 
     {
-      title: "Pattern",
+      title: "Pattern N°",
       dataIndex: "patternNumb",
       filters: [...new Set(stockDATA?.map((d) => d.patternNumb))].map(
         (pattern) => ({
@@ -77,7 +92,6 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       onFilter: (value, record) => record.projetNom === value,
     },
 
-    { title: "Bin de stockage", dataIndex: "bin_code" },
     {
       title: "Site",
       dataIndex: "site",
@@ -88,29 +102,39 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       onFilter: (value, record) => record.projetNom === value,
     },
 
+    {
+      title: "Bin de stockage",
+      dataIndex: "bin_code",
+      filters: [...new Set(stockDATA?.map((d) => d.bin_code))].map((bin) => ({
+        text: bin,
+        value: bin,
+      })),
+      onFilter: (value, record) => record.bin_code === value,
+    },
+
     { title: "Qte par bin", dataIndex: "quantiteBin", width: 150 },
-    { title: "Qte en stock", dataIndex: "quantite", width: 150 },
+    { title: "Qte en stock", dataIndex: "totalQuantiteBin", width: 150 },
   ];
 
-  // if (roleList.includes("Admin") || roleList.includes("GESTIONNAIRE_STOCK")) {
-  //   columns.push({
-  //     width: 70,
-  //     title: "Action",
-  //     key: "action",
-  //     render: (text, record) => (
-  //       <RiEdit2Fill
-  //         color={COLORS.Blue}
-  //         onClick={() => {
-  //           setIdStock(record.id);
-  //           setQteAjour(record.quantite);
-  //           setEditingModal(true);
-  //         }}
-  //         style={{ cursor: "pointer" }}
-  //         size={ICONSIZE.SMALL}
-  //       />
-  //     ),
-  //   });
-  // }
+  if (roleList.includes("Admin") || roleList.includes("GESTIONNAIRE_STOCK")) {
+    columns.push({
+      width: 70,
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <RiEdit2Fill
+          color={COLORS.Blue}
+          onClick={() => {
+            setIdStock(record.id);
+            setQteAjour(record.quantiteBin);
+            setEditingModal(true);
+          }}
+          style={{ cursor: "pointer" }}
+          size={ICONSIZE.SMALL}
+        />
+      ),
+    });
+  }
 
   return (
     <div>
@@ -121,7 +145,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
           padding: "13px 0 0 0",
         }}
         bordered
-        dataSource={stockDATA}
+        dataSource={searchingData}
         columns={columns}
         pagination={{
           position: ["bottomCenter"],
@@ -135,8 +159,8 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
         size="small"
       />
 
-      {/* <Modal
-        title={<p style={{ margin: 0 }}>Modifier qte stock</p>}
+      <Modal
+        title={<p style={{ margin: 0 }}>Modifier Qte Bin</p>}
         closable={{ "aria-label": "Custom Close Button" }}
         open={editingModal}
         onCancel={() => {
@@ -164,14 +188,13 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
         <InputNumber
           onChange={(value) => {
             setQteAjour(value);
-            console.log(value);
           }}
-          min={0}
+          min={1}
           max={10000}
           value={qteAjour}
           style={{ width: "100%" }}
         />
-      </Modal> */}
+      </Modal>
     </div>
   );
 });

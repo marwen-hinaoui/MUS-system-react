@@ -40,9 +40,9 @@ export const useRefreshAccessToken = () => {
         dispatch(set_redirect(res.data.redirection));
         dispatch(set_fullname(`${res.data.firstName} ${res.data.lastName}`));
 
-        if (location.pathname == "/" || location.pathname == "/")
-          navigate(res.data.redirection);
+        if (location.pathname == "/") navigate(res.data.redirection);
         else dispatch(set_redirection(location.pathname), { replace: true });
+        console.log(res.data);
       }
     } catch (error) {
       console.log(error);

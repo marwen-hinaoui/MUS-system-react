@@ -43,7 +43,7 @@ const Login = () => {
 
   const redirection = useSelector((state) => state.app.redirection);
   useEffect(() => {
-    document.title = "MUS - Login";
+    document.title = "MUS";
   }, []);
 
   //LOGIN ACTION
@@ -186,7 +186,7 @@ const Login = () => {
           fontSize: FONTSIZE.PRIMARY,
         }}
       >
-        V3.1
+        V2.2
       </div>
     </Flex>
   ) : (
