@@ -17,10 +17,9 @@ const columns = [
   { title: "Projet", dataIndex: "projetNom" },
   { title: "Part Number", dataIndex: "partNumber" },
   { title: "Pattern", dataIndex: "patternNumb" },
-  { title: "Matière", dataIndex: "partNumberMaterial" },
   { title: "Bin de stockage", dataIndex: "bin_code" },
   { title: "Site", dataIndex: "site" },
-  { title: "Qte en stock", dataIndex: "quantite" },
+  { title: "Qte par bin", dataIndex: "quantiteBin" },
 ];
 const columns_check = [
   { title: "Part Number", dataIndex: "partNumber" },
@@ -40,25 +39,26 @@ const columns_check = [
   //   //   );
   //   // },
   // },
-  {
-    title: "Quantité",
-    dataIndex: "qteChangement",
-    render: (text, record) => {
-      return (
-        <div>
-          <p>
-            <span style={{ color: "#6b7280" }}>{record.qteChangement[0]}</span>
-            {" -> "}
-            <span>{record.qteChangement[1]} </span>
-          </p>
-        </div>
-      );
-    },
-  },
+  // {
+  //   title: "Quantité",
+  //   dataIndex: "qteChangement",
+  //   render: (text, record) => {
+  //     return (
+  //       <div>
+  //         <p>
+  //           <span style={{ color: "#6b7280" }}>{record.qteChangement[0]}</span>
+  //           {" -> "}
+  //           <span>{record.qteChangement[1]} </span>
+  //         </p>
+  //       </div>
+  //     );
+  //   },
+  // },
 ];
 
 export const ExcelReader = ({ qteStock, fetchFunction }) => {
   const token = useSelector((state) => state.app.tokenValue);
+  const id_userMUS = useSelector((state) => state.app.userId);
   const [api, contextHolder] = notification.useNotification();
   const [checkMassiveArray, setCheckMassive] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -158,8 +158,14 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
   };
   const checkMassive = async (processedData) => {
     setLoadingCheck(true);
+    console.log("processedData");
+    console.log(processedData);
 
-    const resCheck = await check_massive_stock_api(processedData, token);
+    const resCheck = await check_massive_stock_api(
+      processedData,
+      id_userMUS,
+      token
+    );
     console.log(resCheck);
 
     if (resCheck.resData) {
@@ -175,7 +181,10 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
   const handleBeforeUpload = async (file) => {
     setFileList([file]);
     try {
-      const processedData = await parseExcelFile(file);
+      const rawData = await parseExcelFile(file);
+      const processedData = rawData.filter((item) => {
+        return Object.values(item).some((value) => value !== undefined);
+      });
       await checkMassive(processedData);
     } catch (err) {
       openNotification(api, String(err));
@@ -319,7 +328,7 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
           paddingRight: "8px",
         }}
       >
-        <Button disabled type="primary" onClick={() => setModalVisible(true)}>
+        <Button type="primary" onClick={() => setModalVisible(true)}>
           Excel Upload
           <MdOutlineFileUpload size={ICONSIZE.XSMALL} />
         </Button>

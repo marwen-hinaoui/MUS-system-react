@@ -42,7 +42,7 @@ const DashboardHeader = ({ role, fullname, token }) => {
   return (
     <div
       style={{ backgroundColor: COLORS.WHITE }}
-      className="header px-4 d-flex justify-content-between align-items-center"
+      className="header px-3 d-flex justify-content-between align-items-center"
     >
       {/* User info */}
       <div

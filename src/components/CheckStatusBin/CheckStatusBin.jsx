@@ -54,31 +54,8 @@ export const CheckStatusBin = ({ binData }) => {
         value: s,
       })),
       onFilter: (value, record) => record.status === value,
-
-      onCell: () => ({
-        style: {
-          padding: 0,
-        },
-      }),
       render: (text, row) => {
-        return (
-          <p
-            style={{
-              background:
-                row.status === "Vide"
-                  ? COLORS.GREEN_ALERT
-                  : row.status === "Plein"
-                  ? COLORS.REDWHITE
-                  : COLORS.WARNIGN_ALERT_TABLE_COLUMN,
-              margin: 0,
-              padding: "7px",
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            {text}
-          </p>
-        );
+        return <p>{text}</p>;
       },
     },
   ];

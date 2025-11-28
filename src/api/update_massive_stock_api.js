@@ -18,11 +18,11 @@ export const update_massive_stock_api = async (dataQte, token) => {
     return { resData: null, resError: error };
   }
 };
-export const check_massive_stock_api = async (dataQte, token) => {
+export const check_massive_stock_api = async (dataQte, id_userMUS, token) => {
   try {
     const res = await apiInstance.post(
       "stock/check/massive",
-      { dataQte },
+      { dataQte, id_userMUS },
       {
         headers: {
           Authorization: `Bearer ${token}`,

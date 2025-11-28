@@ -110,31 +110,89 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
         value: bin,
       })),
       onFilter: (value, record) => record.bin_code === value,
+      // render: (txt, row) => {
+      //   return (
+      //     <div
+      //       style={{
+      //         display: "flex",
+      //         justifyContent: "space-between",
+      //       }}
+      //     >
+      //       <p>{txt}</p>
+      //       {(roleList.includes("Admin") ||
+      //         roleList.includes("GESTIONNAIRE_STOCK")) && (
+      //         <RiEdit2Fill
+      //           color={COLORS.Blue}
+      //           onClick={() => {
+      //             setIdStock(row.id);
+      //             setQteAjour(row.quantiteBin);
+      //             setEditingModal(true);
+      //           }}
+      //           style={{ cursor: "pointer" }}
+      //           size={ICONSIZE.SMALL}
+      //         />
+      //       )}
+      //     </div>
+      //   );
+      // },
     },
 
-    { title: "Qte par bin", dataIndex: "quantiteBin", width: 150 },
-    { title: "Qte en stock", dataIndex: "totalQuantiteBin", width: 150 },
+    {
+      title: "Qte par bin",
+      dataIndex: "quantiteBin",
+      width: 150,
+      render: (txt, row) => {
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <p>{txt}</p>
+            {(roleList.includes("Admin") ||
+              roleList.includes("GESTIONNAIRE_STOCK")) && (
+              <RiEdit2Fill
+                color={COLORS.Blue}
+                onClick={() => {
+                  setIdStock(row.id);
+                  setQteAjour(row.quantiteBin);
+                  setEditingModal(true);
+                }}
+                style={{ cursor: "pointer" }}
+                size={ICONSIZE.SMALL}
+              />
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Qte en stock",
+      dataIndex: "totalQuantiteBin",
+      width: 150,
+    },
   ];
 
-  if (roleList.includes("Admin") || roleList.includes("GESTIONNAIRE_STOCK")) {
-    columns.push({
-      width: 70,
-      title: "Action",
-      key: "action",
-      render: (text, record) => (
-        <RiEdit2Fill
-          color={COLORS.Blue}
-          onClick={() => {
-            setIdStock(record.id);
-            setQteAjour(record.quantiteBin);
-            setEditingModal(true);
-          }}
-          style={{ cursor: "pointer" }}
-          size={ICONSIZE.SMALL}
-        />
-      ),
-    });
-  }
+  // if (roleList.includes("Admin") || roleList.includes("GESTIONNAIRE_STOCK")) {
+  //   columns.push({
+  //     width: 70,
+  //     title: "Action",
+  //     key: "action",
+  //     render: (text, record) => (
+  //       <RiEdit2Fill
+  //         color={COLORS.Blue}
+  //         onClick={() => {
+  //           setIdStock(record.id);
+  //           setQteAjour(record.quantiteBin);
+  //           setEditingModal(true);
+  //         }}
+  //         style={{ cursor: "pointer" }}
+  //         size={ICONSIZE.SMALL}
+  //       />
+  //     ),
+  //   });
+  // }
 
   return (
     <div>

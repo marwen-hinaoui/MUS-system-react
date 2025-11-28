@@ -2,7 +2,6 @@ import { Button, Segmented } from "antd";
 import { useEffect, useState } from "react";
 import { GammeTaux } from "../../components/gammeTaux/gammeTaux";
 import { GammeQte } from "../../components/gammeQte/gammeQte";
-import RebuildHeader from "../../components/rebuildHeader/rebuildHeader";
 import { rebuild_api } from "../../api/rebuild_api";
 import { set_data_searching, set_loading } from "../../redux/slices";
 import { useDispatch, useSelector } from "react-redux";

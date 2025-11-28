@@ -200,6 +200,8 @@ const DetailsDemande = () => {
     },
 
     {
+      width: 250,
+
       title: "Defaut",
       dataIndex: "defaut",
       key: "defaut",
@@ -212,6 +214,7 @@ const DetailsDemande = () => {
       ),
     },
     {
+      width: 250,
       title: "Part number",
       dataIndex: "partNumber",
       key: "partNumber",
@@ -225,7 +228,7 @@ const DetailsDemande = () => {
     },
 
     {
-      width: 150,
+      width: 100,
 
       title: "Pattern",
       dataIndex: "patternNumb",
@@ -242,7 +245,7 @@ const DetailsDemande = () => {
     },
 
     {
-      width: 250,
+      width: 350,
 
       title: "Bin de stockage",
       dataIndex: "bin",
@@ -352,7 +355,7 @@ const DetailsDemande = () => {
       },
     },
     {
-      width: 150,
+      width: 100,
       title: "Qte livrée",
       dataIndex: "selectedQuantite",
       key: "selectedQuantite",
@@ -365,6 +368,8 @@ const DetailsDemande = () => {
       ),
     },
     {
+      width: 250,
+
       title: "Matière",
       dataIndex: "materialPartNumber",
       key: "materialPartNumber",
@@ -377,7 +382,7 @@ const DetailsDemande = () => {
       ),
     },
     {
-      width: 150,
+      width: 100,
       title: "Qte demandée ",
       dataIndex: "quantite",
       key: "quantite",
@@ -390,7 +395,7 @@ const DetailsDemande = () => {
       ),
     },
     {
-      width: 150,
+      width: 100,
       title: "Qte disponible",
       dataIndex: "quantiteDisponible",
       key: "quantiteDisponible",
@@ -405,6 +410,8 @@ const DetailsDemande = () => {
       ),
     },
     {
+      width: 150,
+
       title: "Status",
       dataIndex: "statusSubDemande",
       key: "statusSubDemande",

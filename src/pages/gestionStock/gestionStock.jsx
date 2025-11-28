@@ -171,8 +171,10 @@ const GestionStock = () => {
 
   const exportSchema = [
     { header: "Id", dataIndex: "id" },
-    { header: "Date", dataIndex: "date_creation" },
+    { header: "Numero MUS", dataIndex: "numDemande", width: 60 },
     { header: "Créateur de mvt", dataIndex: "mvt_create" },
+    { header: "Emetteur", dataIndex: "Emetteur", width: 60 },
+    { header: "Date", dataIndex: "date_creation" },
     { header: "Heure", dataIndex: "heure" },
     { header: "Séquence", dataIndex: "sequence" },
     { header: "Projet", dataIndex: "projetNom" },
@@ -508,6 +510,7 @@ const GestionStock = () => {
       partNumberMaterial: values.materialPartNumber,
       quantiteAjouter: values.quantite,
       bin_code: binCode,
+      Emetteur: values.Emetteur,
       bin_code_plein: binCodePlein,
     };
 
@@ -549,6 +552,7 @@ const GestionStock = () => {
       quantiteAjouter: values.quantite,
       bin_code: binCode,
       bin_code_plein: binCodePlein,
+      Emetteur: values.Emetteur,
     };
     console.log(piece);
 
@@ -592,6 +596,7 @@ const GestionStock = () => {
       quantiteAjouter: values.quantite,
       bin_code: binCode,
       bin_code_plein: binCodePlein,
+      Emetteur: values.Emetteur,
     };
     console.log(piece);
 
@@ -619,7 +624,20 @@ const GestionStock = () => {
   };
 
   const columns = [
-    { title: "Id", dataIndex: "id", width: 60 },
+    { title: "Id", dataIndex: "id" },
+    {
+      title: "Numero MUS",
+      dataIndex: "numDemande",
+      width: 100,
+      filters: [...new Set(allStockMouvement?.map((d) => d.numDemande))].map(
+        (_numDemande) => ({
+          text: _numDemande,
+          value: _numDemande,
+        })
+      ),
+      onFilter: (value, record) => record.numDemande === value,
+      filterSearch: true,
+    },
     {
       title: "Créateur de mvt",
       dataIndex: "mvt_create",
@@ -632,6 +650,20 @@ const GestionStock = () => {
       onFilter: (value, record) => record.mvt_create === value,
       filterSearch: true,
     },
+    {
+      title: "Emetteur",
+      dataIndex: "Emetteur",
+      dataIndex: "Emetteur",
+      filters: [...new Set(allStockMouvement?.map((d) => d.Emetteur))].map(
+        (_Emetteur) => ({
+          text: _Emetteur,
+          value: _Emetteur,
+        })
+      ),
+      onFilter: (value, record) => record.Emetteur === value,
+      filterSearch: true,
+    },
+
     {
       title: "Date",
       dataIndex: "date_creation",
@@ -842,7 +874,7 @@ const GestionStock = () => {
               }
             }}
           >
-            Le bin est-il plein ?
+            Le bin est-il plein?
           </p>
         )}
         {binPlein && (
@@ -1058,6 +1090,16 @@ const GestionStock = () => {
                   />
                 </Form.Item>
 
+                {/* Emetteur */}
+                <Form.Item
+                  required={false}
+                  label="Emetteur"
+                  name="Emetteur"
+                  rules={[{ required: true, message: "Saisie Emetteur!" }]}
+                >
+                  <Input style={{ width: "100%", height: "34px" }} />
+                </Form.Item>
+
                 <div style={{ display: "flex", justifyContent: "end" }}>
                   <Button key="cancel" onClick={hanleCloseModal}>
                     Annuler
@@ -1148,7 +1190,6 @@ const GestionStock = () => {
                 >
                   <Select
                     value={selectedBin}
-                    showSearch
                     placeholder="Select Bin de stockage"
                     onChange={handleChange}
                     disabled={binStorage?.length === 0}
@@ -1172,7 +1213,15 @@ const GestionStock = () => {
                     style={{ width: "100%", height: "34px" }}
                   />
                 </Form.Item>
-
+                {/* Emetteur */}
+                <Form.Item
+                  required={false}
+                  label="Emetteur"
+                  name="Emetteur"
+                  rules={[{ required: true, message: "Saisie Emetteur!" }]}
+                >
+                  <Input style={{ width: "100%", height: "34px" }} />
+                </Form.Item>
                 <div style={{ display: "flex", justifyContent: "end" }}>
                   <Button key="cancel" onClick={hanleCloseModal}>
                     Annuler
@@ -1270,7 +1319,6 @@ const GestionStock = () => {
                 >
                   <Select
                     value={selectedBin}
-                    showSearch
                     placeholder="Select Bin de stockage"
                     onChange={handleChange}
                     disabled={binStorage?.length === 0}
@@ -1302,7 +1350,15 @@ const GestionStock = () => {
                     style={{ width: "100%", height: "34px" }}
                   />
                 </Form.Item>
-
+                {/* Emetteur */}
+                <Form.Item
+                  required={false}
+                  label="Emetteur"
+                  name="Emetteur"
+                  rules={[{ required: true, message: "Saisie Emetteur!" }]}
+                >
+                  <Input style={{ width: "100%", height: "34px" }} />
+                </Form.Item>
                 <div style={{ display: "flex", justifyContent: "end" }}>
                   <Button key="cancel" onClick={hanleCloseModal}>
                     Annuler
@@ -1382,7 +1438,7 @@ const GestionStock = () => {
                   Ajout Pattern
                 </span>
 
-                <Popover
+                {/* <Popover
                   placement="right"
                   content={
                     <div style={{ maxWidth: "300px" }}>
@@ -1398,7 +1454,7 @@ const GestionStock = () => {
                       cursor: "pointer",
                     }}
                   />
-                </Popover>
+                </Popover> */}
               </div>
 
               <span

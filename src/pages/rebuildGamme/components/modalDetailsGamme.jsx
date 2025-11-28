@@ -21,6 +21,7 @@ export const ModalDetailsGamme = ({
   const [patternsData, setPatternsData] = useState([]);
   const [detailsModalClose, setDetailsCloseModal] = useState(false);
   const [scaleValue, setScaleValue] = useState(0.03);
+
   useEffect(() => {
     if (Array.isArray(patterns)) {
       setPatternsData(patterns);
@@ -48,6 +49,7 @@ export const ModalDetailsGamme = ({
       onFilter: (value, record) => record.patternPN === value,
       filterSearch: true,
     },
+    { title: "Type", dataIndex: "type", width: 200 },
     { title: "Pattern N°", dataIndex: "pattern", width: 100 },
     { title: "Qte par Coiffe", dataIndex: "quantity", width: 100 },
     { title: "Qte en stock", dataIndex: "available", width: 100 },
@@ -56,6 +58,7 @@ export const ModalDetailsGamme = ({
       dataIndex: "possible",
       width: 100,
     },
+
     {
       title: "Qte manquante",
       dataIndex: "missing",
@@ -88,6 +91,8 @@ export const ModalDetailsGamme = ({
       onFilter: (value, record) => record.pattern === value,
       filterSearch: true,
     },
+    { title: "Type", dataIndex: "type", width: 100 },
+
     { title: "Pattern N°", dataIndex: "panel_number" },
     { title: "Bin de stockage", dataIndex: "binCode" },
     {

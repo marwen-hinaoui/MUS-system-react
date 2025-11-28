@@ -17,7 +17,6 @@ export const ExportExcel = ({ stockDATA, isBin }) => {
           { header: "Bin de stockage", dataIndex: "bin_code" },
           { header: "Site", dataIndex: "site" },
           { header: "Qte par bin", dataIndex: "quantiteBin" },
-          { header: "Qte en stock", dataIndex: "quantite" },
         ]
       : [
           { header: "Projet", dataIndex: "project" },

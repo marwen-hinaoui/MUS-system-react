@@ -11,7 +11,6 @@ import { ModalDetailsGamme } from "../../pages/rebuildGamme/components/modalDeta
 import { set_data_searching } from "../../redux/slices";
 
 export const GammeTaux = React.memo(() => {
-  const [rebuilData, setRebuilData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [emptyData, setEmptyData] = useState(true);
   const [selectedItem, setSelectedItem] = useState({});
@@ -30,7 +29,6 @@ export const GammeTaux = React.memo(() => {
     setLoading(true);
     const res = await rebuild_api(token);
     if (res.resData) {
-      setRebuilData(res?.resData?.data);
       dispatch(set_data_searching(res?.resData?.data));
 
       setEmptyData(false);
