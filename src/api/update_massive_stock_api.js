@@ -1,10 +1,10 @@
 import apiInstance from "./axios";
 
-export const update_massive_stock_api = async (dataQte, token) => {
+export const update_massive_stock_api = async (dataQte, id_userMUS, token) => {
   try {
     const res = await apiInstance.post(
       "stock/update/massive",
-      { dataQte },
+      { dataQte, id_userMUS },
       {
         headers: {
           Authorization: `Bearer ${token}`,

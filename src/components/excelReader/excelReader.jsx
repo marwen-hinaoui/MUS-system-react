@@ -5,58 +5,221 @@ import {
   check_massive_stock_api,
   update_massive_stock_api,
 } from "../../api/update_massive_stock_api";
-import { Button, Modal, notification, Spin, Table, Upload } from "antd";
+import {
+  Button,
+  Modal,
+  notification,
+  Spin,
+  Table,
+  Tooltip,
+  Upload,
+} from "antd";
 import {
   openNotification,
   openNotificationSuccess,
 } from "../notificationComponent/openNotification";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { ICONSIZE } from "../../constant/FontSizes";
-
+import { RiErrorWarningFill } from "react-icons/ri";
+import { COLORS } from "../../constant/colors";
+import SharedButton from "../button/button";
 const columns = [
   { title: "Projet", dataIndex: "projetNom" },
+  { title: "Site", dataIndex: "site" },
+
   { title: "Part Number", dataIndex: "partNumber" },
+
   { title: "Pattern", dataIndex: "patternNumb" },
   { title: "Bin de stockage", dataIndex: "bin_code" },
-  { title: "Site", dataIndex: "site" },
+  {
+    title: "Bin distination",
+    dataIndex: "bin_code_distination",
+  },
   { title: "Qte par bin", dataIndex: "quantiteBin" },
-];
-const columns_check = [
-  { title: "Part Number", dataIndex: "partNumber" },
-  { title: "Pattern", dataIndex: "pattern" },
-  // {
-  //   title: "Bin de stockage",
-  //   dataIndex: "bin_code",
-  //   // render: (text, record) => {
-  //   //   return (
-  //   //     <div>
-  //   //       <p>
-  //   //         <span style={{ color: "#6b7280" }}>{record.binChangement[0]}</span>
-  //   //         {" -> "}
-  //   //         <span>{record.binChangement[1]} </span>
-  //   //       </p>
-  //   //     </div>
-  //   //   );
-  //   // },
-  // },
-  // {
-  //   title: "Quantité",
-  //   dataIndex: "qteChangement",
-  //   render: (text, record) => {
-  //     return (
-  //       <div>
-  //         <p>
-  //           <span style={{ color: "#6b7280" }}>{record.qteChangement[0]}</span>
-  //           {" -> "}
-  //           <span>{record.qteChangement[1]} </span>
-  //         </p>
-  //       </div>
-  //     );
-  //   },
-  // },
+  { title: "Emetteur", dataIndex: "emetteur" },
 ];
 
-export const ExcelReader = ({ qteStock, fetchFunction }) => {
+const columns_check = [
+  {
+    title: "Part Number",
+    dataIndex: "partNumber",
+    render: (text, record) => {
+      return record.reasonPN ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <p>{text}</p>
+          <Tooltip placement="rightTop" title={record.reasonPN}>
+            <RiErrorWarningFill size={ICONSIZE.XSMALL} />
+          </Tooltip>
+        </div>
+      ) : (
+        <p>{text}</p>
+      );
+    },
+  },
+  {
+    title: "Pattern",
+    dataIndex: "pattern",
+    render: (text, record) => {
+      return record.reasonPattern ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <p>{text}</p>
+          <Tooltip placement="rightTop" title={record.reasonPattern}>
+            <RiErrorWarningFill size={ICONSIZE.XSMALL} />
+          </Tooltip>
+        </div>
+      ) : (
+        <p>{text}</p>
+      );
+    },
+  },
+  {
+    title: "Projet",
+    dataIndex: "projetNom",
+    render: (text, record) => {
+      return record.reasonProjet ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <p>{text}</p>
+          <Tooltip placement="rightTop" title={record.reasonProjet}>
+            <RiErrorWarningFill size={ICONSIZE.XSMALL} />
+          </Tooltip>
+        </div>
+      ) : (
+        <p>{text}</p>
+      );
+    },
+  },
+  {
+    title: "Site",
+    dataIndex: "site",
+    render: (text, record) => {
+      return record.reasonSite ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <p>{text}</p>
+          <Tooltip placement="rightTop" title={record.reasonSite}>
+            <RiErrorWarningFill size={ICONSIZE.XSMALL} />
+          </Tooltip>
+        </div>
+      ) : (
+        <p>{text}</p>
+      );
+    },
+  },
+  {
+    title: "Bin de stockage",
+    dataIndex: "binChangement",
+    render: (text, record) => {
+      return record.reasonBin ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <p>
+            {record.bin_code}{" "}
+            {record.bin_code_distination && `-> ${record.bin_code_distination}`}
+          </p>
+          <Tooltip placement="rightTop" title={record.reasonBin}>
+            <RiErrorWarningFill size={ICONSIZE.XSMALL} />
+          </Tooltip>
+        </div>
+      ) : record.binChangement && record.binChangement.length >= 2 ? (
+        <div>
+          <p>
+            {record.binChangement[0]} {" -> "}
+            <b>{record.binChangement[1]}</b>
+          </p>
+        </div>
+      ) : (
+        <p>{record.bin_code}</p>
+      );
+    },
+  },
+  {
+    title: "Qte par bin",
+    dataIndex: "qteChangement",
+    render: (text, record) => {
+      return record.reasonQTE ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <p>{record.quantiteBin}</p>
+          <Tooltip placement="rightTop" title={record.reasonQTE}>
+            <RiErrorWarningFill size={ICONSIZE.XSMALL} />
+          </Tooltip>
+        </div>
+      ) : record.qteChangement && record.qteChangement.length >= 2 ? (
+        <div>
+          <p>
+            <span>{record.qteChangement[0]}</span>
+            {record.qteChangement[0] && " -> "}
+            <b>{record.qteChangement[1]} </b>
+          </p>
+        </div>
+      ) : (
+        <p>{record.quantiteBin}</p>
+      );
+    },
+  },
+  {
+    title: "Emetteur",
+    dataIndex: "emetteur",
+    render: (text, record) => {
+      console.log("Emetteur record:", record);
+
+      if (record.reasonEmetteur) {
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span>{record.emetteur || ""}</span>
+            <Tooltip placement="rightTop" title={record.reasonEmetteur}>
+              <RiErrorWarningFill size={ICONSIZE.XSMALL} />
+            </Tooltip>
+          </div>
+        );
+      } else if (record.emetteur && record.emetteur.trim().length > 0) {
+        return <span>{record.emetteur}</span>;
+      } else {
+        return <span>N/A</span>;
+      }
+    },
+  },
+];
+
+export const ExcelReader = ({
+  fetchFunction,
+  fetchAllBins,
+  fetchMouvement,
+}) => {
   const token = useSelector((state) => state.app.tokenValue);
   const id_userMUS = useSelector((state) => state.app.userId);
   const [api, contextHolder] = notification.useNotification();
@@ -65,6 +228,8 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
   const [checkLoading, setLoadingCheck] = useState(false);
   const [loadingConfirm, setLoadingConfirm] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const isLoading = useSelector((state) => state.app.isLoading);
+  const [updatingData, setUpdatingData] = useState([]);
 
   const getExpectedHeaders = () => columns.map((c) => c.title);
 
@@ -101,6 +266,8 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
             (h) => !actualHeaders.includes(h)
           );
           if (missingHeaders.length > 0) {
+            console.log("----------missingHeaders---------", missingHeaders);
+
             return reject(
               `Le fichier ne contient pas les en-têtes obligatoires suivants: ${missingHeaders.join(
                 ", "
@@ -126,6 +293,12 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
 
           for (let i = 1; i < jsonSheet.length; i++) {
             const row = jsonSheet[i];
+            if (
+              !row ||
+              row.every((cell) => cell === undefined || cell === "")
+            ) {
+              continue;
+            }
             const rowData = {};
 
             expectedHeaders.forEach((header, index) => {
@@ -169,12 +342,19 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
     console.log(resCheck);
 
     if (resCheck.resData) {
-      if (resCheck?.resData?.updated > 0) {
-        setCheckMassive(resCheck.resData.details);
-      } else {
-        openNotification(api, "Aucune mise à jour de quantité effectuée");
-        setFileList([]);
-      }
+      setCheckMassive(resCheck.resData.details);
+      const updating = resCheck.resData.details.filter(
+        (row) => row.updated === true
+      );
+      setUpdatingData(updating);
+      console.log("updating", updating);
+
+      // if (resCheck?.resData?.updated > 0) {
+      // setCheckMassive(resCheck.resData.details);
+      // } else {
+      //   openNotification(api, "Aucune mise à jour effectuée");
+      //   setFileList([]);
+      // }
     }
     setLoadingCheck(false);
   };
@@ -212,10 +392,18 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
     try {
       const processedData = await parseExcelFile(fileList[0]);
 
-      const res = await update_massive_stock_api(processedData, token);
+      const res = await update_massive_stock_api(
+        updatingData,
+        id_userMUS,
+        token
+      );
       if (res?.resData?.updated > 0) {
         openNotificationSuccess(api, "Mise à jour du stock réussie");
         fetchFunction();
+        fetchAllBins();
+        fetchMouvement();
+
+        console.log(res?.resData);
       } else {
         openNotification(api, "Aucune mise à jour de quantité effectuée");
       }
@@ -234,6 +422,7 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
     setModalVisible(false);
     setFileList([]);
     setCheckMassive([]);
+    setLoadingCheck(false);
   };
 
   const handleRomeFile = async () => {
@@ -241,11 +430,32 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
     setCheckMassive([]);
   };
 
+  const getRowClassName = (record) => {
+    if (record.updated) {
+      return "ant-row-no-hover row-green";
+    }
+    if (!record.updated) {
+      return "ant-row-no-hover red-row";
+    }
+    return "";
+  };
+
+  const hasErrors = checkMassiveArray.some(
+    (item) =>
+      item.reasonPN ||
+      item.reasonPattern ||
+      item.reasonProjet ||
+      item.reasonSite ||
+      item.reasonBin ||
+      item.reasonQTE
+  );
+
   return (
     <div>
       {contextHolder}
 
       <Modal
+        width={800}
         title={<p style={{ margin: 0 }}>Modifier quantité du stock</p>}
         open={modalVisible}
         onCancel={handleCloseModal}
@@ -253,11 +463,20 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
           <Button key="cancel" onClick={handleCloseModal}>
             Annuler
           </Button>,
+          // <SharedButton
+          //   loading={isLoading}
+          //   disabled={hasErrors || checkMassiveArray.length === 0}
+          //   type="primary"
+          //   name="Confirmer"
+          //   color={hasErrors ? "rgb(238 49 36 / 70%)" : COLORS.LearRed}
+          //   callBack={handleConfirmUpload}
+          // />,
           <Button
             key="confirm"
             type="primary"
             onClick={handleConfirmUpload}
             loading={loadingConfirm}
+            color={COLORS.LearRed}
           >
             Confirmer
           </Button>,
@@ -282,6 +501,34 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
                 Choisir un fichier Excel
               </Button>
             </Upload>
+            {checkMassiveArray.length > 0 && (
+              <div>
+                <Table
+                  rowClassName={getRowClassName}
+                  style={{
+                    padding: "13px 0 0 0",
+                  }}
+                  bordered
+                  dataSource={checkMassiveArray}
+                  columns={columns_check}
+                  pagination={{
+                    position: ["bottomCenter"],
+                    showSizeChanger: true,
+                    defaultPageSize: "100",
+                    pageSizeOptions: ["5", "10", "25", "50", "100"],
+                  }}
+                  locale={{
+                    emptyText: <p>Aucune donnée trouvée</p>,
+                  }}
+                  size="small"
+                />
+                {fileList.length > 0 && (
+                  <p style={{ marginTop: 8, color: "green" }}>
+                    {fileList[0].name} prêt à être importé
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         ) : (
           <div
@@ -292,34 +539,6 @@ export const ExcelReader = ({ qteStock, fetchFunction }) => {
             }}
           >
             <Spin size="small" />
-          </div>
-        )}
-
-        {checkMassiveArray.length > 0 && (
-          <div>
-            <Table
-              style={{
-                padding: "13px 0 0 0",
-              }}
-              bordered
-              dataSource={checkMassiveArray}
-              columns={columns_check}
-              pagination={{
-                position: ["bottomCenter"],
-                showSizeChanger: true,
-                defaultPageSize: "5",
-                pageSizeOptions: ["5", "10", "25", "50", "100"],
-              }}
-              locale={{
-                emptyText: <p>Aucune donnée trouvée</p>,
-              }}
-              size="small"
-            />
-            {fileList.length > 0 && (
-              <p style={{ marginTop: 8, color: "green" }}>
-                {fileList[0].name} prêt à être importé
-              </p>
-            )}
           </div>
         )}
       </Modal>

@@ -247,7 +247,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
           onChange={(value) => {
             setQteAjour(value);
           }}
-          min={1}
+          min={0}
           max={10000}
           value={qteAjour}
           style={{ width: "100%" }}

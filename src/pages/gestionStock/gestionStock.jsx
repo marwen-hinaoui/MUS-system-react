@@ -1515,6 +1515,8 @@ const GestionStock = () => {
             >
               <ExcelReader
                 fetchFunction={fetchStockAllQte}
+                fetchMouvement={fetchStock}
+                fetchAllBins={fetchAllBins}
                 stockDATA={[...stockDATA]}
               />
               <ExportExcel isBin={false} stockDATA={[...stockDATA]} />
