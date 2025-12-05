@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import { get_bins_api } from "../../api/get_bins_api";
 import { useSelector } from "react-redux";
-import { Select, Button, Card, Row, Col, Space, notification } from "antd";
+import {
+  Select,
+  Button,
+  Card,
+  Row,
+  Col,
+  Space,
+  notification,
+  Typography,
+} from "antd";
 import { assign_bin_project_api } from "../../api/assign_bin_project_api";
 import {
   openNotification,
@@ -11,6 +20,7 @@ import { RiEdit2Fill } from "react-icons/ri";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 import { get_projet_api } from "../../api/get_projet_api";
+import { MdOutlineContentCopy } from "react-icons/md";
 
 const { Option } = Select;
 
@@ -35,7 +45,6 @@ export default function BinsPage() {
   useEffect(() => {
     fetchBins();
     getProjets();
-
   }, []);
 
   const fetchBins = async () => {
@@ -164,7 +173,16 @@ export default function BinsPage() {
           >
             {projets.map((item, index) => (
               <Option key={index} value={item.nom}>
-                {item.nom}
+                <Typography.Text
+                  className="copyLine"
+                  copyable={{
+                    icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
+                    text: item.nom,
+                    tooltips: ["Copier", "Copié!"],
+                  }}
+                >
+                  {item.nom}
+                </Typography.Text>
               </Option>
             ))}
           </Select>

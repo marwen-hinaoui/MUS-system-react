@@ -210,3 +210,14 @@ h4 {
 .ant-notification-notice-wrapper {
   border-radius: 4px !important;
 }
+
+.copyLine {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* spacing between text and icon */
+  width: 100%; /* optional: ensures full width so icon reaches the right edge */
+}
+
+.copyLine .ant-typography-copy {
+  margin-left: auto; /* pushes the icon to the right */
+}

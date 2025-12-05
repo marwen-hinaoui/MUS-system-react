@@ -52,7 +52,7 @@ export const CheckStatusBin = ({ binData }) => {
 
           return (
             <div key={project} style={{ marginBottom: 24 }}>
-              <h6 style={{ marginBottom: 8 }}>{project}</h6>
+              <p style={{ marginBottom: 8 }}>{project}</p>
 
               <div style={{ display: "flex", alignItems: "center" }}>
                 <div style={{ padding: "5px" }}>

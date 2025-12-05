@@ -13,6 +13,7 @@ import {
   Space,
   Table,
   Tabs,
+  Typography,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import SharedButton from "../../components/button/button";
@@ -25,7 +26,7 @@ import {
   openNotification,
   openNotificationSuccess,
 } from "../../components/notificationComponent/openNotification";
-import { MdOutlineFileDownload } from "react-icons/md";
+import { MdOutlineContentCopy, MdOutlineFileDownload } from "react-icons/md";
 
 import { get_patterns_api } from "../../api/plt/get_patterns_api";
 import { ajout_stock_admin_api } from "../../api/ajout_stock_admin_api";
@@ -820,7 +821,18 @@ const GestionStock = () => {
 
   const binOptions = React.useMemo(() =>
     binStorage?.map((p) => ({
-      label: `${p.bin_code} -> ${p.status}`,
+      label: () => (
+        <Typography.Text
+          className="copyLine"
+          copyable={{
+            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
+            text: `${p.bin_code} -> ${p.status}`,
+            tooltips: ["Copier", "Copié!"],
+          }}
+        >
+          {`${p.bin_code} -> ${p.status}`}
+        </Typography.Text>
+      ),
       value: p.id,
       status: p.status,
       style: {
@@ -1019,7 +1031,16 @@ const GestionStock = () => {
                         key={p.cover_part_number}
                         value={p.cover_part_number}
                       >
-                        {p.cover_part_number}
+                        <Typography.Text
+                          className="copyLine"
+                          copyable={{
+                            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
+                            text: p.cover_part_number,
+                            tooltips: ["Copier", "Copié!"],
+                          }}
+                        >
+                          {p.cover_part_number}
+                        </Typography.Text>
                       </Option>
                     ))}
                   </Select>
@@ -1040,7 +1061,16 @@ const GestionStock = () => {
                   >
                     {availablePatterns.map((pat, i) => (
                       <Option key={i} value={pat.panel_number}>
-                        {pat.panel_number}
+                        <Typography.Text
+                          className="copyLine"
+                          copyable={{
+                            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
+                            text: pat.panel_number,
+                            tooltips: ["Copier", "Copié!"],
+                          }}
+                        >
+                          {pat.panel_number}
+                        </Typography.Text>
                       </Option>
                     ))}
                   </Select>
@@ -1165,7 +1195,16 @@ const GestionStock = () => {
                   >
                     {availablePatterns.map((pat, i) => (
                       <Option key={i} value={pat.panel_number}>
-                        {pat.panel_number}
+                        <Typography.Text
+                          className="copyLine"
+                          copyable={{
+                            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
+                            text: pat.panel_number,
+                            tooltips: ["Copier", "Copié!"],
+                          }}
+                        >
+                          {pat.panel_number}
+                        </Typography.Text>
                       </Option>
                     ))}
                   </Select>
@@ -1294,7 +1333,16 @@ const GestionStock = () => {
                   >
                     {availablePatterns.map((pat, i) => (
                       <Option key={i} value={pat.panel_number}>
-                        {pat.panel_number}
+                        <Typography.Text
+                          className="copyLine"
+                          copyable={{
+                            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
+                            text: pat.panel_number,
+                            tooltips: ["Copier", "Copié!"],
+                          }}
+                        >
+                          {pat.panel_number}
+                        </Typography.Text>
                       </Option>
                     ))}
                   </Select>

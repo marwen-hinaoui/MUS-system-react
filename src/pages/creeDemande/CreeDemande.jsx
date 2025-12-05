@@ -15,7 +15,7 @@ import {
 import CardComponent from "../../components/card/cardComponent";
 import { openNotification } from "../../components/notificationComponent/openNotification";
 import { useLocation } from "react-router-dom";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdOutlineContentCopy } from "react-icons/md";
 import { COLORS } from "../../constant/colors";
 import { ICONSIZE } from "../../constant/FontSizes";
 import { get_sites } from "../../api/get_sites";
@@ -265,7 +265,16 @@ const CreeDemande = () => {
         >
           {partNumbers.map((p) => (
             <Option key={p.cover_part_number} value={p.cover_part_number}>
-              {p.cover_part_number}
+              <Typography.Text
+                className="copyLine"
+                copyable={{
+                  icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
+                  text: p.cover_part_number,
+                  tooltips: ["Copier", "Copié!"],
+                }}
+              >
+                {p.cover_part_number}
+              </Typography.Text>
             </Option>
           ))}
         </Select>
@@ -287,7 +296,16 @@ const CreeDemande = () => {
         >
           {patternsByRow[record.key]?.map((p) => (
             <Option key={p.panel_number} value={p.panel_number}>
-              {p.panel_number}
+              <Typography.Text
+                className="copyLine"
+                copyable={{
+                  icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
+                  text: p.panel_number,
+                  tooltips: ["Copier", "Copié!"],
+                }}
+              >
+                {p.panel_number}
+              </Typography.Text>
             </Option>
           ))}
         </Select>
@@ -352,7 +370,16 @@ const CreeDemande = () => {
               key={`${def.code_defaut} ${def.typeDefaut}`}
               value={`${def.code_defaut} ${def.typeDefaut}`}
             >
-              {def.code_defaut} {def.typeDefaut}
+              <Typography.Text
+                className="copyLine"
+                copyable={{
+                  icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
+                  text: `${def.code_defaut} ${def.typeDefaut}`,
+                  tooltips: ["Copier", "Copié!"],
+                }}
+              >
+                {def.code_defaut} {def.typeDefaut}
+              </Typography.Text>
             </Select.Option>
           ))}
         </Select>
