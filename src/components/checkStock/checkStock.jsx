@@ -109,6 +109,8 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
         text: bin,
         value: bin,
       })),
+      filterSearch: true,
+
       onFilter: (value, record) => record.bin_code === value,
       // render: (txt, row) => {
       //   return (

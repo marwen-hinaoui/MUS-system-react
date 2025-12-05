@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { set_data_searching, set_loading } from "../../redux/slices";
 import { Input } from "antd";
 
-const SearchComponent = ({ placeholder, data, searchFor, table }) => {
+const SearchComponent = ({ placeholder, data, searchFor, table, disable }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
@@ -31,11 +31,12 @@ const SearchComponent = ({ placeholder, data, searchFor, table }) => {
     <div>
       <div>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ padding: "5px" }}>
+          <div style={{ padding: !table && "5px" }}>
             <MdSearch size={ICONSIZE.PRIMARY} />
           </div>
           {!table ? (
             <Input
+              disabled={!disable}
               placeholder={placeholder}
               className="searchInput"
               onChange={(e) => {

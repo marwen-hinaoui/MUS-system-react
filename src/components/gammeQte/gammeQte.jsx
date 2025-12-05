@@ -30,7 +30,7 @@ import { get_rebuild_livree_api } from "../../api/get_rebuild_livree_api";
 import { get_patterns_api } from "../../api/plt/get_patterns_api";
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { ModalDetailsGamme } from "../../pages/rebuildGamme/components/modalDetailsGamme";
-import { set_data_searching } from "../../redux/slices";
+import { set_data_searching, set_loading_gamme } from "../../redux/slices";
 import { RxCheckCircled } from "react-icons/rx";
 import {
   openNotification,
@@ -51,7 +51,6 @@ export const GammeQte = () => {
   const [emptyCompeleted, setEmptyCompeleted] = useState(true);
   const [detailsModal, setDetailsModal] = useState(false);
   const [detailsModalPattern, setDetailsModalPattern] = useState(false);
-  const [isLoading, setLoading] = useState(false);
   const [laodingComfirmation, setLoadingComfimation] = useState(false);
   const token = useSelector((state) => state.app.tokenValue);
   const [currentView, setCurrentView] = useState("Préparation en cours");
@@ -67,6 +66,7 @@ export const GammeQte = () => {
 
   const searchingData = useSelector((state) => state.app.searchingData);
   const isLoadingSlice = useSelector((state) => state.app.isLoading);
+  const isLoading = useSelector((state) => state.app.isLoadingGamme);
   const [api, contextHolder] = notification.useNotification();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -78,7 +78,8 @@ export const GammeQte = () => {
   }, [dispatch]);
 
   const fetchRebuild = async () => {
-    setLoading(true);
+    dispatch(set_loading_gamme(true));
+
     const res = await rebuild_api(token);
 
     setRebuilData(res?.resData?.compeletedDataRebuild);
@@ -87,7 +88,7 @@ export const GammeQte = () => {
     if (res?.resData?.compeletedDataRebuild?.length > 0) {
       setEmptyCompeleted(false);
     }
-    setLoading(false);
+    dispatch(set_loading_gamme(false));
   };
   const handleCloseModal = () => {
     setSelectedItem({});

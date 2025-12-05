@@ -1,84 +1,99 @@
-import { Table, Tag } from "antd";
+import React, { useMemo, useState } from "react";
+import { Table, Input } from "antd";
+import SearchComponent from "../searchComponent/searchComponent";
+import CardComponent from "../card/cardComponent";
 import { useSelector } from "react-redux";
-import SearchComponent from "../../components/searchComponent/searchComponent";
-import { COLORS } from "../../constant/colors";
-
+import { MdSearch } from "react-icons/md";
+import { ICONSIZE } from "../../constant/FontSizes";
 export const CheckStatusBin = ({ binData }) => {
+  const [search, setSearch] = useState({});
   const searchingData = useSelector((state) => state.app.searchingData);
 
+  const projects = useMemo(
+    () => [...new Set((binData || []).map((d) => d.project))].sort(),
+    [binData]
+  );
+
+  const statusFilters = useMemo(
+    () =>
+      [...new Set((binData || []).map((d) => d.status))]
+        .filter(Boolean)
+        .map((s) => ({ text: s, value: s })),
+    [binData]
+  );
+
   const columns = [
-    { title: "Id", dataIndex: "id", width: 60 },
     {
-      title: "Projet",
-      dataIndex: "project",
-      filters: [...new Set(binData?.map((d) => d.project))].map((projet) => ({
-        text: projet,
-        value: projet,
-      })),
-      onFilter: (value, record) => record.project === value,
-    },
-    {
-      title: () => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <SearchComponent
-              table={true}
-              data={binData}
-              searchFor={"bin_code"}
-              placeholder={"Bin code"}
-            />
-          </div>
-        );
-      },
-
+      title: "Bin code",
       dataIndex: "bin_code",
-      // title: "Bin code",
-      // dataIndex: "bin_code",
-      // filters: [...new Set(binData?.map((d) => d.bin_code))].map((bin) => ({
-      //   text: bin,
-      //   value: bin,
-      // })),
-      // onFilter: (value, record) => record.bin_code === value,
+      width: 200,
     },
-
     {
       title: "Status bin",
       dataIndex: "status",
-      filters: [...new Set(binData?.map((d) => d.status))].map((s) => ({
-        text: s,
-        value: s,
-      })),
+      filters: statusFilters,
       onFilter: (value, record) => record.status === value,
-      render: (text, row) => {
-        return <p>{text}</p>;
-      },
+      render: (text) => <p>{text}</p>,
+      width: 200,
     },
   ];
+
   return (
-    <div>
-      <Table
-        style={{
-          padding: "13px 0 0 0",
-        }}
-        bordered
-        dataSource={searchingData}
-        columns={columns}
-        pagination={{
-          position: ["bottomCenter"],
-          showSizeChanger: true,
-          defaultPageSize: "10",
-          pageSizeOptions: ["5", "10", "25", "50", "100"],
-        }}
-        locale={{
-          emptyText: <p>Aucune donnée trouvée</p>,
-        }}
-        size="small"
-      />
+    <div style={{ padding: "12px 0 0 0", width: "100%", margin: "auto" }}>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        {projects.map((project) => {
+          const projectRows = binData.filter((r) => r.project === project);
+
+          const filteredRows = projectRows.filter((r) =>
+            r.bin_code
+              ?.toLowerCase()
+              .includes((search[project] || "").toLowerCase())
+          );
+
+          return (
+            <div key={project} style={{ marginBottom: 24 }}>
+              <h6 style={{ marginBottom: 8 }}>{project}</h6>
+
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ padding: "5px" }}>
+                  <MdSearch size={ICONSIZE.PRIMARY} />
+                </div>
+
+                <Input
+                  placeholder="Recherche Bin code"
+                  className="searchInput"
+                  value={search[project] || ""}
+                  onChange={(e) =>
+                    setSearch((prev) => ({
+                      ...prev,
+                      [project]: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <Table
+                bordered
+                size="small"
+                dataSource={filteredRows}
+                columns={columns}
+                rowKey={(row) => row.id ?? `${project}-${row.bin_code}`}
+                pagination={{
+                  position: ["bottomCenter"],
+                  showSizeChanger: true,
+                  defaultPageSize: 10,
+                  pageSizeOptions: ["5", "10", "25", "50", "100"],
+                }}
+                locale={{
+                  emptyText: (
+                    <p style={{ margin: 0 }}>Aucun résultat pour ce projet</p>
+                  ),
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

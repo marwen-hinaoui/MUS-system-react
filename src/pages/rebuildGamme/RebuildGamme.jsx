@@ -18,6 +18,9 @@ const RebuildGamme = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.app.tokenValue);
 
+  const loading = useSelector((state) => state.app.isLoading);
+  const isLoadingGamme = useSelector((state) => state.app.isLoadingGamme);
+
   useEffect(() => {
     fetchRebuild(currentView);
   }, [dispatch]);
@@ -68,8 +71,10 @@ const RebuildGamme = () => {
             Actualiser
           </Button>
         </div>
+
         <CardComponent>
           <SearchComponent
+            disable={!loading && !isLoadingGamme && rebuildData?.length > 0}
             searchFor={"_pn"}
             data={rebuildData}
             placeholder={"Part Number"}

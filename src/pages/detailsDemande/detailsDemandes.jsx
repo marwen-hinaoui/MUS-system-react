@@ -15,7 +15,7 @@ import { COLORS } from "../../constant/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IoCheckmarkCircleOutline,
   IoCloseCircleOutline,
@@ -275,7 +275,6 @@ const DetailsDemande = () => {
             style={{ width: "100%", minHeight: "34px" }}
             options={binOptions}
             value={selectedBins[record.numSubDemande] || []}
-            // Prevent adding bins when qte is full
             onChange={(newValues) => {
               const sub = record.numSubDemande;
               const prevValues = selectedBins[sub] || [];

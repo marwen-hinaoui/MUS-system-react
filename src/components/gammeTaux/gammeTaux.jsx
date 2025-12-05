@@ -8,10 +8,9 @@ import { rebuild_api } from "../../api/rebuild_api";
 import { TbRefresh } from "react-icons/tb";
 import { ICONSIZE } from "../../constant/FontSizes";
 import { ModalDetailsGamme } from "../../pages/rebuildGamme/components/modalDetailsGamme";
-import { set_data_searching } from "../../redux/slices";
+import { set_data_searching, set_loading_gamme } from "../../redux/slices";
 
 export const GammeTaux = React.memo(() => {
-  const [isLoading, setLoading] = useState(false);
   const [emptyData, setEmptyData] = useState(true);
   const [selectedItem, setSelectedItem] = useState({});
   const [detailsModal, setDetailsModal] = useState(false);
@@ -20,13 +19,15 @@ export const GammeTaux = React.memo(() => {
   const dispatch = useDispatch();
   const searchingData = useSelector((state) => state.app.searchingData);
   const isLoadingSlice = useSelector((state) => state.app.isLoading);
+  const isLoading = useSelector((state) => state.app.isLoadingGamme);
 
   useEffect(() => {
     fetchRebuild();
   }, [dispatch]);
 
   const fetchRebuild = async () => {
-    setLoading(true);
+    dispatch(set_loading_gamme(true));
+
     const res = await rebuild_api(token);
     if (res.resData) {
       dispatch(set_data_searching(res?.resData?.data));
@@ -35,7 +36,7 @@ export const GammeTaux = React.memo(() => {
     } else {
       setEmptyData(true);
     }
-    setLoading(false);
+    dispatch(set_loading_gamme(false));
   };
 
   const getProgressColor = (valuePercent) => {

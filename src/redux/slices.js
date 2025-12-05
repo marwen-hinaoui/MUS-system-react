@@ -10,6 +10,7 @@ const appSlices = createSlice({
     fullname: "",
     fonction: "",
     isLoading: false,
+    isLoadingGamme: false,
     isLoadingRefresh: false,
     errorMsg: "",
     NetworkErrorMsg: "",
@@ -52,6 +53,9 @@ const appSlices = createSlice({
     },
     set_loading: (state, action) => {
       state.isLoading = action.payload;
+    },
+    set_loading_gamme: (state, action) => {
+      state.isLoadingGamme = action.payload;
     },
     set_loading_refresh: (state, action) => {
       state.isLoadingRefresh = action.payload;
@@ -114,6 +118,7 @@ export const {
   set_patterns,
   set_cover_pn,
   set_fonction,
+  set_loading_gamme,
   set_redirect,
   set_loading_refresh,
   set_network_error,
