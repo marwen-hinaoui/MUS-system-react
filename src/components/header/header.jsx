@@ -52,18 +52,18 @@ const DashboardHeader = ({ role, fullname, token }) => {
         }}
       >
         <img src={CI_LOGO} height={40} />
-        <div style={{ paddingLeft: "5px" }}></div>
-        {/* <img src={CI_TEXT} /> */}
-        <div
+        <div style={{ paddingLeft: "7px" }}></div>
+        <img src={CI_TEXT} />
+        {/* <div
           style={{
             display: "flex",
-            lineHeight: "11px",
+            lineHeight: "10px",
             flexDirection: "column",
           }}
         >
-          <b style={{ fontSize: "11px", letterSpacing: "2px" }}>CONTINUOUS </b>
-          <b style={{ fontSize: "11px", letterSpacing: "2px" }}>IMPROVEMENT</b>
-        </div>
+          <b style={{ fontSize: "10px", letterSpacing: "2px" }}>CONTINUOUS </b>
+          <b style={{ fontSize: "10px", letterSpacing: "2px" }}>IMPROVEMENT</b>
+        </div> */}
       </div>
       <div className="d-flex justify-content-between align-items-center">
         <div

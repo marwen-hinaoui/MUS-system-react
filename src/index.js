@@ -9,6 +9,7 @@ import { App as AntdApp } from "antd";
 import "./index.css";
 import { LoadingBarContainer } from "react-top-loading-bar";
 import { COLORS } from "./constant/colors";
+import "@fontsource/lato";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>

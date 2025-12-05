@@ -821,18 +821,7 @@ const GestionStock = () => {
 
   const binOptions = React.useMemo(() =>
     binStorage?.map((p) => ({
-      label: () => (
-        <Typography.Text
-          className="copyLine"
-          copyable={{
-            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
-            text: `${p.bin_code} -> ${p.status}`,
-            tooltips: ["Copier", "Copié!"],
-          }}
-        >
-          {`${p.bin_code} -> ${p.status}`}
-        </Typography.Text>
-      ),
+      label: `${p.bin_code} -> ${p.status}`,
       value: p.id,
       status: p.status,
       style: {

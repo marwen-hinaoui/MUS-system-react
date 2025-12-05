@@ -221,3 +221,7 @@ h4 {
 .copyLine .ant-typography-copy {
   margin-left: auto; /* pushes the icon to the right */
 }
+
+.latoOnly {
+  font-family: "Lato", "Inter", sans-serif;
+}

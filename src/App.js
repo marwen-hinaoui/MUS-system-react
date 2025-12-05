@@ -1,6 +1,7 @@
 import { ConfigProvider, Spin } from "antd";
 import AppRoutes from "./routes/routes";
 import "@fontsource/inter";
+
 import { COLORS } from "./constant/colors";
 import { useEffect, useState } from "react";
 // import 'antd/dist/reset.css';
@@ -15,7 +16,6 @@ const App = () => {
   return (
     <>
       <ConfigProvider
-
         theme={{
           components: {
             Typography: {
