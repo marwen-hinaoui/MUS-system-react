@@ -1,5 +1,6 @@
 import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
 import {
+  AutoComplete,
   Button,
   DatePicker,
   Form,
@@ -62,6 +63,8 @@ const GestionStock = () => {
   const [form] = Form.useForm();
   const [formAdmin] = Form.useForm();
   const [formAdminKitLeather] = Form.useForm();
+
+  const [copied, setCopied] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [lastComfirmBinPlein, setLastComfirmBinPlein] = useState(false);
@@ -1009,7 +1012,18 @@ const GestionStock = () => {
                   required={false}
                   rules={[{ required: true, message: "Choisir part Number!" }]}
                 >
-                  <Select
+                  <AutoComplete
+                    value={partNumber}
+                    placeholder="Select Part Number"
+                    onSelect={(val) => handlePartNumberChange(val)}
+                    disabled={partNumbers.length === 0}
+                    options={partNumbers.map((p) => ({
+                      value: p.cover_part_number,
+                    }))}
+                    onSearch={() => {}}
+                  ></AutoComplete>
+
+                  {/* <Select
                     showSearch
                     placeholder="Select Part Number"
                     onChange={handlePartNumberChange}
@@ -1020,22 +1034,14 @@ const GestionStock = () => {
                         key={p.cover_part_number}
                         value={p.cover_part_number}
                       >
-                        <Typography.Text
-                          className="copyLine"
-                          copyable={{
-                            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
-                            text: p.cover_part_number,
-                            tooltips: ["Copier", "Copié!"],
-                          }}
-                        >
-                          {p.cover_part_number}
-                        </Typography.Text>
+                        {p.cover_part_number}
                       </Option>
                     ))}
-                  </Select>
+                  </Select> */}
                 </Form.Item>
 
                 {/* Pattern */}
+
                 <Form.Item
                   required={false}
                   label="Pattern"
@@ -1046,20 +1052,17 @@ const GestionStock = () => {
                     showSearch
                     placeholder="Select Pattern"
                     onChange={(val) => handlePatternChange(val)}
-                    disabled={availablePatterns.length === 0}
+                    disabled={
+                      !Array.isArray(availablePatterns) ||
+                      availablePatterns.length === 0
+                    }
                   >
-                    {availablePatterns.map((pat, i) => (
+                    {(Array.isArray(availablePatterns)
+                      ? availablePatterns
+                      : []
+                    ).map((pat, i) => (
                       <Option key={i} value={pat.panel_number}>
-                        <Typography.Text
-                          className="copyLine"
-                          copyable={{
-                            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
-                            text: pat.panel_number,
-                            tooltips: ["Copier", "Copié!"],
-                          }}
-                        >
-                          {pat.panel_number}
-                        </Typography.Text>
+                        {pat.panel_number}
                       </Option>
                     ))}
                   </Select>
@@ -1184,16 +1187,7 @@ const GestionStock = () => {
                   >
                     {availablePatterns.map((pat, i) => (
                       <Option key={i} value={pat.panel_number}>
-                        <Typography.Text
-                          className="copyLine"
-                          copyable={{
-                            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
-                            text: pat.panel_number,
-                            tooltips: ["Copier", "Copié!"],
-                          }}
-                        >
-                          {pat.panel_number}
-                        </Typography.Text>
+                        {pat.panel_number}
                       </Option>
                     ))}
                   </Select>
@@ -1322,16 +1316,7 @@ const GestionStock = () => {
                   >
                     {availablePatterns.map((pat, i) => (
                       <Option key={i} value={pat.panel_number}>
-                        <Typography.Text
-                          className="copyLine"
-                          copyable={{
-                            icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
-                            text: pat.panel_number,
-                            tooltips: ["Copier", "Copié!"],
-                          }}
-                        >
-                          {pat.panel_number}
-                        </Typography.Text>
+                        {pat.panel_number}
                       </Option>
                     ))}
                   </Select>

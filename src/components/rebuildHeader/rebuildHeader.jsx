@@ -1,6 +1,6 @@
 import { Button } from "antd";
 import { TbRefresh } from "react-icons/tb";
-import CardComponent from "../card/cardComponent";
+import CardComponent from "../card/CardComponent";
 import SearchComponent from "../searchComponent/searchComponent";
 import { ICONSIZE } from "../../constant/FontSizes";
 

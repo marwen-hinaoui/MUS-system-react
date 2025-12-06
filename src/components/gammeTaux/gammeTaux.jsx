@@ -1,5 +1,5 @@
 import { Button, Col, Progress, Row, Skeleton, Spin } from "antd";
-import CardComponent from "../card/cardComponent";
+import CardComponent from "../card/CardComponent";
 import { COLORS } from "../../constant/colors";
 import SearchComponent from "../searchComponent/searchComponent";
 import React, { useEffect, useState } from "react";

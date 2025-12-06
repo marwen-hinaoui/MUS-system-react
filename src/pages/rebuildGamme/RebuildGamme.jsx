@@ -7,7 +7,7 @@ import { set_data_searching, set_loading } from "../../redux/slices";
 import { useDispatch, useSelector } from "react-redux";
 import { ICONSIZE } from "../../constant/FontSizes";
 import { TbRefresh } from "react-icons/tb";
-import CardComponent from "../../components/card/cardComponent";
+import CardComponent from "../../components/card/CardComponent";
 import SearchComponent from "../../components/searchComponent/searchComponent";
 const options = ["Gestion Coiffes (Qte)", "Gestion Coiffes (%)"];
 

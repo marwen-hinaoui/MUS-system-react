@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FONTSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 import { Card, Progress } from "antd";
-import CardComponent from "../card/cardComponent";
+import CardComponent from "../card/CardComponent";
 import { useNavigate } from "react-router-dom";
 import "./statisticsComponent.css";
 

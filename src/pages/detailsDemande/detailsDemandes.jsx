@@ -31,7 +31,7 @@ import { RxCheckCircled } from "react-icons/rx";
 // import { FiEdit } from "react-icons/fi";
 import { annuler_demande_api } from "../../api/annuler_demande_api";
 // import { update_subDemande_api } from "../../api/update_subDemande_api";
-import CardComponent from "../../components/card/cardComponent";
+import CardComponent from "../../components/card/CardComponent";
 import { SharedModal } from "./sharedModal";
 import "./details.css";
 import { get_bin_from_pattern_api_livree } from "../../api/get_bin_from_pattern_api_livree";

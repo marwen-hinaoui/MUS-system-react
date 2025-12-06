@@ -13,7 +13,7 @@ import {
   Table,
 } from "antd";
 import { useEffect, useState } from "react";
-import CardComponent from "../../components/card/cardComponent";
+import CardComponent from "../../components/card/CardComponent";
 import SearchComponent from "../searchComponent/searchComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { rebuild_api } from "../../api/rebuild_api";
@@ -103,7 +103,6 @@ export const GammeQte = () => {
     const res = await get_patterns_api(pn, token);
 
     if (res.resData) {
-      // 1. Fetch bins for all patterns in parallel
       const patternsWithBins = await Promise.all(
         res.resData.map(async (item) => {
           const binsRes = await get_bin_from_pattern_api_livree(

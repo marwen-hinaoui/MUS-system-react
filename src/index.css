@@ -211,17 +211,14 @@ h4 {
   border-radius: 4px !important;
 }
 
-.copyLine {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* spacing between text and icon */
-  width: 100%; /* optional: ensures full width so icon reaches the right edge */
+:where(.css-dev-only-do-not-override-yiboe5).ant-notification
+  .ant-notification-notice-wrapper
+  .ant-notification-notice-error {
+  background: white !important;
 }
 
-.copyLine .ant-typography-copy {
-  margin-left: auto; /* pushes the icon to the right */
-}
-
-.latoOnly {
-  font-family: "Lato", "Inter", sans-serif;
+:where(.css-dev-only-do-not-override-yiboe5).ant-notification
+  .ant-notification-notice-wrapper
+  .ant-notification-notice-success {
+  background: white !important;
 }

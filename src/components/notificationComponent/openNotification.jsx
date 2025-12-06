@@ -1,11 +1,13 @@
+import { RiErrorWarningFill } from "react-icons/ri";
+
 export const openNotification = (api, msg) => {
-  api['error']({
+  api["error"]({
     message: msg,
     duration: 15,
   });
 };
 export const openNotificationSuccess = (api, msg) => {
-  api['success']({
+  api["success"]({
     message: msg,
     duration: 15,
   });

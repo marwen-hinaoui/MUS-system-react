@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Table, Input } from "antd";
 import SearchComponent from "../searchComponent/searchComponent";
-import CardComponent from "../card/cardComponent";
 import { useSelector } from "react-redux";
 import { MdSearch } from "react-icons/md";
 import { ICONSIZE } from "../../constant/FontSizes";

@@ -11,8 +11,9 @@ import {
   Button,
   Modal,
   Typography,
+  AutoComplete,
 } from "antd";
-import CardComponent from "../../components/card/cardComponent";
+import CardComponent from "../../components/card/CardComponent";
 import { openNotification } from "../../components/notificationComponent/openNotification";
 import { useLocation } from "react-router-dom";
 import { MdDelete, MdOutlineContentCopy } from "react-icons/md";
@@ -255,29 +256,17 @@ const CreeDemande = () => {
       dataIndex: "partNumber",
       key: "partNumber",
       render: (text, record) => (
-        <Select
+        <AutoComplete
           value={record.partNumber || undefined}
           placeholder="Sélectionnez le Part number"
-          onChange={(val) => handleChange(record.key, "partNumber", val)}
-          showSearch
-          optionFilterProp="children"
+          onSelect={(val) => handleChange(record.key, "partNumber", val)}
+          disabled={partNumbers.length === 0}
+          options={partNumbers.map((p) => ({
+            value: p.cover_part_number,
+          }))}
+          onSearch={() => {}}
           style={{ width: "100%", height: "34px" }}
-        >
-          {partNumbers.map((p) => (
-            <Option key={p.cover_part_number} value={p.cover_part_number}>
-              <Typography.Text
-                className="copyLine"
-                copyable={{
-                  icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
-                  text: p.cover_part_number,
-                  tooltips: ["Copier", "Copié!"],
-                }}
-              >
-                {p.cover_part_number}
-              </Typography.Text>
-            </Option>
-          ))}
-        </Select>
+        ></AutoComplete>
       ),
     },
     {
@@ -296,16 +285,7 @@ const CreeDemande = () => {
         >
           {patternsByRow[record.key]?.map((p) => (
             <Option key={p.panel_number} value={p.panel_number}>
-              <Typography.Text
-                className="copyLine"
-                copyable={{
-                  icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
-                  text: p.panel_number,
-                  tooltips: ["Copier", "Copié!"],
-                }}
-              >
-                {p.panel_number}
-              </Typography.Text>
+              {p.panel_number}
             </Option>
           ))}
         </Select>
@@ -370,16 +350,7 @@ const CreeDemande = () => {
               key={`${def.code_defaut} ${def.typeDefaut}`}
               value={`${def.code_defaut} ${def.typeDefaut}`}
             >
-              <Typography.Text
-                className="copyLine"
-                copyable={{
-                  icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
-                  text: `${def.code_defaut} ${def.typeDefaut}`,
-                  tooltips: ["Copier", "Copié!"],
-                }}
-              >
-                {def.code_defaut} {def.typeDefaut}
-              </Typography.Text>
+              {def.code_defaut} {def.typeDefaut}
             </Select.Option>
           ))}
         </Select>

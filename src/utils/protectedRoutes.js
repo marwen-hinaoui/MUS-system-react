@@ -62,7 +62,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
               fontSize: FONTSIZE.PRIMARY,
             }}
           >
-            V2.2
+            V3.0
           </div>
         </div>
       </div>
@@ -83,7 +83,7 @@ export const ProtectedRoutes = ({ children, allowedRoles }) => {
               fontSize: FONTSIZE.PRIMARY,
             }}
           >
-            V2.2
+            V3.0
           </div>
         </div>
       </div>

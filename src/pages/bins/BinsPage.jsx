@@ -10,6 +10,7 @@ import {
   Space,
   notification,
   Typography,
+  AutoComplete,
 } from "antd";
 import { assign_bin_project_api } from "../../api/assign_bin_project_api";
 import {
@@ -17,10 +18,11 @@ import {
   openNotificationSuccess,
 } from "../../components/notificationComponent/openNotification";
 import { RiEdit2Fill } from "react-icons/ri";
-import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
+import { ICONSIZE } from "../../constant/FontSizes";
 import { COLORS } from "../../constant/colors";
 import { get_projet_api } from "../../api/get_projet_api";
-import { MdOutlineContentCopy } from "react-icons/md";
+
+const { Text } = Typography;
 
 const { Option } = Select;
 
@@ -165,27 +167,16 @@ export default function BinsPage() {
         </div>
       ) : (
         <Space style={{ marginBottom: 16 }}>
-          <Select
-            placeholder="Select Project"
-            value={project || undefined}
-            onChange={(value) => setProject(value)}
-            style={{ width: 150 }}
-          >
-            {projets.map((item, index) => (
-              <Option key={index} value={item.nom}>
-                <Typography.Text
-                  className="copyLine"
-                  copyable={{
-                    icon: <MdOutlineContentCopy color={COLORS.Gray4} />,
-                    text: item.nom,
-                    tooltips: ["Copier", "Copié!"],
-                  }}
-                >
-                  {item.nom}
-                </Typography.Text>
-              </Option>
-            ))}
-          </Select>
+          <AutoComplete
+            value={project}
+            onChange={setProject}
+            options={projets.map((p) => ({ value: p.nom }))}
+            style={{ width: 220 }}
+            placeholder="Nom du projet"
+            filterOption={(inputValue, option) =>
+              option?.value?.toLowerCase().includes(inputValue.toLowerCase())
+            }
+          />
 
           <Button loading={isLoading} type="primary" onClick={handleAssign}>
             Enregistrer

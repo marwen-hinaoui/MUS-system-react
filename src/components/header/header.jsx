@@ -52,7 +52,7 @@ const DashboardHeader = ({ role, fullname, token }) => {
         }}
       >
         <img src={CI_LOGO} height={40} />
-        <div style={{ paddingLeft: "7px" }}></div>
+        <div style={{ paddingLeft: "5px" }}></div>
         <img src={CI_TEXT} />
         {/* <div
           style={{
