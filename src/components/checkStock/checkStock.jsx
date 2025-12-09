@@ -81,6 +81,16 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
       filterSearch: true,
     },
     {
+      title: "Type",
+      dataIndex: "type",
+      filters: [...new Set(stockDATA?.map((d) => d.type))].map((_type) => ({
+        text: _type,
+        value: _type,
+      })),
+      onFilter: (value, record) => record.patternNumb === value,
+      filterSearch: true,
+    },
+    {
       title: "Projet",
       dataIndex: "projetNom",
       filters: [...new Set(stockDATA?.map((d) => d.projetNom))].map(
