@@ -16,13 +16,11 @@ export const ExportExcel = ({ stockDATA, isBin }) => {
           { header: "Part Number", dataIndex: "partNumber" },
           { header: "Pattern", dataIndex: "patternNumb" },
           { header: "Bin de stockage", dataIndex: "bin_code" },
-
           {
             header: "Bin distination",
             dataIndex: "bin_code_distination",
           },
           { header: "Qte par bin", dataIndex: "quantiteBin" },
-          { header: "Emetteur", dataIndex: "emetteur" },
         ]
       : [
           { header: "Projet", dataIndex: "project" },

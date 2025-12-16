@@ -22,13 +22,10 @@ import { MdOutlineFileUpload } from "react-icons/md";
 import { ICONSIZE } from "../../constant/FontSizes";
 import { RiErrorWarningFill } from "react-icons/ri";
 import { COLORS } from "../../constant/colors";
-import SharedButton from "../button/button";
 const columns = [
   { title: "Projet", dataIndex: "projetNom" },
   { title: "Site", dataIndex: "site" },
-
   { title: "Part Number", dataIndex: "partNumber" },
-
   { title: "Pattern", dataIndex: "patternNumb" },
   { title: "Bin de stockage", dataIndex: "bin_code" },
   {
@@ -36,7 +33,6 @@ const columns = [
     dataIndex: "bin_code_distination",
   },
   { title: "Qte par bin", dataIndex: "quantiteBin" },
-  { title: "Emetteur", dataIndex: "emetteur" },
 ];
 
 const columns_check = [
@@ -183,34 +179,6 @@ const columns_check = [
       ) : (
         <p>{record.quantiteBin}</p>
       );
-    },
-  },
-  {
-    title: "Emetteur",
-    dataIndex: "emetteur",
-    render: (text, record) => {
-      console.log("Emetteur record:", record);
-
-      if (record.reasonEmetteur) {
-        return (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span>{record.emetteur || ""}</span>
-            <Tooltip placement="rightTop" title={record.reasonEmetteur}>
-              <RiErrorWarningFill size={ICONSIZE.XSMALL} />
-            </Tooltip>
-          </div>
-        );
-      } else if (record.emetteur && record.emetteur.trim().length > 0) {
-        return <span>{record.emetteur}</span>;
-      } else {
-        return <span>N/A</span>;
-      }
     },
   },
 ];
@@ -434,26 +402,14 @@ export const ExcelReader = ({
     if (record.updated) {
       return "ant-row-no-hover row-green";
     }
-    if (!record.updated) {
-      return "ant-row-no-hover red-row";
-    }
+    // if (!record.updated) {
+    //   return "ant-row-no-hover red-row";
+    // }
     return "";
   };
-
-  const hasErrors = checkMassiveArray.some(
-    (item) =>
-      item.reasonPN ||
-      item.reasonPattern ||
-      item.reasonProjet ||
-      item.reasonSite ||
-      item.reasonBin ||
-      item.reasonQTE
-  );
-
   return (
     <div>
       {contextHolder}
-
       <Modal
         width={800}
         title={<p style={{ margin: 0 }}>Modifier quantité du stock</p>}
@@ -463,14 +419,7 @@ export const ExcelReader = ({
           <Button key="cancel" onClick={handleCloseModal}>
             Annuler
           </Button>,
-          // <SharedButton
-          //   loading={isLoading}
-          //   disabled={hasErrors || checkMassiveArray.length === 0}
-          //   type="primary"
-          //   name="Confirmer"
-          //   color={hasErrors ? "rgb(238 49 36 / 70%)" : COLORS.LearRed}
-          //   callBack={handleConfirmUpload}
-          // />,
+
           <Button
             key="confirm"
             type="primary"

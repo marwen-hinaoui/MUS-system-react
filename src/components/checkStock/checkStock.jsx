@@ -87,7 +87,7 @@ export const CheckStock = React.memo(({ stockDATA, refreshData }) => {
         text: _type,
         value: _type,
       })),
-      onFilter: (value, record) => record.patternNumb === value,
+      onFilter: (value, record) => record.type === value,
       filterSearch: true,
     },
     {
