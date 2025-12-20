@@ -10,6 +10,7 @@ import GestionUser from "../pages/dashboardAdmin/gestionUser/GestionUser";
 import Dashboard from "../pages/dashboardAdmin/dashboard/dashboard";
 import RebuildGamme from "../pages/rebuildGamme/RebuildGamme";
 import BinsPage from "../pages/bins/BinsPage";
+import GammeMUS from "../pages/gammeMUS/gammeMUS";
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -78,6 +79,20 @@ const AppRoutes = () => {
               }
             />
             <Route
+              path="gamme"
+              element={
+                <ProtectedRoutes
+                  allowedRoles={[
+                    "DEMANDEUR",
+                    "AGENT_MUS",
+                    "GESTIONNAIRE_STOCK",
+                  ]}
+                >
+                  <GammeMUS />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
               path="cree_demande"
               element={
                 <ProtectedRoutes allowedRoles={["DEMANDEUR"]}>
@@ -118,6 +133,14 @@ const AppRoutes = () => {
               element={
                 <ProtectedRoutes allowedRoles={["Admin"]}>
                   <Dashboard />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="gamme"
+              element={
+                <ProtectedRoutes allowedRoles={["Admin"]}>
+                  <GammeMUS />
                 </ProtectedRoutes>
               }
             />

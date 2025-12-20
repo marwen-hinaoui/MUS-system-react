@@ -10,6 +10,7 @@ import { HiUserCircle } from "react-icons/hi";
 
 import { IoLayers } from "react-icons/io5";
 import { IoMdRefreshCircle, IoMdSettings } from "react-icons/io";
+import { BiSolidFileFind } from "react-icons/bi";
 
 const { Sider } = Layout;
 
@@ -20,11 +21,18 @@ const navItems = [
     label: "Suivi des demandes",
     route: "/admin",
   },
+
   {
     key: "cree_demande",
     icon: <MdLibraryAdd size={ICONSIZE.SMALL} />,
     label: "Nouvelle demande",
     route: "/admin/cree_demande",
+  },
+  {
+    key: "gamme",
+    icon: <BiSolidFileFind size={ICONSIZE.SMALL} />,
+    label: "Gamme MUS",
+    route: "/admin/gamme",
   },
   {
     key: "stock",

@@ -18,6 +18,12 @@ const App = () => {
       <ConfigProvider
         theme={{
           components: {
+            Notification: {
+              colorSuccessBg: "#ffffff",
+              colorErrorBg: "#ffffff",
+              colorInfoBg: "#ffffff",
+              colorWarningBg: "#ffffff",
+            },
             Typography: {
               linkDecoration: "underline",
               linkHoverColor: "inherit",

@@ -3,7 +3,11 @@ import { MdSearch } from "react-icons/md";
 import { ICONSIZE } from "../../constant/FontSizes";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { set_data_searching, set_loading } from "../../redux/slices";
+import {
+  set_cover_pn,
+  set_data_searching,
+  set_loading,
+} from "../../redux/slices";
 import { Input } from "antd";
 
 const SearchComponent = ({ placeholder, data, searchFor, table, disable }) => {

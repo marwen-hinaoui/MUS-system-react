@@ -2,6 +2,7 @@ export const FONTSIZE = {
   SMALL: 13,
   XPRIMARY: 14,
   PRIMARY: 16,
+  _TITLE: 18,
   TITLE: 20,
   XTITLE: 22,
 };

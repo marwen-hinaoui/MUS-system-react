@@ -44,7 +44,6 @@ const RebuildGamme = () => {
       <div style={{ paddingBottom: "16px" }}>
         <h4 style={{ margin: "0px" }}>Reconstitution Coiffes</h4>
       </div>
-
       <div
         style={{
           display: "flex",

@@ -7,14 +7,10 @@ import { COLORS } from "../../../../constant/colors";
 import LearLogo from "../../../../assets/img/LearLogo1.png";
 import { FONTSIZE, ICONSIZE } from "../../../../constant/FontSizes";
 
-import {
-  MdLibraryAdd,
-  MdReplayCircleFilled,
-  MdRestorePage,
-  MdSpaceDashboard,
-} from "react-icons/md";
-import { IoLayers, IoReloadCircleSharp } from "react-icons/io5";
+import { MdLibraryAdd, MdSpaceDashboard } from "react-icons/md";
+import { IoLayers } from "react-icons/io5";
 import { IoMdRefreshCircle } from "react-icons/io";
+import { BiSolidFileFind } from "react-icons/bi";
 
 const { Sider } = Layout;
 const commonNavItems = [
@@ -33,14 +29,27 @@ const roleBasedNavItems = {
       label: "Nouvelle demande",
       route: "/user/cree_demande",
     },
+    {
+      key: "Gamme",
+      icon: <BiSolidFileFind size={ICONSIZE.SMALL} />,
+      label: "Gamme MUS",
+      route: "/user/gamme",
+    },
   ],
   agent: [
+    {
+      key: "Gamme",
+      icon: <BiSolidFileFind size={ICONSIZE.SMALL} />,
+      label: "Gamme MUS",
+      route: "/user/gamme",
+    },
     {
       key: "stock",
       icon: <IoLayers size={ICONSIZE.SMALL} />,
       label: "Gestion stock",
       route: "/user/stock",
     },
+
     {
       key: "Reconstitution",
       icon: <IoMdRefreshCircle size={ICONSIZE.SMALL} />,

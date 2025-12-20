@@ -208,17 +208,6 @@ h4 {
 }
 
 .ant-notification-notice-wrapper {
+  background-color: #fff !important;
   border-radius: 4px !important;
-}
-
-:where(.css-dev-only-do-not-override-yiboe5).ant-notification
-  .ant-notification-notice-wrapper
-  .ant-notification-notice-error {
-  background: white !important;
-}
-
-:where(.css-dev-only-do-not-override-yiboe5).ant-notification
-  .ant-notification-notice-wrapper
-  .ant-notification-notice-success {
-  background: white !important;
 }

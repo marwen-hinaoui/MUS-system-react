@@ -1,46 +1,65 @@
 function hpglToSVG(hpgl, scale = 0.02) {
-  // const startString = "PU";
-  // const endString = "PU;";
-
-  // const startIndex = hpgl.indexOf(startString);
-  // const endIndex = hpgl.lastIndexOf(endString);
-
-  // const new_hpgl = hpgl.slice(0, startIndex) + hpgl.slice(endIndex + 1);
-  // console.log(new_hpgl);
   const new_hpgl = parsePUsegments(hpgl);
-  console.log(new_hpgl);
   const commands = new_hpgl.split(";");
+
   let pathData = "";
-  let penDown = false;
+  let minX = Infinity,
+    minY = Infinity;
+  let maxX = -Infinity,
+    maxY = -Infinity;
+
+  // Helper to track bounding box
+  const updateBounds = (x, y) => {
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  };
 
   for (let cmd of commands) {
     cmd = cmd.trim();
     if (!cmd) continue;
 
     if (cmd.startsWith("PU")) {
-      penDown = false;
       const coords = cmd.slice(2).split(",").map(Number);
       if (coords.length >= 2) {
-        pathData += `M ${coords[0] * scale} ${coords[1] * scale} `;
+        const x = coords[0] * scale;
+        const y = coords[1] * scale;
+        pathData += `M ${x} ${y} `;
+        updateBounds(x, y);
       }
     } else if (cmd.startsWith("PD")) {
-      penDown = true;
       const coords = cmd.slice(2).split(",").map(Number);
       for (let i = 0; i < coords.length; i += 2) {
-        pathData += `L ${coords[i] * scale} ${coords[i + 1] * scale} `;
+        const x = coords[i] * scale;
+        const y = coords[i + 1] * scale;
+        pathData += `L ${x} ${y} `;
+        updateBounds(x, y);
       }
     }
   }
 
+  // Calculate width/height and add a small padding for the stroke
+  const width = maxX - minX;
+  const height = maxY - minY;
+  const padding = 2; // Adjust based on your stroke-width
+
+  // Final viewBox: "minX minY width height"
   return `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 900 900">
-      <path d="${pathData}" stroke="black" fill="none" stroke-width="1"/>
+    <svg xmlns="http://www.w3.org/2000/svg" 
+         width="${width + padding * 2}" 
+         height="${height + padding * 2}" 
+         viewBox="${minX - padding} ${minY - padding} ${width + padding * 2} ${
+    height + padding * 2
+  }" 
+         data--h-bstatus="0OBSERVED">
+      <path d="${pathData.trim()}" stroke="black" fill="none" stroke-width="1"/>
     </svg>
   `;
 }
 
 export const HpglViewer = ({ hpglCode, scale }) => {
-  const svgString = hpglToSVG(hpglCode, scale);
+  const svgString = hpglToSVG(hpglCode, scale || 0.005);
 
   return (
     <div
