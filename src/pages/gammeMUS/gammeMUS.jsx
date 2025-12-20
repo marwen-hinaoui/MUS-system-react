@@ -172,7 +172,24 @@ const GammeMUS = () => {
                 </h6>
                 {searchPN}
               </div>
-              <p style={{ fontSize: FONTSIZE.XPRIMARY }}>{desc}</p>
+              <div
+                style={{
+                  fontSize: FONTSIZE.XPRIMARY,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <h6
+                  style={{
+                    fontSize: FONTSIZE.XPRIMARY,
+                    display: "flex",
+                    margin: 0,
+                  }}
+                >
+                  <b style={{ paddingRight: "5px" }}> Description:</b>
+                </h6>
+                {desc}
+              </div>
             </div>
             <div style={{ paddingRight: "35px" }}></div>
 
