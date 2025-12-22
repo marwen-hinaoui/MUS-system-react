@@ -32,7 +32,7 @@ const roleBasedNavItems = {
     {
       key: "Gamme",
       icon: <BiSolidFileFind size={ICONSIZE.SMALL} />,
-      label: "Gamme MUS",
+      label: "Gamme technique",
       route: "/user/gamme",
     },
   ],
@@ -40,7 +40,7 @@ const roleBasedNavItems = {
     {
       key: "Gamme",
       icon: <BiSolidFileFind size={ICONSIZE.SMALL} />,
-      label: "Gamme MUS",
+      label: "Gamme technique",
       route: "/user/gamme",
     },
     {

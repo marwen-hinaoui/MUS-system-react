@@ -31,7 +31,7 @@ const navItems = [
   {
     key: "gamme",
     icon: <BiSolidFileFind size={ICONSIZE.SMALL} />,
-    label: "Gamme MUS",
+    label: "Gamme technique",
     route: "/admin/gamme",
   },
   {

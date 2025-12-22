@@ -11,10 +11,9 @@ import {
   Select,
   Spin,
 } from "antd";
-import { FONTSIZE, ICONSIZE } from "../../constant/FontSizes";
+import { ICONSIZE } from "../../constant/FontSizes";
 import CardComponent from "../../components/card/CardComponent";
 import { HpglViewer } from "../../components/patternViewer/patternViewer";
-
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { get_projet_api } from "../../api/plt/get_projet_api";
@@ -22,6 +21,8 @@ import { MdSearch } from "react-icons/md";
 import { get_patterns_api } from "../../api/plt/get_patterns_api";
 import { pattern_image_api } from "../../api/plt/pattern_image_api";
 import { set_loading } from "../../redux/slices";
+import PrintableLabel from "./PrintableLabel";
+
 const { Option } = Select;
 
 const GammeMUS = () => {
@@ -36,6 +37,7 @@ const GammeMUS = () => {
   const [scaleValue, setScaleValue] = useState(0.03);
   const [paternImageModal, setPaternImageModal] = useState(false);
   const [patternPNNumberCode, setPatterPNCode] = useState({});
+  const [showPrintModal, setShowPrintModal] = useState(false);
 
   const handleChange = (value) => {
     setScaleValue(value);
@@ -45,16 +47,15 @@ const GammeMUS = () => {
     setPatterPNCode(patternPN);
     setPaternImageModal(true);
   };
+
   const handlePartNumberChange = async () => {
     dispatch(set_loading(true));
     if (searchPN !== "") {
       const _projet = await get_projet_api(searchPN, token);
       setProject(_projet.resData.projet);
       const resData = await get_patterns_api(searchPN, token);
-
       if (resData?.resData) {
         dispatch(set_loading(true));
-
         const results = await Promise.all(
           resData?.resData.map(async (item) => {
             const res = await pattern_image_api(item.pattern);
@@ -66,9 +67,7 @@ const GammeMUS = () => {
           })
         );
         console.log(results);
-
         setData(results);
-
         setDesc(resData.resData[0]?.part_number_cover_description);
         const leatherRow = (
           Array.isArray(resData.resData) ? resData.resData : []
@@ -79,14 +78,13 @@ const GammeMUS = () => {
         setLeatherPN(leatherPN);
       }
     }
-
     dispatch(set_loading(false));
   };
 
   return (
     <div className="dashboard">
       <div style={{ padding: "0 0 16px 0" }}>
-        <h4 style={{ margin: 0 }}>Gamme MUS</h4>
+        <h4 style={{ margin: 0 }}>Gamme Technique</h4>
       </div>
       <div
         style={{
@@ -132,10 +130,24 @@ const GammeMUS = () => {
             Recherche
           </Button>
         </div>
+        {/* {data.length > 0 && (
+          <div>
+            <Button
+              style={{
+                lineHeight: 0,
+              }}
+              type="primary"
+              onClick={() => setShowPrintModal(true)}
+              icon={<PrinterOutlined />}
+            >
+              Imprimer Label
+            </Button>
+          </div>
+        )} */}
       </div>
       {!isLoading && data.length > 0 ? (
         <div>
-          <div
+          {/* <div
             style={{
               paddingBottom: "16px",
             }}
@@ -186,13 +198,12 @@ const GammeMUS = () => {
                     margin: 0,
                   }}
                 >
-                  <b style={{ paddingRight: "5px" }}> Description:</b>
+                  <b style={{ paddingRight: "5px" }}>Description:</b>
                 </h6>
                 {desc}
               </div>
             </div>
             <div style={{ paddingRight: "35px" }}></div>
-
             <div style={{ display: "flex", alignItems: "flex-start" }}>
               <div
                 style={{
@@ -208,13 +219,13 @@ const GammeMUS = () => {
                     margin: 0,
                   }}
                 >
-                  <b style={{ paddingRight: "5px" }}> Leather Kit:</b>
+                  <b style={{ paddingRight: "5px" }}>Leather Kit:</b>
                 </h6>
                 {leatherPN}
               </div>
             </div>
-          </div>
-          <div style={{ margin: "auto", borderRadius: "4px" }}>
+          </div> */}
+          {/* <div style={{ margin: "auto", borderRadius: "4px" }}>
             <Row style={{ rowGap: "8px" }} gutter={[16, 16]}>
               {(Array.isArray(data) ? data : []).map((item, index) => {
                 return (
@@ -290,7 +301,6 @@ const GammeMUS = () => {
                       <Option value={0.06}>0.06</Option>
                     </Select>
                   </div>
-
                   <div style={{ paddingTop: "10px" }}></div>
                   <HpglViewer
                     scale={scaleValue}
@@ -299,7 +309,16 @@ const GammeMUS = () => {
                 </div>
               </Modal>
             </Row>
-          </div>
+          </div> */}
+          <PrintableLabel
+            visible={showPrintModal}
+            onClose={() => setShowPrintModal(false)}
+            data={data}
+            searchPN={searchPN}
+            desc={desc}
+            leatherPN={leatherPN}
+            project={project}
+          />
         </div>
       ) : !isLoading && data.length === 0 ? (
         <p>Aucune donnée trouvée</p>
